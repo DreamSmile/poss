@@ -1,0 +1,58 @@
+@import "../assets/css/common.less" ;
+#home{
+    background-color: #F6F6F8;
+    min-height:calc(100vh - 50px);
+    .content{
+        width:80%;
+        min-width: 900px;
+        margin:0 auto;  
+        margin-top:50px;
+        box-sizing: border-box;
+        .banner{
+            width:100%;
+            margin:0 auto;
+            height:17.4%;
+        }
+        .main{
+            display: flex;
+            .main_data{
+                flex:1;
+                margin-right:30px;
+                .search{
+                    margin-top: 20px;
+                    margin-bottom: 20px;
+                    box-sizing: border-box;
+                    .el-input-group{
+                        border:1px solid @base-color;
+                    }
+                    .el-icon-search{
+                        color:#fff;
+                    }
+                    .el-input-group__prepend{
+                        border:none;
+                    }
+                    .el-input__inner{
+                        border:none;
+                    }
+                    .el-input-group__append{
+                        background-color: @base-color;
+                        border:1px solid @base-color;
+                        border-radius: 0;
+                        .el-button--primary{
+                            width:100px;
+                        }
+                    }
+                    .el-select .el-input {
+                        width: 150px;
+                      }
+                      .input-with-select .el-input-group__prepend {
+                        background-color: #fff;
+                      }
+                }
+            }
+            .main_state{
+                width:294px;
+            }
+        }
+    }
+}

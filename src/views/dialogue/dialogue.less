@@ -1,0 +1,136 @@
+@import '../../assets/css/common.less';
+
+#dialogue {
+    .content {
+        width: 80%;
+        margin: 0 auto;
+        min-width: 900px;
+        margin-top: 50px;
+
+        .content_flex {
+            display: flex;
+            min-height: calc(100vh - 100px);
+
+            .user_list {
+                padding-top: 40px;
+                width: 300px;
+                background-color: #F1F1F1;
+
+                p {
+                    line-height: 28px;
+                    color: @msg-color;
+                    padding-left: 6px;
+                }
+
+                .list {
+                    .list_box {
+                        position: relative;
+                        padding: 6px 10px;
+                        cursor: pointer;
+
+                        .imgs {
+                            width: 46px;
+                            height: 46px;
+                            border-radius: 50%;
+                            display: inline-block;
+                            background-size: cover;
+                            background-position: 50%;
+                            background-color: #ddd;
+                        }
+
+                        .user {
+                            display: inline-block;
+                            margin-left: 10px;
+
+                            .user_name {
+                                color: @font-color;
+                                line-height: 28px;
+                            }
+
+                            .user_data {
+                                font-size: 12px;
+                            }
+                        }
+
+                        .time {
+                            position: absolute;
+                            top: 0px;
+                            right: 10px;
+                            line-height: 28px;
+                            color: @msg-color;
+                            font-size: 12px;
+                        }
+
+                    }
+                }
+            }
+
+            .dialog_box {
+                flex: 1;
+                padding: 20px;
+                display: flex;
+                flex-direction: column;
+
+                .box_data {
+                    margin-top: 20px;
+
+                    .job_master {
+                        color: @user-color;
+                        line-height: 28px;
+
+                        span {
+                            margin-left: 20px;
+                        }
+                    }
+
+                    .job_data {
+                        line-height: 28px;
+
+                        .job_name {
+                            margin: 0 16px;
+                            color: @base-color;
+                        }
+                    }
+                }
+
+                .box {
+                    flex: 1;
+                }
+
+                .dialog_input {
+                    position: relative;
+
+                    button {
+                        position: absolute;
+                        bottom: 0;
+                        right: 0;
+                    }
+
+                    .icon {
+                        img {
+                            width: 24px;
+                            height: 24px;
+                            display: inline-block;
+                        }
+
+                        .photo {
+                            margin-left: 10px;
+                        }
+                    }
+
+                    .inp {
+                        width: 100%;
+                        height: 100px;
+
+                        textarea {
+                            margin-top: 10px;
+                            width: 100%;
+                            height: 100%;
+                            border: none;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

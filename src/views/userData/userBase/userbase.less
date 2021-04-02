@@ -1,0 +1,43 @@
+@import "../../../assets/css/common.less" ;
+#userBase {
+    .base_data {
+      padding: 34px;
+      position: relative;
+      .data_title {
+        padding-left: 10px;
+        border-left: 3px solid @base-color;
+      }
+      button {
+        background-color: @base-color;
+        border: none;
+        color: #fff;
+        padding: 6px 34px;
+        font-size: 14px;
+        cursor: pointer;
+        position: absolute;
+        top: 72px;
+        right: 24px;
+        a{
+          text-decoration: none;
+          color:#fff;
+        }
+      }
+  
+      .rows {
+        display: flex;
+        text-align: right;
+        height: 42px;
+        align-items: flex-end;
+        .row_problem {
+          width: 5em;
+          line-height: 24px;
+          color: @user-color;
+        }
+        .row_answer {
+          margin-left: 20px;
+          line-height: 24px;
+          color: @font-color;
+        }
+      }
+    }
+  }
