@@ -21,6 +21,9 @@ const mutations = {
             status: data.status
         }
     },
+    editUserData(state,data){
+        Object.assign(state.userData,data);
+    },
     getUserToken(state) {
         console.log(state);
         return state;

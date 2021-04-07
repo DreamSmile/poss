@@ -1,6 +1,6 @@
 <template>
   <div id="job">
-    <top></top>
+    <top message="兼职详情"></top>
     <div class="content">
       <!-- 顶部招聘基础信息 -->
       <div class="content_banner">
@@ -18,7 +18,7 @@
             {{ jobData.title }}<span>{{ jobData.hourlyWage }}元/小时</span>
           </div>
           <div class="school">{{ jobData.workplace }}</div>
-          <button>立即沟通</button>
+          <router-link to="/dialogue"><button type="button">立即沟通</button></router-link>
         </div>
       </div>
       <!-- 底部招聘详细信息 -->
@@ -56,7 +56,7 @@
                 负责人手机号：{{ jobData.publisher.phoneNumber || "--" }}
               </p>
               <p class="list">
-                负责人所属学校：{{ jobData.publisher.campusInfo || "--" }}
+                负责人所属学校：{{ jobData.publisher.campusInfo.name || "--" }}
               </p>
             </div>
           </div>
@@ -64,14 +64,14 @@
             <p class="title">学校信息</p>
             <div class="box">
               <p class="list">
-                {{ jobData.publisher.campusInfo || "学校简介空~" }}
+                {{ jobData.publisher.campusInfo.description || "学校简介空~" }}
               </p>
             </div>
           </div>
         </div>
       </div>
       <!-- 底部附件 -->
-      <div class="job_file">
+      <div class="job_file" v-if="jobData.attachmentName">
         <p>附件</p>
         <div class="file">
           <div class="file_name">
@@ -116,7 +116,7 @@ export default {
         .then((res) => {
           console.log(res);
           if (!res.success) {
-            this.$massage.error("获取兼职详情错误！原因为：" + res.msg);
+            this.$message.error("获取兼职详情错误！原因为：" + res.msg);
             return false;
           }
           this.jobData = res.data;

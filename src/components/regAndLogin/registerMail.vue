@@ -42,7 +42,7 @@
           v-model="form.code"
           placeholder="请输入验证码"
         ></el-input>
-        <span class="sendCode" @click="sendCode">发送验证码</span>
+        <span class="sendCode" @click="sendCode">{{ times }}</span>
       </el-form-item>
       <el-checkbox v-model="checked">同意poss直聘《用户协议》</el-checkbox>
       <el-button type="primary" @click="regist">注册</el-button>
@@ -62,6 +62,7 @@ export default {
         pass: "",
         code: "",
       },
+      times: "发送验证码",
       checked: false,
     };
   },
@@ -71,6 +72,7 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           //邮箱正确
+          this.tiems = "已发送。。";
           this.$api
             .getCodeByMail({
               email: this.form.email,
@@ -81,6 +83,7 @@ export default {
                 this.$alert("发送验证码失败，原因为：" + res.msg, "错误", {
                   confirmButtonText: "确定",
                 });
+                this.times = "发送验证码";
                 return false;
               }
               this.$message({
@@ -89,7 +92,8 @@ export default {
               });
             })
             .catch((err) => {
-              this.$massage.error("发送验证码失败！原因：" + err);
+              this.$message.error("发送验证码失败！原因：" + err);
+              this.times = "发送验证码";
             });
         }
       });

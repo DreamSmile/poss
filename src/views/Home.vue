@@ -130,13 +130,13 @@ export default {
         .then((res) => {
           // console.log(res);
           if (!res.success) {
-            this.$massage.error("获取学校列表失败！原因为：" + res.msg);
+            this.$message.error("获取学校列表失败！原因为：" + res.msg);
             return false;
           }
           this.schoolList = res.data;
         })
         .catch((err) => {
-          this.$massage.error("获取学校列表失败！" + err);
+          this.$message.error("获取学校列表失败！" + err);
         });
     },
     // 搜索工作
@@ -163,6 +163,7 @@ export default {
           },
         })
         .then((res) => {
+          console.log(res);
           if (!res.success) {
             this.$message.error("获取兼职列表失败！原因为：" + res.msg);
             return false;

@@ -1,16 +1,26 @@
 <template>
   <div id="userEdit">
-    <top></top>
+    <top message="修改信息"></top>
     <div class="content">
-      <div
-        class="imgs"
-        :style="{ backgroundImage: 'url(' + imgSrc + ')' }"
-      ></div>
+      <div class="imgs" :style="{ backgroundImage: 'url(' + imgSrc + ')' }">
+        <el-upload
+          class="avatar-uploader"
+          action="#"
+          :show-file-list="false"
+          :on-success="handleAvatarSuccess"
+          :before-upload="beforeAvatarUpload"
+        >
+          <div class="img_hover" @click="upImg">
+            <i class="el-icon-upload"></i>
+            <p>上传图片</p>
+          </div>
+        </el-upload>
+      </div>
       <!-- 基本信息修改 -->
       <el-form ref="form" :model="form" label-width="80px" size="mini">
         <div class="data_box">
           <p class="data_title">基本信息</p>
-          <button class="keep" @click="keep">保存</button>
+          <button type="button" class="keep" @click="keep">保存</button>
           <el-form-item label="用户名">
             <el-input v-model="form.name"></el-input>
           </el-form-item>
@@ -22,13 +32,13 @@
           </el-form-item>
           <el-form-item label="邮箱"
             ><span class="mail">{{ form.mail }}</span
-            ><router-link v-if="!form.mail" to="/mailPhoneConnect"
+            ><router-link v-if="!form.mail" to="/mailPhoneConnect/mail"
               >去绑定</router-link
             ><router-link v-else to="/MailPhoneEdit">修改</router-link>
           </el-form-item>
           <el-form-item label="手机号"
             ><span class="phone">{{ form.phone }}</span
-            ><router-link v-if="!form.phone" to="/mailPhoneConnect"
+            ><router-link v-if="!form.phone" to="/mailPhoneConnect/phone"
               >去绑定</router-link
             >
             <router-link v-else to="/MailPhoneEdit">修改</router-link>
@@ -40,7 +50,7 @@
         <!-- 教育背景 -->
         <div class="data_box">
           <p class="data_title">教育背景</p>
-          <button class="keep" @click="keep">保存</button>
+          <button type="button" class="keep" @click="keep">保存</button>
           <el-form-item label="毕业院校">
             <el-select
               v-model="form.school"
@@ -77,6 +87,7 @@ export default {
   components: {
     Top,
   },
+  inject: ["reload"],
   data() {
     return {
       imgSrc: require("@/assets/imgs/user.jpg"),
@@ -104,11 +115,11 @@ export default {
         this.form = {
           name: data.nickName,
           sex: data.sex ? data.sex : "男",
-          mail: data.mail,
+          mail: data.email,
           phone: data.phoneNumber,
           autograph: data.signature,
           school: data.campusInfo ? data.campusInfo.name : null,
-          education: data.campusInfo,
+          education: data.campusInfo.type,
           major: data.major ? data.major : "",
         };
         this.$store.state.avatar
@@ -122,13 +133,13 @@ export default {
         .getSchoolList()
         .then((res) => {
           if (!res.success) {
-            this.$massage.error("获取学校列表失败！原因为：" + res.msg);
+            this.$message.error("获取学校列表失败！原因为：" + res.msg);
             return false;
           }
           this.schoolList = res.data;
         })
         .catch((err) => {
-          this.$massage.error("获取学校列表失败！" + err);
+          this.$message.error("获取学校列表失败！" + err);
         });
     },
     // 监听学校选择变化
@@ -141,32 +152,18 @@ export default {
     },
     // 保存修改后的信息
     keep() {
-      console.log(
-        "学校：" +
-          this.form.school +
-          ",专业" +
-          this.form.major +
-          ",名字：" +
-          this.form.name
-      );
-      console.log(
-        "性别：" + this.form.sex + ",个性签名：" + this.form.autograph
-      );
-      let editData = {
-        campus: this.form.school,
-        major: this.form.major,
-        nickName: this.form.name,
-        sex: this.form.sex,
-        signature: this.form.autograph,
-      };
       this.$api
         .changeBaseData({
-          editData,
+          campus: this.form.school,
+          major: this.form.major,
+          nickName: this.form.name,
+          sex: this.form.sex,
+          signature: this.form.autograph,
         })
         .then((res) => {
           console.log(res);
           if (!res.success) {
-            this.$massage.error("修改信息出错，原因为：" + res.msg);
+            this.$message.error("修改信息出错，原因为：" + res.msg);
             this.setData();
             return;
           }
@@ -175,12 +172,56 @@ export default {
             type: "success",
           });
           // 将数据修改到vux中去，未未写这部分代码
-          Object.assign(this.$store.userData, editData);
+          this.$store.commit("editUserData", {
+            campus: this.form.school,
+            major: this.form.major,
+            nickName: this.form.name,
+            sex: this.form.sex,
+            signature: this.form.autograph,
+          });
         })
         .catch((err) => {
-          console.log(err);
-          this.$message.error('修改信息请求失败！');
+          this.$message.error("修改信息请求失败！");
         });
+    },
+    // 上传头像
+    upImg() {},
+    // 确定上传前，检查图片格式
+    beforeAvatarUpload(file) {
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (file.type != "image/png" && file.type != "image/jpeg") {
+        this.$message.error("上传头像图片只能是 JPG户或者PNG 格式!");
+        return false;
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+        return false;
+      }
+
+      this.$api
+        .upImg({
+          file: file,
+        })
+        .then((res) => {
+          if (!res.success) {
+            this.$message.error("头像修改失败，原因为：" + res.msg);
+            return;
+          }
+          this.$message({
+            message: "修改头像成功！",
+            type: "success",
+          });
+          this.reload();
+        })
+        .catch((err) => {
+          this.$message.error(err);
+        });
+      return false;
+    },
+    // 上传成功
+    handleAvatarSuccess() {
+      console.log("上传成功");
     },
   },
 };

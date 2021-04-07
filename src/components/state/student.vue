@@ -5,31 +5,76 @@
         <router-link to="/userData">
           <img src="@/assets/imgs/user.jpg" />
         </router-link>
-        <p>张三</p>
+        <p>{{ userData.nickName }}</p>
       </div>
       <div class="student_data">
-        <div class="rows">
+        <div class="rows"><router-link to="/userData">
           <span>参与过的兼职记录</span>
-          <div>32<i class="el-icon-arrow-right"></i></div>
+          <div>
+            {{ userData.joinCount || 0 }}<i class="el-icon-arrow-right"></i>
+          </div>
+          </router-link>
         </div>
-        <div class="rows">
+        <div class="rows" v-if="userData.role == 'merchant'"><router-link to="/userData">
           <span>发布过的兼职记录</span>
           <div>32<i class="el-icon-arrow-right"></i></div>
+          </router-link>
         </div>
       </div>
     </div>
     <div class="work_list">
       <p class="list_title">正在进行中的兼职列表</p>
-      <ul v-for="i in 5" :key="i">
+      <ul v-for="(item,i) in jobList" :key="i">
         <li>
-          1、
-          <p class="list_data">悸动打范文芳起码</p>
-          <span class="list_time">2021.04.22</span>
+          {{i+1}}、
+          <p class="list_data">{{item.title}}</p>
+          <span class="list_time">{{item.startTime}}</span>
         </li>
       </ul>
+      <div v-show="jobList.length<1" class="no">暂时没有数据，快去兼职吧~
+      </div>
     </div>
   </div>
 </template>
+<script>
+export default {
+  data() {
+    return {
+      userData: {},
+      imgSrc: require("@/assets/imgs/user.jpg"),
+      jobList: [],
+    };
+  },
+  mounted() {
+    this.setData();
+  },
+  methods: {
+    setData() {
+      if (this.$store.state) {
+        this.userData = this.$store.state.userData;
+        this.$store.state.avatar
+          ? (this.imgSrc = require(this.$store.state.avatar))
+          : "";
+      }
+    },
+    // 获取兼职列表
+    getJobHis() {
+      this.$api
+        .getJobHis()
+        .then((res) => {
+          if (!res.success) {
+            this.$message.error("获取用户兼职历史失败，原因为：" + res.msg);
+            return;
+          }
+          this.jobList = res.data;
+        })
+        .catch((err) => {
+          this.$message.error("获取用户兼职历史失败，原因为：" + err);
+        });
+    },
+  },
+};
+</script>
 <style scoped lang="less">
 @import "../../assets/css/common.less";
 #student {
@@ -58,6 +103,10 @@
         cursor: pointer;
         position: relative;
         margin-bottom: 22px;
+        a{
+          color:@font-color;
+          text-decoration: none;
+        }
         span {
           padding-left: 25px;
         }
@@ -75,6 +124,11 @@
     margin-top: 20px;
     padding: 18px 23px;
     .list_title {
+    }
+    .no{
+      text-align: center;
+      color:@msg-color;
+      margin-top:20px;
     }
     ul {
       li {

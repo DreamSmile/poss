@@ -37,7 +37,7 @@ const routes = [
     component: register1
   }, {
     path: '/register',
-    name: '',
+    name: 'Register',
     component: register
   }, {
     path: '/login',
@@ -89,7 +89,7 @@ const routes = [
     name: 'MailPhoneEdit',
     component: mailPhoneEdit,
   }, {
-    path: '/mailPhoneConnect',
+    path: '/mailPhoneConnect/:type',
     name: 'MailPhoneConnect',
     component: mailPhoneConnect,
   }, {
@@ -116,13 +116,7 @@ router.beforeEach((to, form, next) => {
 
   let userInfo = $store.state;//所有的用户信息，包括token
   console.log(userInfo);
-  // if (!userInfo && to.name != "Home") {
-  //   next({
-  //     path: "/login",
-  //     query: { msg: encodeURIComponent('登录信息失效，请重新登录！') }
-  //   });
-  //   return;
-  // }
+
   // 每次换路由就获取用户接口，检查token是否过期
   if (to.name != "Login" && to.name != "Register") {
     console.log('不是登录和注册界面');
@@ -146,7 +140,10 @@ router.beforeEach((to, form, next) => {
           console.log('路由守卫获取新token失败！');
           $store.commit('clearAll');
         })
+        return;
       }
+      // 成功获取数据，存入用户
+      $store.commit("setUserData", res.data);
     }).catch(err => {
       console.log('路由守卫获取用户信息失败！');
       if (to.name != "Home") {

@@ -1,6 +1,6 @@
 <template>
   <div id="userData">
-    <top></top>
+    <top message="基本信息"></top>
     <div class="content">
       <el-container>
         <el-aside width="200px"

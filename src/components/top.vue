@@ -2,11 +2,16 @@
   <div id="top">
     <div class="bg">
       <div class="inner">
-        <img src="@/assets/imgs/logo.png" alt="boss直聘" />
+        <router-link to="/">
+          <img src="@/assets/imgs/logo.png" alt="boss直聘" />
+        </router-link>
         <div class="nav">
           <ul>
-            <li><router-link to="/">首页</router-link></li>
-            <li v-if="userData.role=='business'"><router-link to="/pushJob">发布</router-link></li>
+            <li v-show="!message"><router-link to="/">首页</router-link></li>
+            <li v-if="userData.role == 'merchant'">
+              <router-link to="/pushJob">发布</router-link>
+            </li>
+            <li v-show="message" class="top_title">{{ message }}</li>
           </ul>
         </div>
       </div>
@@ -21,10 +26,13 @@
             <router-link to="/login">登录</router-link>
           </button>
           <!-- 已登录区 -->
-          <span v-if="$store.state.accessToken"><router-link to="/dialogue">聊天</router-link></span>
-          <span v-if="$store.state.accessToken">{{userData.nickName}}</span>
+          <span v-if="$store.state.accessToken"
+            ><router-link to="/dialogue">聊天</router-link></span
+          >
+          <span v-if="$store.state.accessToken">{{ userData.nickName }}</span>
           <router-link to="/userData">
-            <div v-if="$store.state.accessToken"
+            <div
+              v-if="$store.state.accessToken"
               class="imgs"
               :style="{ backgroundImage: 'url(' + imgSrc + ')' }"
             ></div>
@@ -43,6 +51,7 @@ export default {
       imgSrc: require("@/assets/imgs/user.jpg"),
     };
   },
+  props: ["message"],
   mounted() {
     this.setData();
   },
@@ -54,7 +63,7 @@ export default {
         this.userData = this.$store.state.userData;
         this.$store.state.avatar
           ? (this.imgSrc = require(this.$store.state.avatar))
-          : '';
+          : "";
         // console.log(this.userData);
       }
     },
@@ -112,6 +121,19 @@ export default {
               color: #fff;
               text-decoration: none;
             }
+          }
+          .top_title {
+            padding-left: 14px;
+            position: relative;
+          }
+          .top_title:after {
+            content: "";
+            width: 2px;
+            height: 30px;
+            position: absolute;
+            background-color: #fff;
+            left: 0;
+            top: -6px;
           }
         }
       }

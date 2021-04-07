@@ -76,11 +76,6 @@ axiosIns.interceptors.response.use(response => {
 });
 
 export function $post(url, params, config = {}) {
-    Object.assign(config, {
-        headers: {
-            "Authorization": $store.state.userToken
-        }
-    })
     return new Promise((resolve, reject) => {
         axiosIns.post(url, params, config).then(res => {
             if (res.status == 200)
@@ -107,17 +102,15 @@ export function $get(url, params, config = {}) {
 }
 
 export function $put(url, params, config = {}) {
-    console.log(params);
-    console.log(config);
-    if (params && typeof (config) == "object") {
-        config.params = params;
-    }
-
-    return axiosIns.put(url, config).then(res => {
-        if (res.status == 200)
-            return res.data;
-        else
-            return Promise.reject(`Put请求失败 信息：status=${res.status} statusText=${res.statusText}`);
+    return new Promise((resolve, reject) => {
+        axiosIns.put(url, params, config).then(res => {
+            if (res.status == 200)
+                resolve(res.data);
+            else
+                reject(`PUT请求失败 信息：status=${res.status} statusText=${res.statusText}`);
+        }).catch(errmsg => {
+            reject(errmsg);
+        });
     });
 }
 

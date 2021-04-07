@@ -1,6 +1,6 @@
 <template>
   <div id="mailPhoneEdit">
-    <top></top>
+    <top message="修改信息"></top>
     <!-- 主要修改区 -->
     <div class="content">
       <p class="content_title">poss直聘通行证</p>

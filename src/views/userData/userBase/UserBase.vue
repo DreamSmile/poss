@@ -8,7 +8,7 @@
       <router-link to="/userEdit"><button>修改</button></router-link>
       <div class="rows first_row">
         <span class="row_problem">用户名</span
-        ><span class="row_answer">{{userData.nickName}}</span>
+        ><span class="row_answer">{{userData.nickName || '无'}}</span>
       </div>
          <div class="rows first_row">
         <span class="row_problem">性别</span
@@ -70,8 +70,7 @@ export default {
           ? (this.imgSrc = require(this.$store.state.avatar))
           : '';
           this.school=this.$store.state.userData.campusInfo?this.$store.state.userData.campusInfo:{'name':'','type':''};
-        //   console.log(this.school);
-        // console.log(this.userData);
+
       }
     },
   },

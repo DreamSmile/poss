@@ -16,14 +16,20 @@
           </el-form-item>
 
           <el-form-item label="*" style="display: inline-block">
-            <el-select
-              v-model="form.school"
-              placeholder="请选择发布学校"
-              style="width: 174px"
-            >
-              <el-option label="学校1" value="shanghai"></el-option>
-              <el-option label="学校2" value="beijing"></el-option>
-            </el-select> </el-form-item
+           
+
+            <el-select v-model="form.school" placeholder="请选择发布学校" style="width: 174px">
+                <el-option
+                  :label="item.name"
+                  :value="item.name"
+                  :sId="item.id"
+                  :sType="item.type"
+                  v-for="(item, i) in schoolList"
+                  :key="i"
+                ></el-option>
+              </el-select>
+            
+             </el-form-item
           ><el-form-item
             prop="num"
             class="num"
@@ -115,6 +121,7 @@ export default {
   },
   data() {
     return {
+      schoolList:[],
       form: {
         name: "",
         school: "",
@@ -144,7 +151,7 @@ export default {
           {
             trigger: "blur",
             type: "number",
-            message: "年龄必须为数字",
+            message: "人数限制必须为数字",
             transform: (value) => Number(value),
           },
         ],
@@ -186,7 +193,25 @@ export default {
       },
     };
   },
+  mounted(){
+    this.getSchoolList();
+  },
   methods: {
+    // 获取学校列表
+    getSchoolList() {
+      this.$api
+        .getSchoolList()
+        .then((res) => {
+          if (!res.success) {
+            this.$message.error("获取学校列表失败！原因为：" + res.msg);
+            return false;
+          }
+          this.schoolList = res.data;
+        })
+        .catch((err) => {
+          this.$message.error("获取学校列表失败！" + err);
+        });
+    },
     handleRemove(file, fileList) {
       console.log(file, fileList);
     },

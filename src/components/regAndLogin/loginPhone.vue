@@ -14,7 +14,9 @@
           placeholder="请输入验证码"
           :validate-event="false"
         ></el-input>
-        <span class="sendCode" @click="sendCode" v-if="isSend">{{ times }}秒后重新发送</span>
+        <span class="sendCode" @click="sendCode" v-if="isSend">{{
+          times
+        }}</span>
         <span class="sendCode" @click="sendCode" v-else>发送验证码</span>
       </el-form-item>
       <el-button type="primary" @click="login" :loading="loading"
@@ -36,8 +38,8 @@ export default {
         code: "",
       },
       loading: false,
-      isSend:false,
-      times:'60',
+      isSend: false,
+      times: "60",
       rules: {
         phone: [
           { required: true, message: "请输入手机号", trigger: "blur" },
@@ -57,13 +59,14 @@ export default {
   methods: {
     //  发送验证码
     sendCode() {
-      this.isSend=true;
-      this.times=this.$utils.countDown();
-      return;
+      // this.isSend=true;
+      // this.times=this.$utils.countDown();
       if (!/^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/.test(this.form.phone)) {
         this.$message.error("请输入正确的手机号码！");
         return;
       }
+      this.isSend = true;
+      this.times = "已发送。。。";
       this.$api
         .getCode({
           operationType: "login",
@@ -92,24 +95,28 @@ export default {
             })
             .then((res) => {
               console.log(res);
-              this.$message({
-                type: "success",
-                message: "登录成功！即将为您跳转至首页",
-              });
-              this.$utils.setLocalToken("userToken", res.data.accessToken); //将token放入缓存
-              this.$store.commit("setUserToken", res.data.accessToken); //将token存到vuex
-              setTimeout(() => {
-                this.$router.push("/");
-              }, 3000);
+              if (res.success) {
+                this.$message({
+                  type: "success",
+                  message: "登录成功！即将为您跳转至首页",
+                });
+                this.$utils.setLocalToken("userToken", res.data.accessToken); //将token放入缓存
+                this.$store.commit("setUserToken", res.data.accessToken); //将token存到vuex
+                setTimeout(() => {
+                  this.$router.push("/");
+                }, 3000);
+              } else {
+                this.isErr("登录失败", res.msg);
+              }
             })
             .catch((err) => {
-              this.isErr("登录失败，", err);
+              this.isErr("登录失败", err);
             });
         }
       });
     },
     isErr(name, msg) {
-      this.$message.error(name + "，原因为：" + msg);
+      this.$alert(name + "，原因为：" + msg);
       this.loading = false;
       this.form.phone = "";
       this.form.code = "";

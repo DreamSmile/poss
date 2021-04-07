@@ -2,16 +2,16 @@
   <div class="user_profile">
     <div class="imgs" :style="{ backgroundImage: 'url(' + imgSrc + ')' }"></div>
     <div class="user_summary">
-      <span>{{ userData.nickName }}</span>
+      <span>{{ userData.nickName || "无" }}</span>
       <i
         :class="
           userData.sex == null || 'man' ? 'el-icon-male' : 'el-icon-female'
         "
       ></i>
-      <button>成为商家</button>
+      <button @click="dialogVisible = true">成为商家</button>
       <el-divider></el-divider>
       <div class="box_first">
-        <p class="box_number">{{ userData.joinCount }}</p>
+        <p class="box_number">{{ userData.joinCount || 0 }}</p>
         <p class="box_msg">参加过的兼职</p>
       </div>
       <div class="box_second">
@@ -22,15 +22,30 @@
         个性签名：{{ userData.signature || "该用户很懒，还没有写个性签名~" }}
       </p>
     </div>
+    <!-- 成为商家画面 -->
+    <el-dialog
+      :visible.sync="dialogVisible"
+      width="780px"
+      height="524px"
+    >
+      <div class="business_box">
+        <to-business></to-business>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
+import toBusiness from "./toBusiness";
 export default {
   name: "userBaseData",
+  components: {
+    toBusiness,
+  },
   data() {
     return {
       userData: {},
       imgSrc: require("@/assets/imgs/user.jpg"),
+      dialogVisible: false,
     };
   },
   mounted() {
@@ -44,6 +59,10 @@ export default {
           ? (this.imgSrc = require(this.$store.state.avatar))
           : console.log("头像信息无");
       }
+    },
+    // 成为商家
+    open() {
+      alert("成为商家");
     },
   },
 };
@@ -130,6 +149,11 @@ export default {
       color: @msg-color;
       font-size: 12px;
       line-height: 48px;
+    }
+  }
+  .el-dialog__wrapper {
+    /deep/.el-dialog {
+      border-radius: 20px !important;
     }
   }
 }

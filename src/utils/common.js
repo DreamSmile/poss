@@ -1,11 +1,20 @@
 // 倒计时
 export function countDown() {
     let num = 60;
+    var test = 60;
     let interval = setInterval(() => {
-        let test = num > 0 ? num-- : clearInterval(interval);
-        console.log(test);
+        test = num > 0 ? num-- : clearInterval(interval);
+        //console.log(test);
         return test
     }, 1000);
+
+    // (function () {
+    //     let interval = setInterval(() => {
+    //         let test = num > 0 ? num-- : clearInterval(interval);
+    //         console.log(test);
+    //         return test
+    //     }, 1000);
+    // })(num)
 }
 
 export function returntime(time) {

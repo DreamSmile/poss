@@ -81,6 +81,7 @@ export default {
         return;
       }
       // this.times = this.$utils.countDown();
+      this.times='已发送。。';
       this.$api
         .getCode({ operationType: "signup", phoneNumber: this.form.phone })
         .then((res) => {
@@ -107,7 +108,7 @@ export default {
             })
             .then((res) => {
               console.log(res);
-              console.log(this.form.phone, "验证码：" + this.form.code,+"密码："+this.form.pass);
+              console.log(this.form.phone, "验证码：" + this.form.code+ "密码："+this.form.pass);
               if (!res.success) {
                 this.$alert("注册失败，原因为：" + res.msg, "错误", {
                   confirmButtonText: "确定",
