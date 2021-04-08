@@ -16,6 +16,7 @@
           </div>
         </el-upload>
       </div>
+
       <!-- 基本信息修改 -->
       <el-form ref="form" :model="form" label-width="80px" size="mini">
         <div class="data_box">
@@ -34,14 +35,14 @@
             ><span class="mail">{{ form.mail }}</span
             ><router-link v-if="!form.mail" to="/mailPhoneConnect/mail"
               >去绑定</router-link
-            ><router-link v-else to="/MailPhoneEdit">修改</router-link>
+            ><router-link v-else to="/MailPhoneEdit/mail">修改</router-link>
           </el-form-item>
           <el-form-item label="手机号"
             ><span class="phone">{{ form.phone }}</span
             ><router-link v-if="!form.phone" to="/mailPhoneConnect/phone"
               >去绑定</router-link
             >
-            <router-link v-else to="/MailPhoneEdit">修改</router-link>
+            <router-link v-else to="/MailPhoneEdit/phone">修改</router-link>
           </el-form-item>
           <el-form-item label="个性签名">
             <el-input type="textarea" v-model="form.autograph"></el-input>
@@ -122,9 +123,9 @@ export default {
           education: data.campusInfo.type,
           major: data.major ? data.major : "",
         };
-        this.$store.state.avatar
-          ? (this.imgSrc = require(this.$store.state.avatar))
-          : console.log("头像信息无");
+        this.$store.state.userData.avatar
+          ? (this.imgSrc = this.$store.state.userData.avatar)
+          : "";
       }
     },
     // 选择学校
@@ -198,11 +199,11 @@ export default {
         this.$message.error("上传头像图片大小不能超过 2MB!");
         return false;
       }
-
+      // 记重点！！！！一定要FormData序列化，不然传的不会是文件，会是文件id!!!!!
+      const fd = new FormData();
+      fd.append("file", file);
       this.$api
-        .upImg({
-          file: file,
-        })
+        .upImg(fd)
         .then((res) => {
           if (!res.success) {
             this.$message.error("头像修改失败，原因为：" + res.msg);
@@ -212,10 +213,10 @@ export default {
             message: "修改头像成功！",
             type: "success",
           });
-          this.reload();
+          // this.reload();
         })
         .catch((err) => {
-          this.$message.error(err);
+          this.$message.error("上传头像错误！");
         });
       return false;
     },

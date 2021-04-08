@@ -110,11 +110,6 @@ export default {
               verifyCode: this.form.code,
             })
             .then((res) => {
-              console.log(res);
-              console.log(
-                this.form.email,
-                "验证码：" + this.form.code + "，密码：" + this.form.pass
-              );
               if (!res.success) {
                 this.$alert("注册失败，原因为：" + res.msg, "错误", {
                   confirmButtonText: "确定",
@@ -128,7 +123,7 @@ export default {
               });
               setTimeout(() => {
                 this.$router.push("/login");
-              }, 3000);
+              }, 2000);
             })
             .catch((err) => {
               this.isErr("注册失败", err);

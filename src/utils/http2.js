@@ -7,6 +7,15 @@ const axiosIns = axios.create({
         "Content-Type": "application/json;charset=UTF-8",
     }
 });
+const axiosInsP = axios.create({
+    timeout: 15 * 1000,
+    contentType:false,
+    processData:false,
+    headers: {
+        "Content-Type": "multipart/form-data",
+        "Accept":"*/*"
+    }
+});
 
 // 发起请求前拦截，获取缓存中token>vuex中>空，将token放到头部
 axiosIns.interceptors.request.use(config => {
@@ -14,6 +23,14 @@ axiosIns.interceptors.request.use(config => {
     if (token) {
         config.headers.Authorization = token;
     }
+
+    return config;
+}, err => {
+    return Promise.reject(err);
+}
+);
+axiosInsP.interceptors.request.use(config => {
+    config.headers.Authorization = $store.state.accessToken;
     return config;
 }, err => {
     return Promise.reject(err);
@@ -108,6 +125,33 @@ export function $put(url, params, config = {}) {
                 resolve(res.data);
             else
                 reject(`PUT请求失败 信息：status=${res.status} statusText=${res.statusText}`);
+        }).catch(errmsg => {
+            reject(errmsg);
+        });
+    });
+}
+
+// 传文件
+export function $putP(url, params, config = {}) {
+    return new Promise((resolve, reject) => {
+        axiosInsP.put(url, params, config).then(res => {
+            if (res.status == 200)
+                resolve(res.data);
+            else
+                reject(`PUT请求失败 信息：status=${res.status} statusText=${res.statusText}`);
+        }).catch(errmsg => {
+            reject(errmsg);
+        });
+    });
+}
+// 发布兼职
+export function $postP(url, params, config = {}) {
+    return new Promise((resolve, reject) => {
+        axiosInsP.post(url, params, config).then(res => {
+            if (res.status == 200)
+                resolve(res.data);
+            else
+                reject(`POST请求失败 信息：status=${res.status} statusText=${res.statusText}`);
         }).catch(errmsg => {
             reject(errmsg);
         });

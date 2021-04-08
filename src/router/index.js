@@ -85,7 +85,7 @@ const routes = [
     name: 'UserEdit',
     component: userEdit,
   }, {
-    path: '/mailPhoneEdit',
+    path: '/mailPhoneEdit/:type',
     name: 'MailPhoneEdit',
     component: mailPhoneEdit,
   }, {
@@ -119,12 +119,10 @@ router.beforeEach((to, form, next) => {
 
   // 每次换路由就获取用户接口，检查token是否过期
   if (to.name != "Login" && to.name != "Register") {
-    console.log('不是登录和注册界面');
     $api.getUserData().then(res => {
-      console.log(res);
       if (res.code == 13004 || res.code == 401) {
         $api.changeToke({ "refreshToken": userInfo.refreshToken, "userId": userInfo.userData.id }).then(res => {
-          console.log(res);
+          // console.log(res);
           if (!res.success) {//获取新的token失败，就跳转登录界面,并清除所有存入vux的信息
             $store.commit('clearAll');
             if (to.name != "Home" && to.name != "Login" && to.name != "Register") {
@@ -145,7 +143,6 @@ router.beforeEach((to, form, next) => {
       // 成功获取数据，存入用户
       $store.commit("setUserData", res.data);
     }).catch(err => {
-      console.log('路由守卫获取用户信息失败！');
       if (to.name != "Home") {
         next({
           path: "/login",

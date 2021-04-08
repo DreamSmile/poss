@@ -128,7 +128,6 @@ export default {
       this.$api
         .getSchoolList()
         .then((res) => {
-          // console.log(res);
           if (!res.success) {
             this.$message.error("获取学校列表失败！原因为：" + res.msg);
             return false;
@@ -169,6 +168,7 @@ export default {
             return false;
           }
           this.jobList = res.data.content;
+          Object.assign(this.jobList,{"type":"home"});
         })
         .catch((err) => {
           this.$message.error(err);

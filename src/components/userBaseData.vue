@@ -8,13 +8,14 @@
           userData.sex == null || 'man' ? 'el-icon-male' : 'el-icon-female'
         "
       ></i>
-      <button @click="dialogVisible = true">成为商家</button>
+      <button type="button" @click="dialogVisible = true" v-if="!business">成为商家</button>
+      <button type="button" v-else >申请商家中</button>
       <el-divider></el-divider>
       <div class="box_first">
         <p class="box_number">{{ userData.joinCount || 0 }}</p>
         <p class="box_msg">参加过的兼职</p>
       </div>
-      <div class="box_second">
+      <div class="box_second" v-if="userData.role == 'merchant'">
         <p class="box_number">32</p>
         <p class="box_msg">发布过的兼职</p>
       </div>
@@ -23,13 +24,9 @@
       </p>
     </div>
     <!-- 成为商家画面 -->
-    <el-dialog
-      :visible.sync="dialogVisible"
-      width="780px"
-      height="524px"
-    >
+    <el-dialog :visible.sync="dialogVisible" width="780px" height="524px">
       <div class="business_box">
-        <to-business></to-business>
+        <to-business @business="isBusiness"></to-business>
       </div>
     </el-dialog>
   </div>
@@ -46,6 +43,7 @@ export default {
       userData: {},
       imgSrc: require("@/assets/imgs/user.jpg"),
       dialogVisible: false,
+      business: false,
     };
   },
   mounted() {
@@ -55,15 +53,15 @@ export default {
     setData() {
       if (this.$store.state) {
         this.userData = this.$store.state.userData;
-        this.$store.state.avatar
-          ? (this.imgSrc = require(this.$store.state.avatar))
-          : console.log("头像信息无");
+        this.$store.state.userData.avatar
+          ? (this.imgSrc = this.$store.state.userData.avatar)
+          : '';
       }
     },
-    // 成为商家
-    open() {
-      alert("成为商家");
-    },
+    // 接收子组件的值，将申请商家按钮变为提示正在申请
+    isBusiness(data){
+      this.business=data;
+    }
   },
 };
 </script>

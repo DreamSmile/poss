@@ -48,6 +48,7 @@
               <el-button class="sub" type="primary">提交</el-button>
             </div></el-tab-pane
           >
+          <!-- 邮箱修改 -->
           <el-tab-pane label="修改邮箱" name="second"
             ><div class="forms">
               <el-form
@@ -58,21 +59,30 @@
               >
                 <el-input
                   style="margin-top: 16px"
-                  v-model="formPhone.MailNew"
+                  v-model="formMail.MailNew"
                   placeholder="新邮箱"
                 ></el-input>
 
                 <el-input
                   placeholder="请输入验证码"
-                  v-model="formPhone.code"
+                  v-model="formMail.codeM"
                   class="input-with-select"
                   style="margin-top: 20px"
                 >
                   <span slot="prepend">验证码</span>
-                  <span slot="append" class="send_ode">发送验证码</span>
+                     <span slot="append" v-show="timesM" class="send_ode"
+                      >{{ timesM }}秒后重发</span
+                    >
+                    <span
+                      slot="append"
+                      v-show="!timesM"
+                      class="send_ode"
+                      @click="sendCode"
+                      >发送验证码</span
+                    >
                 </el-input></el-form
               >
-              <el-button class="sub" type="primary">提交</el-button>
+              <el-button class="sub" type="primary" @click="editMail">提交</el-button>
             </div></el-tab-pane
           >
         </el-tabs>
@@ -98,9 +108,53 @@ export default {
       },
       formMail: {
         mailNew: "",
-        code: "",
+        codeM: "",
       },
+      timesM:null,
     };
+  },
+  mounted() {
+    this.setData();
+  },
+  methods: {
+    setData() {
+      this.$route.params.type == "phone"
+        ? (this.activeName = "first")
+        : (this.activeName = "second");
+    },
+    // 发送邮箱验证码
+    senCodeByMail() {
+      if (
+        !/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(
+          this.formMail.MailNew
+        )
+      ) {
+        this.$message.error("请输入正确的邮箱！");
+        return;
+      }
+      let num = 60;
+      let interval = setInterval(() => {
+        this.timesM = num > 0 ? num-- : clearInterval(interval);
+      }, 1000);
+      this.$api
+        .getCodeByMail({
+          operationType: "bind",
+          email: this.formMail.MailNew,
+        })
+        .then((res) => {
+          if (!res.success) {
+            this.$alert("发送验证码失败，原因为：" + res.msg);
+            return;
+          }
+        })
+        .catch((err) => {
+          this.$message.error("发送验证码错误" + err);
+        });
+    },
+    // 确定修改邮箱
+    editMail(){
+
+    }
   },
 };
 </script>

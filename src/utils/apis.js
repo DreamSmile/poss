@@ -1,4 +1,4 @@
-import { $post, $get, $put } from './http2.js';
+import { $post, $get, $put,$putP,$postP } from './http2.js';
 const api = './possApi';
 
 /*注册*/
@@ -67,6 +67,11 @@ export function getJobData(data) {
     return $post(api + '/parttime/detail', data);
 }
 
+// 加入兼职
+export function addJob(data){
+    return $post(api+'/user/join/pt',data);
+}
+
 /*用户信息*/
 // 修改基本信息
 export function changeBaseData(data) {
@@ -74,7 +79,7 @@ export function changeBaseData(data) {
 }
 // 修改头像
 export function upImg(data) {
-    return $put(api + '/user/avatar/img', data, { 'Content-Type': 'multipart/form-data' });
+    return $putP(api + '/user/avatar/img', data);
 }
 
 // 绑定手机号
@@ -85,4 +90,14 @@ export function bindPhone(data){
 // 绑定邮箱
 export function bindMail(data){
     return $put(api+'/user/bind/email',data);
+}
+
+// 成为商家
+export function toBusiness(data){
+    return $post(api+'/user/apply/turn',data);
+}
+
+// 商家发布兼职
+export function pushJob(data){
+    return $postP(api+'/merchant/publish',data);
 }

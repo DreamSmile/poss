@@ -40,7 +40,11 @@
                   label="真实姓名"
                   prop="name"
                   :rules="[
-                    { required: true, message: '真实姓名', trigger: 'blur' },
+                    {
+                      required: true,
+                      message: '请输入真实姓名',
+                      trigger: 'blur',
+                    },
                     {
                       min: 1,
                       max: 6,
@@ -58,12 +62,12 @@
             </div>
             <div v-show="active == 1" class="sfz">
               <p class="tab_title">身份证正反面</p>
-              <el-upload action="#">
+              <el-upload :before-upload="beforeupload" action="#">
                 <div class="upload_demo">
                   <div class="upload_text">点击上传身份证正面</div>
                 </div>
               </el-upload>
-              <el-upload action="#">
+              <el-upload action="#" :before-upload="beforeupload">
                 <div class="upload_demo">
                   <div class="upload_text">点击上传身份证背面</div>
                 </div>
@@ -71,14 +75,27 @@
             </div>
             <div v-show="active == 2" class="sjzm">
               <p class="tab_title">商家证明</p>
-              <el-upload action="#">
+              <el-upload action="#" :before-upload="beforeupload">
                 <div class="upload_demo">
                   <div class="upload_text">点击上传商家证明</div>
                 </div>
               </el-upload>
             </div>
           </div>
-          <el-button class="btn" type="primary" @click="next">下一步</el-button>
+          <el-button
+            class="btn"
+            type="primary"
+            v-show="active != 2"
+            @click="next"
+            >下一步</el-button
+          >
+          <el-button
+            class="btn"
+            type="primary"
+            v-show="active == 2"
+            @click="sub"
+            >提交</el-button
+          >
         </div>
       </div>
     </div>
@@ -94,6 +111,8 @@ export default {
         name: "",
       },
       secondForm: {},
+      fileList: [], //存放要上传文件的数据
+      moreFile: new FormData(), //传到接口的文件数据
     };
   },
   methods: {
@@ -105,11 +124,53 @@ export default {
           }
         });
       } else if (this.active == 1) {
+        this.active++;
       }
     },
     // 点击步骤
     step(num) {
       this.active = num;
+    },
+    // 上传身份证正面
+    beforeupload(file) {
+      this.fileList.push({
+        file: file,
+      });
+      return false;
+    },
+    // 提交商家信息
+    sub() {
+      if (this.fileList.length < 3) {
+        this.$message.error("请上传完整的商家证明！");
+        return false;
+      }
+      if (!this.firstForm.name) {
+        this.$message.error("请填写真实姓名！");
+        return false;
+      }
+      this.$api
+        .toBusiness({
+          idCardBack: this.fileList,
+          idCardFront: this.fileList,
+          mercahntCertify: this.fileList,
+          realName: this.firstForm.name,
+        })
+        .then((res) => {
+          if (!res.success) {
+            this.$message.error("文件上传失败！原因为：" + res.msg);
+            this.fileList = [];
+            this.firstForm.name = "";
+            return;
+          }
+          this.$message({
+            message: "商家申请提交成功！",
+            type: "success",
+          });
+          this.$emit("business", true);
+        })
+        .catch((err) => {
+          this.$message.error(err);
+        });
     },
   },
 };
@@ -226,7 +287,7 @@ export default {
               top: 0px;
             }
             div {
-              width:100%;
+              width: 100%;
               /deep/.el-upload {
                 display: block;
               }

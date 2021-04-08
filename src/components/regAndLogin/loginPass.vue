@@ -68,7 +68,6 @@ export default {
               password: this.form.pass,
             })
             .then((res) => {
-              console.log(res);
               if (res.code != 200) {
                 this.isErr(res.msg);
                 return;
@@ -81,7 +80,7 @@ export default {
               this.$store.commit("setUserToken", res.data); //将token存到vuex
               setTimeout(() => {
                 this.$router.push("/");
-              }, 3000);
+              }, 2000);
             })
             .catch((err) => {
               this.isErr(err);

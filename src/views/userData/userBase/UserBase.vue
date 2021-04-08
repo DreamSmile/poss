@@ -66,8 +66,8 @@ export default {
       if (this.$store.state) {
         console.log("用户基本信息设置数据");
         this.userData = this.$store.state.userData;
-        this.$store.state.avatar
-          ? (this.imgSrc = require(this.$store.state.avatar))
+        this.$store.state.userData.avatar
+          ? (this.imgSrc = this.$store.state.userData.avatar)
           : '';
           this.school=this.$store.state.userData.campusInfo?this.$store.state.userData.campusInfo:{'name':'','type':''};
 

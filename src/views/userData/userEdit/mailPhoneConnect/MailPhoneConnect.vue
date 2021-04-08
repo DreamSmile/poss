@@ -175,7 +175,6 @@ export default {
         this.$message.error("请输入正确的邮箱！");
         return;
       }
-      let that=this;
       let num = 60;
       let interval = setInterval(() => {
         this.timesM = num > 0 ? num-- : clearInterval(interval);
@@ -213,14 +212,16 @@ export default {
               this.$message({
                 message: "绑定手机号成功！",
                 type: "success",
+              })
+              
               }).catch((err) => {
                 this.$message.error(err);
               });
+
               setTimeout(() => {
                 this.$router.push("/userEdit");
               }, 2000);
-            });
-        }
+            };
       });
     },
     // 邮箱确定绑定

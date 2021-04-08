@@ -73,7 +73,6 @@ export default {
           phoneNumber: this.form.phone,
         })
         .then((res) => {
-          console.log(res);
           if (!res.success) {
             this.isErr("获取验证码失败", res.msg);
             return;
@@ -94,7 +93,6 @@ export default {
               verifyCode: this.form.code,
             })
             .then((res) => {
-              console.log(res);
               if (res.success) {
                 this.$message({
                   type: "success",
@@ -104,7 +102,7 @@ export default {
                 this.$store.commit("setUserToken", res.data.accessToken); //将token存到vuex
                 setTimeout(() => {
                   this.$router.push("/");
-                }, 3000);
+                }, 2000);
               } else {
                 this.isErr("登录失败", res.msg);
               }

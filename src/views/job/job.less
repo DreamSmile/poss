@@ -108,9 +108,17 @@
                         font-size: 20px;
                     }
 
-                    .hr_state {
-                        padding: 6px 16px;
-                        color: @msg-color;
+                    a {
+                        text-decoration: none;
+
+                        .hr_state {
+                            padding: 6px 16px;
+                            color: @base-color;
+                            .el-icon-chat-dot-square{
+                                margin-right:4px;
+                                font-size: 15px;
+                            }
+                        }
                     }
                 }
             }
@@ -211,10 +219,11 @@
                     width: 100px;
                     cursor: pointer;
                 }
-                .download{
+
+                .download {
                     cursor: pointer;
-                    color:@base-color;
-                    padding-left:20px;
+                    color: @base-color;
+                    padding-left: 20px;
                 }
             }
         }

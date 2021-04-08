@@ -19,6 +19,21 @@
     </div>
   </div>
 </template>
+<script>
+export default {
+  data(){
+    return{
+      userData:{}
+    }
+  },
+  mounted(){
+    //  v-if="$store.userData.role=='merchant'"
+    this.userData=$store.userData;
+    console.log('这是用户信息');
+    console.log(this.userData);
+  }
+}
+</script>
 <style scoped lang="less">
 @import "../../assets/css/common.less";
 

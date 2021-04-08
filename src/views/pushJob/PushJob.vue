@@ -16,20 +16,20 @@
           </el-form-item>
 
           <el-form-item label="*" style="display: inline-block">
-           
-
-            <el-select v-model="form.school" placeholder="请选择发布学校" style="width: 174px">
-                <el-option
-                  :label="item.name"
-                  :value="item.name"
-                  :sId="item.id"
-                  :sType="item.type"
-                  v-for="(item, i) in schoolList"
-                  :key="i"
-                ></el-option>
-              </el-select>
-            
-             </el-form-item
+            <el-select
+              v-model="form.school"
+              placeholder="请选择发布学校"
+              style="width: 174px"
+            >
+              <el-option
+                :label="item.name"
+                :value="item.name"
+                :sId="item.id"
+                :sType="item.type"
+                v-for="(item, i) in schoolList"
+                :key="i"
+              ></el-option>
+            </el-select> </el-form-item
           ><el-form-item
             prop="num"
             class="num"
@@ -66,11 +66,20 @@
 
           <el-form-item prop="data" label="*" style="display: inline-block">
             <el-date-picker
-              v-model="form.data"
-              type="date"
+              v-model="form.date"
+              type="datetime"
               placeholder="请选择开始时间"
+                  :picker-options="pickerOptions"
+
             >
             </el-date-picker>
+              <!-- <el-date-picker
+              v-model="form.time"
+              type="datetime"
+              placeholder="请输入兼职时间"
+              style="width: 200px"
+            >
+            </el-date-picker> -->
           </el-form-item>
 
           <el-form-item prop="time" label=" " style="display: inline-block">
@@ -78,6 +87,8 @@
               v-model="form.time"
               placeholder="请输入兼职时间"
               style="width: 200px"
+              value-format="yyyy-MM-dd"
+              format="yyyy-MM-dd"
             ></el-input>
           </el-form-item>
 
@@ -85,14 +96,11 @@
             <el-upload
               class="upload-demo"
               action="#"
-              :on-preview="handlePreview"
-              :on-remove="handleRemove"
-              multiple
-              :limit="3"
-              :on-exceed="handleExceed"
+              :before-upload="beforeAvatarUpload"
             >
               <el-button><i class="el-icon-link"></i>点击上传附件</el-button>
             </el-upload>
+            <span class="fileName">{{ fileName }}</span>
           </el-form-item>
           <p class="content_title">工作内容</p>
           <el-form-item label=" ">
@@ -104,8 +112,8 @@
             ></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary">发布</el-button>
-            <el-button>取消</el-button>
+            <el-button type="primary" @click="pushJob">发布</el-button>
+            <el-button @click="reset">取消</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -121,17 +129,20 @@ export default {
   },
   data() {
     return {
-      schoolList:[],
+      schoolList: [],
+      formData: new FormData(),
       form: {
         name: "",
         school: "",
         num: "",
         money: "",
         place: "",
-        data: "",
+        date: "",
         time: "",
         content: "",
       },
+      files: null,
+      fileName: "",
       rules: {
         name: [
           { required: true, message: "请输入工作标题", trigger: "blur" },
@@ -191,9 +202,12 @@ export default {
           },
         ],
       },
+      pickerOptions:{
+        disabledDate (time) {return time.getTime() < Date.now()}
+      }
     };
   },
-  mounted(){
+  mounted() {
     this.getSchoolList();
   },
   methods: {
@@ -212,21 +226,63 @@ export default {
           this.$message.error("获取学校列表失败！" + err);
         });
     },
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
+    // 文件上传前阻止文件上传，一起提交
+    beforeAvatarUpload(file) {
+      this.fileName = file.name;
+      this.formData.set("file", file);
+      return false;
     },
-    handlePreview(file) {
-      console.log(file);
+    // 取消发布
+    reset() {
+      console.log(this.$utils.returntimes(this.form.date));
+      // this.formData=new FormData();
     },
-    handleExceed(files, fileList) {
-      this.$message.warning(
-        `当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${
-          files.length + fileList.length
-        } 个文件`
-      );
-    },
-    beforeRemove(file, fileList) {
-      return this.$confirm(`确定移除 ${file.name}？`);
+    // 发布兼职
+    pushJob() {
+      this.$refs.form.validate((valid) => {
+        if (valid) {
+          let data = {
+            campus: this.form.school,
+            content: this.form.content,
+            duration: parseInt(this.form.time),
+            file: this.files,
+            hourlyWage: parseInt(this.form.money),
+            limit: parseInt(this.form.num),
+            startTime: this.$utils.returntimes(this.form.date),
+            title: this.form.name,
+            workplace: this.form.place,
+          };
+          this.formData.set("campus", this.form.school);
+          this.formData.set("content", this.form.content);
+          this.formData.set("duration", parseInt(this.form.time));
+          this.formData.set("hourlyWage", parseInt(this.form.money));
+          this.formData.set("limit", parseInt(this.form.num));
+          this.formData.set(
+            "startTime",
+            this.$utils.returntimes(this.form.date)
+          );
+          this.formData.set("title", this.form.name);
+          this.formData.set("workplace", this.form.place);
+          this.$api
+            .pushJob(this.formData)
+            .then((res) => {
+              if (!res.success) {
+                this.$message.error("发布兼职失败，原因为：" + res.msg);
+                return;
+              }
+              this.$message({
+                message: "发布招聘信息成功！将为您跳转至首页！",
+                type: "success",
+              });
+              setTimeout(() => {
+                this.$router.push("/");
+              }, 2000);
+            })
+            .catch((err) => {
+              this.$message.error("兼职发布失败");
+            });
+        }
+      });
     },
   },
 };
@@ -261,8 +317,8 @@ export default {
       /deep/.el-textarea__inner {
         height: 200px;
       }
-      button{
-        width:200px;
+      button {
+        width: 200px;
       }
     }
   }

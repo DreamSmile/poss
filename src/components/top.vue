@@ -61,10 +61,11 @@ export default {
       // nickName: 用户名 phoneNumber: 电话 role: 身份  sex: 性别 signature: 签名 status: 状态
       if (this.$store.state) {
         this.userData = this.$store.state.userData;
-        this.$store.state.avatar
-          ? (this.imgSrc = require(this.$store.state.avatar))
+        // console.log('头部图片');
+        // console.log(this.$store.state.userData.avatar)
+        this.$store.state.userData.avatar
+          ? (this.imgSrc = this.$store.state.userData.avatar)
           : "";
-        // console.log(this.userData);
       }
     },
   },

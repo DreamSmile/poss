@@ -9,8 +9,13 @@
               <div class="list_base">
                 <span class="work_name">{{ item.title }}</span
                 ><span class="work_place">[{{ item.workplace }}]</span>
-                <span class="work_master">发布者：陈先生</span>
-                <span class="work_say"
+                <span class="work_master" v-if="jobList.type == 'home'"
+                  >发布者：{{item.publisher.realName || '发布者'}}</span
+                >
+                <span class="work_data" v-if="jobList.type == 'join'">{{
+                  $utils.returnData(item.createTime)
+                }}</span>
+                <span class="work_say" v-if="jobList.type == 'home'"
                   ><i class="el-icon-chat-dot-round"></i>立即沟通</span
                 >
               </div>
@@ -22,7 +27,9 @@
                   >/{{ item.limit }}
                 </div>
               </div>
-              <img src="@/assets/imgs/no.png" />
+              <img v-show="item.status == 0" src="@/assets/imgs/over.png" />
+              <img v-show="item.status == 1" src="@/assets/imgs/no.png" />
+              <img v-show="item.status == 2" src="@/assets/imgs/ing.png" />
             </div>
           </router-link>
         </li>
@@ -41,7 +48,8 @@
 export default {
   name: "workList",
   data() {
-    return {};
+    return {
+    };
   },
   props: {
     jobList: {
@@ -49,8 +57,7 @@ export default {
       default: () => [],
     },
   },
-  mounted() {
-  },
+  mounted() {},
 };
 </script>
 <style scoped lang="less">
@@ -59,7 +66,7 @@ export default {
   .list {
     ul {
       li {
-        padding: 13px 37px;
+        padding: 10px 37px;
         box-sizing: border-box;
         height: 80px;
         background-color: #fff;
@@ -87,15 +94,20 @@ export default {
               margin-right: 3px;
             }
           }
-          .work_master {
+          .work_master,
+          .work_data {
             color: @msg-color;
             margin: 0 30px;
           }
         }
         .list_secondary {
+          margin-top:4px;
           .work_money,
           .work_time {
             color: #f95500;
+          }
+          .work_time {
+            margin-left: 10px;
           }
           .work_state {
             display: inline-block;
