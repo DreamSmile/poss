@@ -2,7 +2,7 @@
   <div id="userEdit">
     <top message="修改信息"></top>
     <div class="content">
-      <div class="imgs" :style="{ backgroundImage: 'url(' + imgSrc + ')' }">
+      <div class="imgs" :style="{ backgroundImage: 'url(' +this.$store.state.userData.avatar || require('@/assets/imgs/user.jpg') + ')' }">
         <el-upload
           class="avatar-uploader"
           action="#"
@@ -21,7 +21,6 @@
       <el-form ref="form" :model="form" label-width="80px" size="mini">
         <div class="data_box">
           <p class="data_title">基本信息</p>
-          <button type="button" class="keep" @click="keep">保存</button>
           <el-form-item label="用户名">
             <el-input v-model="form.name"></el-input>
           </el-form-item>
@@ -120,7 +119,7 @@ export default {
           phone: data.phoneNumber,
           autograph: data.signature,
           school: data.campusInfo ? data.campusInfo.name : null,
-          education: data.campusInfo.type,
+          education: data.campusInfo ? data.campusInfo.type : "",
           major: data.major ? data.major : "",
         };
         this.$store.state.userData.avatar
@@ -180,9 +179,14 @@ export default {
             sex: this.form.sex,
             signature: this.form.autograph,
           });
+          console.log(this.form.name);
+          // setTimeout(() => {
+          //   this.$router.push("/userBase");
+          // }, 2000);
         })
         .catch((err) => {
           this.$message.error("修改信息请求失败！");
+          this.setData();
         });
     },
     // 上传头像
@@ -210,10 +214,12 @@ export default {
             return;
           }
           this.$message({
-            message: "修改头像成功！",
+            message: "修改头像成功！即将跳入用户基本信息页",
             type: "success",
           });
-          // this.reload();
+           setTimeout(() => {
+            this.$router.push("/userBase");
+          }, 2000);
         })
         .catch((err) => {
           this.$message.error("上传头像错误！");

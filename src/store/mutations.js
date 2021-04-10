@@ -12,6 +12,7 @@ const mutations = {
             email: data.email,
             id: data.id,
             joinCount: data.joinCount,
+            publishCount:data.publishCount,
             major: data.major,
             nickName: data.nickName,
             phoneNumber: data.phoneNumber,

@@ -9,7 +9,7 @@
             <li>
               <router-link to="/userJoin">参加过的兼职</router-link>
             </li>
-            <li>
+            <li  v-if="$store.state.userData.role == 'merchant'">
               <router-link to="/userRelease">发布过的兼职</router-link>
             </li>
           </ul></el-aside
@@ -27,10 +27,18 @@ export default {
     }
   },
   mounted(){
-    //  v-if="$store.userData.role=='merchant'"
-    this.userData=$store.userData;
-    console.log('这是用户信息');
-    console.log(this.userData);
+    //  v-if="userData.role=='merchant'"
+    // console.log('权限');
+    // console.log(this.$store.state.userData);
+    // console.log(this.userData.role);
+    this.setData();
+    console.log('这边要判断');
+  },
+  methods:{
+    setData(){
+    this.userData=this.$store.state.userData;
+    console.log('设置数据');
+    }
   }
 }
 </script>

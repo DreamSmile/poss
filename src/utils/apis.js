@@ -1,4 +1,4 @@
-import { $post, $get, $put,$putP,$postP } from './http2.js';
+import { $post, $get, $put, $putP, $postP } from './http2.js';
 const api = './possApi';
 
 /*注册*/
@@ -38,6 +38,16 @@ export function changeToke(data) {
     return $post(api + '/open/refresh/token', data);
 }
 
+// 修改密码
+export function resetPass(data) {
+    return $put(api + '/user/restPassword', data);
+}
+
+// 注销用户
+export function logout() {
+    return $get(api + '/user/logout');
+}
+
 
 /*主页*/
 // 获取用户信息
@@ -68,10 +78,14 @@ export function getJobData(data) {
 }
 
 // 加入兼职
-export function addJob(data){
-    return $post(api+'/user/join/pt',data);
+export function addJob(data) {
+    return $post(api + '/user/join/pt', data);
 }
 
+// 退出兼职
+export function outJob(data) {
+    return $post(api + '/user/exit/pt', data);
+}
 /*用户信息*/
 // 修改基本信息
 export function changeBaseData(data) {
@@ -83,21 +97,54 @@ export function upImg(data) {
 }
 
 // 绑定手机号
-export function bindPhone(data){
-    return $put(api+'/user/bind/phone',data);
+export function bindPhone(data) {
+    return $put(api + '/user/bind/phone', data);
 }
 
 // 绑定邮箱
-export function bindMail(data){
-    return $put(api+'/user/bind/email',data);
+export function bindMail(data) {
+    return $put(api + '/user/bind/email', data);
+}
+
+// 查看是否有资格成为商家
+export function isGobusiness(){
+    return $get(api+'/user/apply/prepare');
 }
 
 // 成为商家
-export function toBusiness(data){
-    return $post(api+'/user/apply/turn',data);
+export function toBusiness(data) {
+    return $post(api + '/user/apply/turn', data);
 }
 
+
+/*商家功能*/
+// 获取发布过的兼职列表
+export function getPushJobHis(data) {
+    return $post(api + '/merchant/pblish/already/page', data);
+}
 // 商家发布兼职
-export function pushJob(data){
-    return $postP(api+'/merchant/publish',data);
+export function pushJob(data) {
+    return $postP(api + '/merchant/publish', data);
+}
+// 商家修改兼职
+export function editJob(data) {
+    return $putP(api + '/merchant/modify', data);
+}
+// 将兼职状态设置为开始
+export function ingJob(data) {
+    return $put(api + '/merchant/pt/breakupRecruit', data);
+}
+// 将兼职状态改为结束
+export function overJob(data) {
+    return $put(api + '/merchant/pt/end', data);
+}
+// 删除兼职
+export function delJob(data) {
+    return $post(api + '/merchant/pt/delete', data);
+}
+
+/*聊天*/
+// 获取于用户所有存在聊天历史的聊天用户
+export function getdialogueList(){
+    return $get(api+'/user/chat');
 }

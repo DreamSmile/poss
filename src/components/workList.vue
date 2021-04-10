@@ -3,35 +3,55 @@
     <div class="list" v-show="jobList.length > 0">
       <ul>
         <li v-for="(item, index) in jobList" :key="index">
-          <router-link :to="{ name: 'Job', params: { id: item.id } }">
-            <div>
-              <span class="work_NO">{{ index + 1 }}、</span>
-              <div class="list_base">
-                <span class="work_name">{{ item.title }}</span
-                ><span class="work_place">[{{ item.workplace }}]</span>
-                <span class="work_master" v-if="jobList.type == 'home'"
-                  >发布者：{{item.publisher.realName || '发布者'}}</span
-                >
-                <span class="work_data" v-if="jobList.type == 'join'">{{
-                  $utils.returnData(item.createTime)
-                }}</span>
-                <span class="work_say" v-if="jobList.type == 'home'"
-                  ><i class="el-icon-chat-dot-round"></i>立即沟通</span
-                >
-              </div>
-              <div class="list_secondary">
-                <span class="work_money">{{ item.hourlyWage }}/小时</span>
-                <span class="work_time">工作时间：{{ item.duration }}小时</span>
-                <div class="work_state">
-                  已报名：<span>{{ item.participantNumber }}</span
-                  >/{{ item.limit }}
-                </div>
-              </div>
-              <img v-show="item.status == 0" src="@/assets/imgs/over.png" />
-              <img v-show="item.status == 1" src="@/assets/imgs/no.png" />
-              <img v-show="item.status == 2" src="@/assets/imgs/ing.png" />
+          <div>
+            <span class="work_NO">{{ index + 1 }}、</span>
+            <div class="list_base">
+              <router-link
+                :to="{
+                  name: jobList.role != 'merchant' ? 'Job' : 'PushJob',
+                  params: { id: item.id },
+                }"
+              >
+                <span class="work_name">{{ item.title }}</span>
+                <span class="work_place"
+                  >[{{ item.workplace }}]</span
+                ></router-link
+              >
+              <span class="work_master" v-if="jobList.type == 'home'"
+                >发布者：{{ item.publisher.realName || "发布者" }}</span
+              >
+              <span class="work_data" v-if="jobList.type == 'join'">{{
+                $utils.returnData(item.createTime)
+              }}</span>
+              <router-link
+                :to="{
+                  name: 'Dialogue',
+                  params: { id: item.id },
+                }"
+              >
+                <span class="work_say" v-if="jobList.type == 'home'">
+                  <i class="el-icon-chat-dot-round"></i>立即沟通</span
+                ></router-link
+              >
+              <i
+                class="el-icon-delete out_job"
+                v-if="jobList.type == 'join'"
+                @click="outJob(item.status, item.id)"
+              ></i>
             </div>
-          </router-link>
+            <div class="list_secondary">
+              <span class="work_money">{{ item.hourlyWage }}/小时</span>
+              <span class="work_time">工作时间：{{ item.duration }}小时</span>
+              <div class="work_state">
+                已报名：<span>{{ item.participantNumber }}</span
+                >/{{ item.limit }}
+              </div>
+            </div>
+            <!-- 1:招聘，2进行，0：结束 -->
+            <img v-show="item.status == 0" src="@/assets/imgs/over.png" />
+            <img v-show="item.status == 1" src="@/assets/imgs/no.png" />
+            <img v-show="item.status == 2" src="@/assets/imgs/ing.png" />
+          </div>
         </li>
       </ul>
     </div>
@@ -48,8 +68,7 @@
 export default {
   name: "workList",
   data() {
-    return {
-    };
+    return {};
   },
   props: {
     jobList: {
@@ -58,6 +77,38 @@ export default {
     },
   },
   mounted() {},
+  methods: {
+    // 退出兼职
+    outJob(satus, id) {
+      if (satus != 1) {
+        this.$message({
+          message: "只能退出未开始的兼职工作！",
+          type: "warning",
+        });
+        return;
+      }
+      this.$confirm("是否退出该兼职?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$api
+            .outJob({
+              pid: id,
+            })
+            .then((res) => {
+              this.$message({
+                message: "退出该兼职工作成功！",
+                type: "success",
+              });
+            });
+          // 应该马上删除改兼职
+          this.jobList = this.jobList.filter((item) => item.id != id);
+        })
+        .catch(() => {});
+    },
+  },
 };
 </script>
 <style scoped lang="less">
@@ -94,14 +145,30 @@ export default {
               margin-right: 3px;
             }
           }
+          .work_name {
+            width: 5em;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            height: 32px;
+            vertical-align: top;
+            display: inline-block;
+          }
           .work_master,
           .work_data {
             color: @msg-color;
             margin: 0 30px;
           }
         }
+        .out_job {
+          position: absolute;
+          right: 50px;
+          top: 5px;
+          color: #f95500;
+          font-size: 20px;
+        }
         .list_secondary {
-          margin-top:4px;
+          margin-top: 4px;
           .work_money,
           .work_time {
             color: #f95500;

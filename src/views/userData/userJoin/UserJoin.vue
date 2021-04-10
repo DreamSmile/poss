@@ -9,7 +9,8 @@
             <el-input
               v-model="input"
               prefix-icon="el-icon-search"
-              placeholder="输入活动标题或者日期进行搜索"
+              placeholder="请输入兼职关键字"
+              @keyup.enter.native="selJob"
               style="width: 500px"
             ></el-input>
             <work-list :jobList="jobList"></work-list></div
@@ -64,11 +65,14 @@ export default {
             switch (res.data[i].status) {
               case 0:
                 this.jobOver.push(res.data[i]);
+                Object.assign(this.jobOver, { type: "join" });
               case 1:
                 this.jobIng.push(res.data[i]);
+                Object.assign(this.jobIng, { type: "join" });
                 break;
               case 2:
                 this.jobNo.push(res.data[i]);
+                Object.assign(this.jobNo, { type: "join" });
               default:
                 break;
             }
@@ -76,6 +80,37 @@ export default {
         })
         .catch((err) => {
           this.$message.error("获取用户兼职历史失败，原因为：" + err);
+        });
+    },
+    // 搜索兼职
+    selJob() {
+      if (!this.input) {
+        this.$message({
+          message: "请输入兼职关键字！",
+          type: "warning",
+        });
+        return;
+      }
+      this.$api
+        .getJobBySchool({
+          campus: "",
+          keyword: this.input,
+          paginationInfo: {
+            pageNumber: 1,
+            pageSize: 10,
+          },
+        })
+        .then((res) => {
+          console.log(res);
+          if (!res.success) {
+            this.$message.error("搜索兼职失败！原因为：" + res.msg);
+            return false;
+          }
+          this.jobList = res.data.content;
+          Object.assign(this.jobList, { type: "business", role: "merchant" });
+        })
+        .catch((err) => {
+          this.$message.error(err);
         });
     },
   },

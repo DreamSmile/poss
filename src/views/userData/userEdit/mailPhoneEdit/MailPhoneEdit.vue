@@ -77,7 +77,6 @@
                       slot="append"
                       v-show="!timesM"
                       class="send_ode"
-                      @click="sendCode"
                       >发送验证码</span
                     >
                 </el-input></el-form
@@ -114,7 +113,7 @@ export default {
     };
   },
   mounted() {
-    this.setData();
+    // this.setData();
   },
   methods: {
     setData() {

@@ -23,7 +23,12 @@
           placeholder="请输入验证码"
           :validate-event="false"
         ></el-input>
-        <span class="sendCode" @click="sendCode">{{ times }}</span>
+        <span class="sendCode" @click="sendCode" v-show="!times"
+          >发送验证码</span
+        >
+        <span class="sendCode" @click="sendCode" v-show="times"
+          >{{ times }}秒后重发</span
+        >
       </el-form-item>
       <el-checkbox v-model="checked">同意poss直聘《用户协议》</el-checkbox>
       <el-button type="primary" @click="regist" :loading="loading"
@@ -46,7 +51,7 @@ export default {
         code: "",
       },
       checked: false,
-      times: "发送验证码",
+      times: null,
       loading: false,
       rules: {
         phone: [
@@ -73,15 +78,17 @@ export default {
   methods: {
     //  发送验证码
     sendCode() {
-      if (!this.form.phone) {
+      if (!/^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/.test(this.form.phone)) {
         this.$message({
-          message: "请先输入手机号码！",
+          message: "请输入正确格式的手机号码！",
           type: "warning",
         });
         return;
       }
-      // this.times = this.$utils.countDown();
-      this.times = "已发送。。";
+      let num = 60;
+      let interval = setInterval(() => {
+        this.times = num > 0 ? num-- : clearInterval(interval);
+      }, 1000);
       this.$api
         .getCode({ operationType: "signup", phoneNumber: this.form.phone })
         .then((res) => {
@@ -98,6 +105,10 @@ export default {
     // 注册
     regist() {
       this.$refs.form.validate((valid) => {
+        if (!this.checked) {
+          this.$message.error("请勾选下方同意条款");
+          return;
+        }
         if (valid && this.checked) {
           this.loading = true;
           this.$api

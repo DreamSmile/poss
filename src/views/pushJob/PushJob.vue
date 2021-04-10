@@ -69,17 +69,10 @@
               v-model="form.date"
               type="datetime"
               placeholder="请选择开始时间"
-                  :picker-options="pickerOptions"
-
+              :picker-options="pickerOptions"
+              :default-value="form.date"
             >
             </el-date-picker>
-              <!-- <el-date-picker
-              v-model="form.time"
-              type="datetime"
-              placeholder="请输入兼职时间"
-              style="width: 200px"
-            >
-            </el-date-picker> -->
           </el-form-item>
 
           <el-form-item prop="time" label=" " style="display: inline-block">
@@ -87,8 +80,6 @@
               v-model="form.time"
               placeholder="请输入兼职时间"
               style="width: 200px"
-              value-format="yyyy-MM-dd"
-              format="yyyy-MM-dd"
             ></el-input>
           </el-form-item>
 
@@ -112,8 +103,22 @@
             ></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="pushJob">发布</el-button>
-            <el-button @click="reset">取消</el-button>
+            <el-button type="primary" v-if="isNew" @click="pushJob"
+              >发布</el-button
+            >
+            <el-button type="primary" v-if="!isNew" @click="pushJob"
+              >修改</el-button
+            >
+            <el-button type="success" v-if="!isNew" @click="ingJob"
+              >开始</el-button
+            >
+            <!-- <el-button @click="reset">取消</el-button> -->
+            <el-button type="danger" v-if="!isNew" @click="overJob"
+              >结束</el-button
+            >
+            <el-button type="danger" v-if="!isNew" @click="delJob"
+              >删除</el-button
+            >
           </el-form-item>
         </el-form>
       </div>
@@ -129,6 +134,7 @@ export default {
   },
   data() {
     return {
+      isNew: true,
       schoolList: [],
       formData: new FormData(),
       form: {
@@ -202,15 +208,50 @@ export default {
           },
         ],
       },
-      pickerOptions:{
-        disabledDate (time) {return time.getTime() < Date.now()}
-      }
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() < Date.now();
+        },
+      },
     };
   },
   mounted() {
     this.getSchoolList();
+    if (this.$route.params.id != 0) {
+      this.isNew = false;
+      this.setData(); //如果是修改兼职界面
+    }
   },
   methods: {
+    // 获取该兼职信息，方便修改
+    setData() {
+      this.$api
+        .getJobData({
+          pid: this.$route.params.id,
+        })
+        .then((res) => {
+          console.log(res);
+          if (!res.success) {
+            this.$message.error("获取兼职详情错误！原因为：" + res.msg);
+            return false;
+          }
+          this.form = {
+            name: res.data.title,
+            school: res.data.campus,
+            num: res.data.limit,
+            money: res.data.hourlyWage,
+            place: res.data.workplace,
+            date: res.data.startTime,
+            time: res.data.duration,
+            content: res.data.content,
+          };
+
+          this.fileName = res.data.attachmentName;
+        })
+        .catch((err) => {
+          this.$message.error(err);
+        });
+    },
     // 获取学校列表
     getSchoolList() {
       this.$api
@@ -239,19 +280,10 @@ export default {
     },
     // 发布兼职
     pushJob() {
+      let jobId = this.$route.params.id;
       this.$refs.form.validate((valid) => {
         if (valid) {
-          let data = {
-            campus: this.form.school,
-            content: this.form.content,
-            duration: parseInt(this.form.time),
-            file: this.files,
-            hourlyWage: parseInt(this.form.money),
-            limit: parseInt(this.form.num),
-            startTime: this.$utils.returntimes(this.form.date),
-            title: this.form.name,
-            workplace: this.form.place,
-          };
+          !this.isNew ? this.formData.set("id", jobId) : "";
           this.formData.set("campus", this.form.school);
           this.formData.set("content", this.form.content);
           this.formData.set("duration", parseInt(this.form.time));
@@ -263,25 +295,144 @@ export default {
           );
           this.formData.set("title", this.form.name);
           this.formData.set("workplace", this.form.place);
-          this.$api
-            .pushJob(this.formData)
-            .then((res) => {
-              if (!res.success) {
-                this.$message.error("发布兼职失败，原因为：" + res.msg);
-                return;
-              }
-              this.$message({
-                message: "发布招聘信息成功！将为您跳转至首页！",
-                type: "success",
-              });
-              setTimeout(() => {
-                this.$router.push("/");
-              }, 2000);
-            })
-            .catch((err) => {
-              this.$message.error("兼职发布失败");
-            });
+
+          this.isNew
+            ? this.pushJobAxios(this.formData)
+            : this.editJobAxios(this.formData);
         }
+      });
+    },
+    // 发布兼职
+    pushJobAxios(data) {
+      this.$api
+        .pushJob(data)
+        .then((res) => {
+          if (!res.success) {
+            this.$message.error("发布兼职失败，原因为：" + res.msg);
+            return;
+          }
+          this.$message({
+            message: "发布招聘信息成功！将为您跳转至首页！",
+            type: "success",
+          });
+          setTimeout(() => {
+            this.$router.push("/");
+          }, 2000);
+        })
+        .catch((err) => {
+          this.$message.error("兼职发布失败");
+        });
+    },
+    // 修改兼职
+    editJobAxios(data) {
+      this.$api
+        .editJob(data)
+        .then((res) => {
+          if (!res.success) {
+            this.$message.error("修改兼职失败，原因为：" + res.msg);
+            return;
+          }
+          this.$message({
+            message: "修改聘信息成功！将为您跳转至首页！",
+            type: "success",
+          });
+          setTimeout(() => {
+            this.$router.push("/");
+          }, 2000);
+        })
+        .catch((err) => {
+          this.$message.error("兼职修改失败");
+        });
+    },
+    // 将兼职状态改为开始兼职
+    ingJob() {
+      this.$confirm("此操作代表将本兼职状态改为进行中, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        this.$api
+          .ingJob({
+            pid: this.$route.params.id,
+          })
+          .then((res) => {
+            if (!res.success) {
+              this.$message.error(
+                "兼职信息转为开始状态失败！原因为：" + res.msg
+              );
+              return;
+            }
+            this.$message({
+              type: "success",
+              message: "修改兼职信息状态成功!将为您跳转至首页！",
+            });
+            setTimeout(() => {
+              this.$router.push("/");
+            }, 2000);
+          })
+          .catch((err) => {
+            this.$message.error(err);
+          });
+      });
+    },
+    // 结束该兼职
+    overJob() {
+      this.$confirm("此操作代表该兼职关闭, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        this.$api
+          .overJob({
+            pid: this.$route.params.id,
+          })
+          .then((res) => {
+            if (!res.success) {
+              this.$message.error(
+                "兼职信息转为结束状态失败！原因为：" + res.msg
+              );
+              return;
+            }
+            this.$message({
+              type: "success",
+              message: "修改兼职信息状态成功!将为您跳转至首页！",
+            });
+            setTimeout(() => {
+              this.$router.push("/");
+            }, 2000);
+          })
+          .catch((err) => {
+            this.$message.error(err);
+          });
+      });
+    },
+    // 删除兼职
+    delJob() {
+      this.$confirm("此操作将永久删除该兼职, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        this.$api
+          .delJob({
+            pid: this.$route.params.id,
+          })
+          .then((res) => {
+            if (!res.success) {
+              this.$message.error("兼职信息删除失败！原因为：" + res.msg);
+              return;
+            }
+            this.$message({
+              type: "success",
+              message: "删除成功!将为您跳转至首页！",
+            });
+            setTimeout(() => {
+              this.$router.push("/");
+            }, 2000);
+          })
+          .catch((err) => {
+            this.$message.error(err);
+          });
       });
     },
   },
@@ -311,6 +462,9 @@ export default {
         color: red;
         font-size: 14px;
       }
+      /deep/.el-button--default {
+        width: 200px;
+      }
       /deep/.el-form-item__label {
         color: red;
       }
@@ -318,7 +472,7 @@ export default {
         height: 200px;
       }
       button {
-        width: 200px;
+        width: 100px;
       }
     }
   }

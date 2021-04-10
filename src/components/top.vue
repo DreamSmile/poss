@@ -8,8 +8,10 @@
         <div class="nav">
           <ul>
             <li v-show="!message"><router-link to="/">首页</router-link></li>
-            <li v-if="userData.role == 'merchant'">
-              <router-link to="/pushJob">发布</router-link>
+            <li v-if="$store.state.userData.role == 'merchant'">
+              <router-link :to="{ name: 'PushJob', params: { id: 0 } }"
+                >发布</router-link
+              >
             </li>
             <li v-show="message" class="top_title">{{ message }}</li>
           </ul>
@@ -27,19 +29,67 @@
           </button>
           <!-- 已登录区 -->
           <span v-if="$store.state.accessToken"
-            ><router-link to="/dialogue">聊天</router-link></span
+            ><router-link   :to="{
+                  name: 'Dialogue',
+                  params: { id: 'topF' },
+                }">聊天</router-link></span
           >
-          <span v-if="$store.state.accessToken">{{ userData.nickName }}</span>
+          <span v-if="$store.state.accessToken">{{ $store.state.userData.nickName || '' }}</span>
           <router-link to="/userData">
-            <div
-              v-if="$store.state.accessToken"
-              class="imgs"
-              :style="{ backgroundImage: 'url(' + imgSrc + ')' }"
-            ></div>
+            <el-dropdown  v-if="$store.state.accessToken">
+              <div
+                v-if="$store.state.accessToken"
+                class="imgs"
+                :style="{ backgroundImage: 'url(' +this.$store.state.userData.avatar || require('@/assets/imgs/user.jpg') + ')' }"
+              ></div>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="dialogVisible = true"
+                  >修改密码</el-dropdown-item
+                >
+                <el-dropdown-item @click.native="signOut"
+                  >退出</el-dropdown-item
+                >
+              </el-dropdown-menu>
+            </el-dropdown>
           </router-link>
         </div>
       </div>
     </div>
+    <!-- 修改密码，退出，注销页面 -->
+    <el-dialog
+      :modal-append-to-body="false"
+      :visible.sync="dialogVisible"
+      title="修改密码"
+      width="400px"
+      height="300px"
+    >
+      <div class="business_box">
+        <el-form ref="form" :model="form">
+          <el-input v-model="form.passOld" placeholder="原密码"></el-input>
+          <el-input
+            placeholder="新密码"
+            v-model="form.passNew"
+            class="input-with-select"
+            style="margin-top: 20px"
+          >
+          </el-input>
+          <el-input
+            placeholder="请输入验证码"
+            v-model="form.code"
+            class="input-with-select"
+            style="margin-top: 20px"
+          >
+          </el-input>
+          <span v-show="!times" class="sendCode" @click="sendCodes"
+            >发送验证码</span
+          >
+          <span v-show="times" class="sendCode"
+            >{{ times }}秒后重发</span
+          ></el-form
+        >
+        <el-button class="sub" type="primary" @click="sub">提交</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -47,26 +97,123 @@ export default {
   name: "Top",
   data() {
     return {
-      userData: {},
-      imgSrc: require("@/assets/imgs/user.jpg"),
+      dialogVisible: false,
+      form: {
+        passOld: "",
+        passNew: "",
+        code: "",
+      },
+      times: null,
     };
   },
   props: ["message"],
-  mounted() {
-    this.setData();
-  },
   methods: {
-    setData() {
-      // avatar:头像;campusInfo: 学校对象;email: 邮箱;id: 用户id joinCount: 参加兼职数；major: 专业
-      // nickName: 用户名 phoneNumber: 电话 role: 身份  sex: 性别 signature: 签名 status: 状态
-      if (this.$store.state) {
-        this.userData = this.$store.state.userData;
-        // console.log('头部图片');
-        // console.log(this.$store.state.userData.avatar)
-        this.$store.state.userData.avatar
-          ? (this.imgSrc = this.$store.state.userData.avatar)
-          : "";
+    // 有绑定手机号时，修改密码的验证码默认发送给手机，其次邮箱
+    sendCodes() {
+      const phoneNumber = this.$store.state.userData.phoneNumber;
+      const mail = this.$store.state.userData.email;
+      phoneNumber ? this.sendPhoneCode(phoneNumber) : this.sendMailCode(mail);
+    },
+    // 发送手机验证码
+    sendPhoneCode(phoneNumber) {
+      let num = 60;
+      let interval = setInterval(() => {
+        this.times = num > 0 ? num-- : clearInterval(interval);
+      }, 1000);
+      this.$api
+        .getCode({
+          operationType: "restPassword",
+          phoneNumber: phoneNumber,
+        })
+        .then((res) => {
+          if (!res.success) {
+            this.isErr("获取手机验证码失败", res.msg);
+            return;
+          }
+        })
+        .catch((err) => {
+          this.$message.error("获取手机验证码失败", err);
+        });
+    },
+    // 发送邮箱验证码
+    sendMailCode(mail) {
+      let num = 60;
+      let interval = setInterval(() => {
+        this.times = num > 0 ? num-- : clearInterval(interval);
+      }, 1000);
+      this.$api
+        .getCodeByMail({
+          operationType: "restPassword",
+          email: mail,
+        })
+        .then((res) => {
+          if (!res.success) {
+            this.isErr("获取邮箱验证码失败", res.msg);
+            return;
+          }
+        })
+        .catch((err) => {
+          this.$message.error("获取邮箱验证码失败", err);
+        });
+    },
+    // 提交修改密码申请
+    sub() {
+      if (!this.form.passOld || !this.form.passNew || !this.form.code) {
+        this.$message.error("请填写完整的新旧密码与验证码！");
+        return;
       }
+      this.$api
+        .resetPass({
+          newPassword: this.form.passNew,
+          oldPassword: this.form.passOld,
+          verifyCode: this.form.code,
+        })
+        .then((res) => {
+          if (!res.success) {
+            this.$message.error("修改密码失败，原因为：" + res.msg);
+            return;
+          }
+          this.$message({
+            message: "修改密码成功！即将跳转至登录界面！",
+            type: "success",
+          });
+          // 需要重新登录，要把所有用户信息清除
+          setTimeout(() => {
+            this.$store.commit("clearAll");
+            this.$router.push("/login");
+          }, 2000);
+        })
+        .catch((err) => {
+          this.$message.error(err);
+        });
+    },
+    // 退出
+    signOut() {
+       this.$confirm("是否退出当前账号?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$api
+            .logout()
+            .then((res) => {
+              if (!res.success) {
+                console.log("退出账号失败，原因为：" + res.msg);
+                return;
+              }
+              this.$store.commit("clearAll");
+              this.$router.push("/");
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        })
+        .catch((err) => {});
+    },
+    // 注销用户
+    logout() {
+     
     },
   },
 };
@@ -190,6 +337,38 @@ export default {
           background-position: 50%;
           background-color: #ddd;
         }
+      }
+    }
+  }
+  /deep/.el-dialog__body {
+    padding-top: 10px;
+    .business_box {
+      position: relative;
+      .send_ode {
+        color: #0eaaf5;
+      }
+      .sub {
+        width: 100%;
+        margin-top: 30px;
+      }
+      .sendCode {
+        color: #0eaaf5;
+        position: absolute;
+        opacity: 0.7;
+        right: 16px;
+        bottom: 80px;
+        cursor: pointer;
+        z-index: 100;
+      }
+      .sendCode:after {
+        content: "";
+        width: 2px;
+        height: 23px;
+        position: absolute;
+        top: -2px;
+        left: -11px;
+        background: #0eaaf5;
+        opacity: 0.4;
       }
     }
   }

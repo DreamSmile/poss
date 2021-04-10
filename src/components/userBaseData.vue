@@ -1,26 +1,48 @@
 <template>
   <div class="user_profile">
-    <div class="imgs" :style="{ backgroundImage: 'url(' + imgSrc + ')' }"></div>
+    <div
+      class="imgs"
+      :style="{
+        backgroundImage:
+          'url(' + this.$store.state.userData.avatar ||
+          require('@/assets/imgs/user.jpg') + ')',
+      }"
+    ></div>
     <div class="user_summary">
-      <span>{{ userData.nickName || "无" }}</span>
+      <span>{{ $store.state.userData.nickName || "无" }}</span>
       <i
         :class="
-          userData.sex == null || 'man' ? 'el-icon-male' : 'el-icon-female'
+          $store.state.userData.sex == null || $store.state.userData.sex == '男'
+            ? 'el-icon-male'
+            : 'el-icon-female'
         "
       ></i>
-      <button type="button" @click="dialogVisible = true" v-if="!business">成为商家</button>
-      <button type="button" v-else >申请商家中</button>
+      <button
+        type="button"
+        @click="dialogVisible = true"
+        v-if="!business && $store.state.userData.role != 'merchant'"
+      >
+        成为商家
+      </button>
+      <button
+        type="button"
+        v-if="business && $store.state.userData.role != 'merchant'"
+      >
+        申请商家中
+      </button>
       <el-divider></el-divider>
       <div class="box_first">
-        <p class="box_number">{{ userData.joinCount || 0 }}</p>
+        <p class="box_number">{{ $store.state.userData.joinCount || 0 }}</p>
         <p class="box_msg">参加过的兼职</p>
       </div>
-      <div class="box_second" v-if="userData.role == 'merchant'">
-        <p class="box_number">32</p>
+      <div class="box_second" v-if="$store.state.userData.role == 'merchant'">
+        <p class="box_number">{{ $store.state.userData.publishCount || 0 }}</p>
         <p class="box_msg">发布过的兼职</p>
       </div>
       <p class="msg">
-        个性签名：{{ userData.signature || "该用户很懒，还没有写个性签名~" }}
+        个性签名：{{
+          $store.state.userData.signature || "该用户很懒，还没有写个性签名~"
+        }}
       </p>
     </div>
     <!-- 成为商家画面 -->
@@ -40,28 +62,37 @@ export default {
   },
   data() {
     return {
-      userData: {},
-      imgSrc: require("@/assets/imgs/user.jpg"),
       dialogVisible: false,
       business: false,
     };
   },
   mounted() {
-    this.setData();
+    this.isGobusiness();
   },
   methods: {
-    setData() {
-      if (this.$store.state) {
-        this.userData = this.$store.state.userData;
-        this.$store.state.userData.avatar
-          ? (this.imgSrc = this.$store.state.userData.avatar)
-          : '';
-      }
-    },
+
     // 接收子组件的值，将申请商家按钮变为提示正在申请
-    isBusiness(data){
-      this.business=data;
-    }
+    isBusiness(data) {
+      this.business = data;
+      this.dialogVisible = false;
+    },
+    // 检测是否有资格申请商家
+    isGobusiness() {
+      this.$api
+        .isGobusiness()
+        .then((res) => {
+          console.log(res);
+          if (!res.success) {
+            this.$message.error(
+              "查看是否有资格申请商家失败，原因为：" + res.msg
+            );
+            return;
+          }
+        })
+        .catch((err) => {
+          this.$message.error(err);
+        });
+    },
   },
 };
 </script>
@@ -96,6 +127,9 @@ export default {
       color: @base-color;
       font-weight: bold;
       margin-left: 10px;
+    }
+    .el-icon-female {
+      color: #fd6847;
     }
     button {
       position: absolute;

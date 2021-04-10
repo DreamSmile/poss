@@ -89,7 +89,7 @@
           </div>
           <div class="file_look">
             <span class="look" @click="lookFile">查看</span>
-            <a :href="jobData.attachment" ><span class="download">下载</span></a>
+            <a :href="jobData.attachment"><span class="download">下载</span></a>
           </div>
         </div>
       </div>
@@ -108,7 +108,7 @@ export default {
       jobData: {},
       status: 1,
       imgSrc: require("@/assets/imgs/user.jpg"),
-      fileUrl:'',
+      fileUrl: "",
     };
   },
   components: {
@@ -124,7 +124,6 @@ export default {
           pid: this.$route.params.id,
         })
         .then((res) => {
-          console.log(res);
           if (!res.success) {
             this.$message.error("获取兼职详情错误！原因为：" + res.msg);
             return false;
@@ -156,6 +155,7 @@ export default {
               message: "申请兼职成功！",
               type: "success",
             });
+            this.jobData.join=true;
           })
           .catch((err) => {
             this.$$message.error(err);
@@ -165,9 +165,10 @@ export default {
     // 查看文件
     lookFile() {
       let url = this.jobData.attachment;
-      console.log(this.jobData.attachment);
-      console.log('加密后：'+encodeURIComponent(url));
-      window.open('http://yggdrasill.vip:8012//onlinePreview?url='+encodeURIComponent(url));
+      window.open(
+        "http://127.0.0.1:8012/onlinePreview?url=" +
+          encodeURIComponent(Base64.encode(url))
+      );
     },
   },
 };

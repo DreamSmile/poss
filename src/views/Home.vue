@@ -8,12 +8,13 @@
         <div class="main_data">
           <div class="search">
             <el-input
-              placeholder="选择学校"
+              placeholder="请输入关键字"
               v-model="jobName"
               autocomplete="off"
               class="input-with-select"
             >
               <el-select v-model="select" slot="prepend" placeholder="选择学校">
+                <el-option label="全部" value=""></el-option>
                 <el-option
                   :label="item.name"
                   :value="item.name"
@@ -22,6 +23,7 @@
                   v-for="(item, i) in schoolList"
                   :key="i"
                 ></el-option>
+
               </el-select>
               <el-button
                 type="primary"
@@ -75,54 +77,28 @@ export default {
     tourist,
   },
   mounted() {
-    // this.getUserData();
+    this.getUserData();
     this.getSchoolList();
     this.jobListAxios(this.select, this.jobName);
   },
   methods: {
     // 获取用户信息
-    // getUserData() {
-    //   this.$api
-    //     .getUserData()
-    //     .then((res) => {
-    //       console.log(res);
-    //       if (res.code == 13004 || res.code == 401) {
-    //         console.log('判断出验证过期');
-    // this.$router.push('/login');
-    // this.$api
-    //   .changeToken({
-    //     refreshToken: this.$store.state.accessToken,
-    //     userId: this.$store.state.userDataid,
-    //   })
-    //   .then((res) => {
-    //     console.log(res);
-    // if (res.success) {
-    //   // this.$store.commit("setUserToken", res.data); //重新更新token
-    //   // 更新后重新获取用户信息
-    //   // getUserData();
-    // } else {
-    //   // this.$store.commit("clearAll");
-    //   this.$message.error("当前为游客模式，需要使用更多功能请登录");
-    // }
-    // })
-    // .catch((err) => {
-    //   this.$message.error("重新换新token失败");
-    // });
-    //     console.log("验证码过期");
-    //     return;
-    //   } else if (res.code == 13006) {
-    //     //token为空,等于没有用户登录，为防止无登录状态却有登录人信息，将Vux中数据清除
-    //     this.$store.commit("clearAll");
-    //     return;
-    //   }
-    //   console.log("配置新的tonken");
-    //   // 已经获取到了用户信息
-    //   this.$store.commit("setUserData", res.data);
-    // })
-    // .catch((err) => {
-    //   this.$message.error("获取登录信息失败，请登录！");
-    // });
-    // },
+    getUserData() {
+      this.$api
+        .getUserData()
+        .then((res) => {
+          if (!res.success) {
+            this.$store.commit("clearAll");
+            return;
+          }
+          // 已经获取到了用户信息
+          this.$store.dispatch("setUserAysc", res.data);
+        })
+        .catch((err) => {
+          this.$message.error("获取登录信息失败，请登录！");
+          this.$store.commit("clearAll");
+        });
+    },
     // 获取学校列表
     getSchoolList() {
       this.$api
@@ -140,14 +116,15 @@ export default {
     },
     // 搜索工作
     queryJob() {
-      if (!this.select) {
+      if (!this.select || !this.jobName) {
+        this.jobListAxios(this.select, this.jobName);
+      }
+      else{
         this.$message({
           message: "请选择学校名称或兼职关键字再搜索！",
           type: "warning",
         });
         return false;
-      } else {
-        this.jobListAxios(this.select, this.jobName);
       }
     },
 
@@ -168,7 +145,7 @@ export default {
             return false;
           }
           this.jobList = res.data.content;
-          Object.assign(this.jobList,{"type":"home"});
+          Object.assign(this.jobList, { type: "home" });
         })
         .catch((err) => {
           this.$message.error(err);

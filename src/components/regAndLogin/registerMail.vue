@@ -42,7 +42,13 @@
           v-model="form.code"
           placeholder="请输入验证码"
         ></el-input>
-        <span class="sendCode" @click="sendCode">{{ times }}</span>
+        <!-- <span class="sendCode" @click="sendCode">{{ times }}</span> -->
+        <span class="sendCode" @click="sendCode" v-show="!times"
+          >发送验证码</span
+        >
+        <span class="sendCode" @click="sendCode" v-show="times"
+          >{{ times }}秒后重发</span
+        >
       </el-form-item>
       <el-checkbox v-model="checked">同意poss直聘《用户协议》</el-checkbox>
       <el-button type="primary" @click="regist">注册</el-button>
@@ -62,7 +68,7 @@ export default {
         pass: "",
         code: "",
       },
-      times: "发送验证码",
+      times: null,
       checked: false,
     };
   },
@@ -73,6 +79,10 @@ export default {
         if (valid) {
           //邮箱正确
           this.tiems = "已发送。。";
+          let num = 60;
+          let interval = setInterval(() => {
+            this.times = num > 0 ? num-- : clearInterval(interval);
+          }, 1000);
           this.$api
             .getCodeByMail({
               email: this.form.email,
@@ -83,17 +93,13 @@ export default {
                 this.$alert("发送验证码失败，原因为：" + res.msg, "错误", {
                   confirmButtonText: "确定",
                 });
-                this.times = "发送验证码";
+                this.times = null;
                 return false;
               }
-              this.$message({
-                message: "发送验证码成功！",
-                type: "success",
-              });
             })
             .catch((err) => {
               this.$message.error("发送验证码失败！原因：" + err);
-              this.times = "发送验证码";
+              this.times = null;
             });
         }
       });
@@ -101,6 +107,10 @@ export default {
     // 邮箱注册
     regist() {
       this.$refs.form.validate((valid) => {
+        if (!this.checked) {
+          this.$message.error("请勾选下方同意条款");
+          return;
+        }
         if (valid && this.checked) {
           this.loading = true;
           this.$api

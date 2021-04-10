@@ -62,22 +62,34 @@
             </div>
             <div v-show="active == 1" class="sfz">
               <p class="tab_title">身份证正反面</p>
-              <el-upload :before-upload="beforeupload" action="#">
+              <el-upload
+                :before-upload="beforeupload"
+                action="#"
+                :on-change="changeOne"
+              >
                 <div class="upload_demo">
-                  <div class="upload_text">点击上传身份证正面</div>
+                  <div class="upload_text">{{ imgOne }}</div>
                 </div>
               </el-upload>
-              <el-upload action="#" :before-upload="beforeupload">
+              <el-upload
+                action="#"
+                :on-change="changeTwo"
+                :before-upload="beforeupload"
+              >
                 <div class="upload_demo">
-                  <div class="upload_text">点击上传身份证背面</div>
+                  <div class="upload_text">{{ imgTwo }}</div>
                 </div>
               </el-upload>
             </div>
             <div v-show="active == 2" class="sjzm">
               <p class="tab_title">商家证明</p>
-              <el-upload action="#" :before-upload="beforeupload">
+              <el-upload
+                action="#"
+                :on-change="changeThree"
+                :before-upload="beforeupload"
+              >
                 <div class="upload_demo">
-                  <div class="upload_text">点击上传商家证明</div>
+                  <div class="upload_text">{{ imgThree }}</div>
                 </div>
               </el-upload>
             </div>
@@ -113,6 +125,9 @@ export default {
       secondForm: {},
       fileList: [], //存放要上传文件的数据
       moreFile: new FormData(), //传到接口的文件数据
+      imgOne: "上传身份证正面",
+      imgTwo: "上传身份证背面",
+      imgThree: "上传商家证明",
     };
   },
   methods: {
@@ -131,12 +146,28 @@ export default {
     step(num) {
       this.active = num;
     },
-    // 上传身份证正面
+    // 上传文件
     beforeupload(file) {
       this.fileList.push({
         file: file,
       });
       return false;
+    },
+    // 身份证正面图片显示
+    changeOne(file) {
+      console.log(file);
+      this.imgOne = "已上传";
+      this.moreFile.append("idCardBack", file.raw);
+    },
+    // 身份证背面
+    changeTwo(file) {
+      this.imgTwo = "已上传";
+      this.moreFile.append("idCardFront", file.raw);
+    },
+    // 商家证明
+    changeThree(file) {
+      this.imgThree = "已上传";
+      this.moreFile.append("mercahntCertify", file.raw);
     },
     // 提交商家信息
     sub() {
@@ -148,18 +179,13 @@ export default {
         this.$message.error("请填写真实姓名！");
         return false;
       }
+      this.moreFile.append("realName", this.firstForm.name);
       this.$api
-        .toBusiness({
-          idCardBack: this.fileList,
-          idCardFront: this.fileList,
-          mercahntCertify: this.fileList,
-          realName: this.firstForm.name,
-        })
+        .toBusiness(this.moreFile)
         .then((res) => {
           if (!res.success) {
             this.$message.error("文件上传失败！原因为：" + res.msg);
-            this.fileList = [];
-            this.firstForm.name = "";
+            this.isErr();
             return;
           }
           this.$message({
@@ -170,7 +196,15 @@ export default {
         })
         .catch((err) => {
           this.$message.error(err);
+          this.isErr();
         });
+    },
+    // 上传商家证明失败
+    isErr() {
+      this.moreFile = new FormData(); //传到接口的文件数据
+      this.imgOne = "上传身份证正面";
+      this.imgTwo = "上传身份证背面";
+      this.imgThree = "上传商家证明";
     },
   },
 };

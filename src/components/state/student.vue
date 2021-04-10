@@ -5,24 +5,24 @@
         <router-link to="/userData">
           <div
             class="img"
-            :style="{ backgroundImage: 'url(' + imgSrc + ')' }"
+            :style="{ backgroundImage: 'url(' + this.$store.state.userData.avatar || require('@/assets/imgs/user.jpg') + ')' }"
           ></div>
         </router-link>
-        <p>{{ userData.nickName }}</p>
+        <p>{{ $store.state.userData.nickName || ''}}</p>
       </div>
       <div class="student_data">
         <div class="rows">
           <router-link to="/userJoin">
             <span>参与过的兼职记录</span>
             <div>
-              {{ userData.joinCount || 0 }}<i class="el-icon-arrow-right"></i>
+              {{ $store.state.userData.joinCount || 0 }}<i class="el-icon-arrow-right"></i>
             </div>
           </router-link>
         </div>
-        <div class="rows" v-show="userData.role == 'merchant'">
+        <div class="rows" v-show="$store.state.userData.role == 'merchant'">
           <router-link to="/userRelease">
             <span>发布过的兼职记录</span>
-            <div>32<i class="el-icon-arrow-right"></i></div>
+            <div>{{$store.state.userData.publishCount ||0}}<i class="el-icon-arrow-right"></i></div>
           </router-link>
         </div>
       </div>
@@ -30,9 +30,11 @@
     <div class="work_list">
       <p class="list_title">正在进行中的兼职列表</p>
       <ul>
-        <li v-for="(item, i) in jobList" :key="i">
+        <li v-for="(item, i) in jobList" :key="i" >
           {{ i + 1 }}、
+          <el-tooltip :content="item.title" placement="top">
           <span class="list_data">{{ item.title }}</span>
+          </el-tooltip>
           <span class="list_time">{{
             $utils.returnData(item.startTime)
           }}</span>
@@ -48,24 +50,13 @@
 export default {
   data() {
     return {
-      userData: {},
-      imgSrc: require("@/assets/imgs/user.jpg"),
       jobList: [],
     };
   },
   mounted() {
-    this.setData();
     this.getJobHis();
   },
   methods: {
-    setData() {
-      if (this.$store.state) {
-        this.userData = this.$store.state.userData;
-        this.$store.state.userData.avatar
-          ? (this.imgSrc = this.$store.state.userData.avatar)
-          : "";
-      }
-    },
     // 获取兼职列表
     getJobHis() {
       this.$api
