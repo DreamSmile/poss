@@ -5,6 +5,7 @@
       <el-container>
         <el-aside width="200px"
           ><ul>
+            
             <li><router-link to="/userBase">基本信息</router-link></li>
             <li>
               <router-link to="/userJoin">参加过的兼职</router-link>

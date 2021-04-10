@@ -24,6 +24,7 @@
           <button type="button" v-else>已申请</button>
         </div>
       </div>
+      
       <!-- 底部招聘详细信息 -->
       <div class="job_box">
         <!-- 举报按钮 -->

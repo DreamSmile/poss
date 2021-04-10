@@ -6,6 +6,7 @@
       <el-tabs v-model="activeName">
         <el-tab-pane :label="'所有(' + jobList.length + ')'" name="first"
           ><div class="list_box">
+            
             <el-input
               v-model="input"
               prefix-icon="el-icon-search"

@@ -31,6 +31,7 @@
 export default {
   name: "loginPass",
   data() {
+    
     return {
       form: {
         email: "15059857514",

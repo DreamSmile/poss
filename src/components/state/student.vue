@@ -66,6 +66,7 @@ export default {
             this.$message.error("获取用户兼职历史失败，原因为：" + res.msg);
             return;
           }
+          
           this.jobList = res.data;
         })
         .catch((err) => {

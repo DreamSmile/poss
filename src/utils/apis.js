@@ -72,6 +72,7 @@ export function getJobBySchool(data) {
 
 
 
+
 /*工作详情页*/
 export function getJobData(data) {
     return $post(api + '/parttime/detail', data);

@@ -115,6 +115,7 @@ router.beforeEach((to, form, next) => {
   }
   // 只有登录注册，首页能让游客进入
 
+  
   let userInfo = $store.state;//所有的用户信息，包括token
   console.log(userInfo);
   // console.log('用户id'+userInfo.userData.avatar);

@@ -105,6 +105,7 @@ export default {
       });
     },
     // 邮箱注册
+    
     regist() {
       this.$refs.form.validate((valid) => {
         if (!this.checked) {

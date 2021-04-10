@@ -280,6 +280,7 @@ export default {
     },
     // 发布兼职
     pushJob() {
+      
       let jobId = this.$route.params.id;
       this.$refs.form.validate((valid) => {
         if (valid) {

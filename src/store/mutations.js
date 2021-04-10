@@ -5,6 +5,7 @@ const mutations = {
         state.refreshToken = !data.refreshToken ? localStorage.getItem('refreshToken') : data.refreshToken;
         state.hasUser = true;
     },
+    
     setUserData(state, data) {
         state.userData = {
             avatar: data.avatar,

@@ -41,6 +41,7 @@
             ><router-link v-if="!form.phone" to="/mailPhoneConnect/phone"
               >去绑定</router-link
             >
+            
             <router-link v-else to="/MailPhoneEdit/phone">修改</router-link>
           </el-form-item>
           <el-form-item label="个性签名">

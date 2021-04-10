@@ -34,6 +34,7 @@
                   params: { id: 'topF' },
                 }">聊天</router-link></span
           >
+          
           <span v-if="$store.state.accessToken">{{ $store.state.userData.nickName || '' }}</span>
           <router-link to="/userData">
             <el-dropdown  v-if="$store.state.accessToken">

@@ -135,6 +135,7 @@ export default {
       let interval = setInterval(() => {
         this.timesM = num > 0 ? num-- : clearInterval(interval);
       }, 1000);
+      
       this.$api
         .getCodeByMail({
           operationType: "bind",

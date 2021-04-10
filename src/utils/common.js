@@ -80,6 +80,8 @@ export function Base64() {
         return output;  
     }  
 
+    
+    
     // public method for decoding  
     this.decode = function (input) {  
         var output = "";  

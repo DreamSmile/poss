@@ -23,7 +23,6 @@
                   v-for="(item, i) in schoolList"
                   :key="i"
                 ></el-option>
-
               </el-select>
               <el-button
                 type="primary"

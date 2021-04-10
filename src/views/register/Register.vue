@@ -12,6 +12,7 @@
               <p class="box_msg">在线职位及沟通</p>
             </div>
           </div>
+          
           <div class="left_box">
             <i class="el-icon-document"></i>
             <div>

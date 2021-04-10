@@ -144,6 +144,7 @@ export function $putP(url, params, config = {}) {
         });
     });
 }
+
 // 发布兼职
 export function $postP(url, params, config = {}) {
     return new Promise((resolve, reject) => {

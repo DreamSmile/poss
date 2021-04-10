@@ -125,6 +125,7 @@ export default {
         code: { required: true, message: "请输入验证码" },
         codeM: { required: true, message: "请输入验证码" },
       },
+      
     };
   },
   mounted() {

@@ -107,6 +107,7 @@ export default {
           });
       }
     },
+    
     // 测试webscoket
     testWbscoket(){
       console.log('点击');

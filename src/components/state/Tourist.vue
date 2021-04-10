@@ -68,6 +68,7 @@ export default {
       if (!this.checked) {
         this.$message.error("请同意用户协议再登录");
         return;
+        
       }
       this.$api
         .loginByCode({

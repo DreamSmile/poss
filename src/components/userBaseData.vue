@@ -35,6 +35,7 @@
         <p class="box_number">{{ $store.state.userData.joinCount || 0 }}</p>
         <p class="box_msg">参加过的兼职</p>
       </div>
+      
       <div class="box_second" v-if="$store.state.userData.role == 'merchant'">
         <p class="box_number">{{ $store.state.userData.publishCount || 0 }}</p>
         <p class="box_msg">发布过的兼职</p>

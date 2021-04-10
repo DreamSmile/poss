@@ -29,6 +29,7 @@
                   params: { id: item.id },
                 }"
               >
+              
                 <span class="work_say" v-if="jobList.type == 'home'">
                   <i class="el-icon-chat-dot-round"></i>立即沟通</span
                 ></router-link

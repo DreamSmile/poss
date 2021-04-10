@@ -25,6 +25,7 @@
             <el-tab-pane label="密码登录" name="pass"><loginPass/></el-tab-pane>
             <el-tab-pane label="短信登录" name="messpage"><loginPhone/></el-tab-pane>
           </el-tabs>
+          
         </div>
       </div>
     </div>
