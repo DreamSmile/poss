@@ -20,13 +20,13 @@
       <button
         type="button"
         @click="dialogVisible = true"
-        v-if="!business && $store.state.userData.role != 'merchant'"
+        v-if="!this.$store.state.userData.applying&& $store.state.userData.role != 'merchant'"
       >
         成为商家
       </button>
       <button
         type="button"
-        v-if="business && $store.state.userData.role != 'merchant'"
+        v-if="this.$store.state.userData.applying && $store.state.userData.role != 'merchant'"
       >
         申请商家中
       </button>
@@ -82,11 +82,8 @@ export default {
       this.$api
         .isGobusiness()
         .then((res) => {
-          console.log(res);
           if (!res.success) {
-            this.$message.error(
-              "查看是否有资格申请商家失败，原因为：" + res.msg
-            );
+            console.log( "查看是否有资格申请商家失败，原因为：" + res.msg)
             return;
           }
         })

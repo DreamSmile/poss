@@ -5,24 +5,35 @@
         <router-link to="/userData">
           <div
             class="img"
-            :style="{ backgroundImage: 'url(' + this.$store.state.userData.avatar || require('@/assets/imgs/user.jpg') + ')' }"
+            :style="{
+              backgroundImage:
+                'url(' + this.$store.state.userData.avatar ||
+                require('@/assets/imgs/user.jpg') + ')',
+            }"
           ></div>
         </router-link>
-        <p>{{ $store.state.userData.nickName || ''}}</p>
+        <p>
+          <i v-show="$store.state.userData.role == 'merchant'" class="el-icon-takeaway-box"></i
+          >{{ $store.state.userData.nickName || "" }}
+        </p>
       </div>
       <div class="student_data">
         <div class="rows">
           <router-link to="/userJoin">
             <span>参与过的兼职记录</span>
             <div>
-              {{ $store.state.userData.joinCount || 0 }}<i class="el-icon-arrow-right"></i>
+              {{ $store.state.userData.joinCount || 0
+              }}<i class="el-icon-arrow-right"></i>
             </div>
           </router-link>
         </div>
         <div class="rows" v-show="$store.state.userData.role == 'merchant'">
           <router-link to="/userRelease">
             <span>发布过的兼职记录</span>
-            <div>{{$store.state.userData.publishCount ||0}}<i class="el-icon-arrow-right"></i></div>
+            <div>
+              {{ $store.state.userData.publishCount || 0
+              }}<i class="el-icon-arrow-right"></i>
+            </div>
           </router-link>
         </div>
       </div>
@@ -30,14 +41,12 @@
     <div class="work_list">
       <p class="list_title">正在进行中的兼职列表</p>
       <ul>
-        <li v-for="(item, i) in jobList" :key="i" >
+        <li v-for="(item, i) in jobList" :key="i">
           {{ i + 1 }}、
           <el-tooltip :content="item.title" placement="top">
-          <span class="list_data">{{ item.title }}</span>
+            <span class="list_data">{{ item.title }}</span>
           </el-tooltip>
-          <span class="list_time">{{
-            $utils.returnData(item.startTime)
-          }}</span>
+          <span class="list_time">{{ $utils.returnData(item.startTime) }}</span>
         </li>
       </ul>
       <div v-show="jobList.length < 1" class="no">
@@ -66,7 +75,7 @@ export default {
             this.$message.error("获取用户兼职历史失败，原因为：" + res.msg);
             return;
           }
-          
+
           this.jobList = res.data;
         })
         .catch((err) => {
@@ -99,6 +108,9 @@ export default {
           background-position: 50%;
           background-color: #ddd;
         }
+      }
+      .el-icon-takeaway-box{
+        padding-right:6px;
       }
       p {
         margin-top: 10px;

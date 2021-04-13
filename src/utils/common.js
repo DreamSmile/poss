@@ -41,7 +41,7 @@ export function returnData(date) {
 // 中国标准时间转换为2021.04.06
 export function returntimes(time) {
     var d = new Date(time);
-    return d.getFullYear() + '-' + return0(d.getMonth() + 1) + '-' + return0(d.getDate()) + ' ' + return0(d.getHours()) + ':' + return0(d.getMinutes()) + ':' + return0(d.getSeconds());
+    return d.getFullYear() + '-' + return0(d.getMonth() + 1) + '-' + return0(d.getDate()) + ' ' + return0(d.getHours()) + ':' + return0(d.getMinutes()) + ':00';
 }
 
 function return0(s) {

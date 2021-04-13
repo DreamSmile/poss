@@ -1,19 +1,21 @@
 
 const mutations = {
     setUserToken(state, data) {
-        state.accessToken = !data.accessToken ? localStorage.getItem('userToken') : data.accessToken;
-        state.refreshToken = !data.refreshToken ? localStorage.getItem('refreshToken') : data.refreshToken;
+        state.accessToken = data.accessToken ? data.accessToken : null;
+        state.refreshToken = data.refreshToken ? data.refreshToken : null;
         state.hasUser = true;
+        console.log(state);
     },
-    
+
     setUserData(state, data) {
         state.userData = {
             avatar: data.avatar,
+            applying:data.applying,
             campusInfo: data.campusInfo,
             email: data.email,
             id: data.id,
             joinCount: data.joinCount,
-            publishCount:data.publishCount,
+            publishCount: data.publishCount,
             major: data.major,
             nickName: data.nickName,
             phoneNumber: data.phoneNumber,
@@ -23,8 +25,8 @@ const mutations = {
             status: data.status
         }
     },
-    editUserData(state,data){
-        Object.assign(state.userData,data);
+    editUserData(state, data) {
+        Object.assign(state.userData, data);
     },
     getUserToken(state) {
         console.log(state);

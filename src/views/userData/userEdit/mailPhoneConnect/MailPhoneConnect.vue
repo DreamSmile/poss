@@ -77,7 +77,9 @@
                   </el-input></el-form-item
                 >
               </el-form>
-              <el-button class="sub" type="primary" @click="upMail">提交</el-button>
+              <el-button class="sub" type="primary" @click="upMail"
+                >提交</el-button
+              >
             </div></el-tab-pane
           >
         </el-tabs>
@@ -125,7 +127,6 @@ export default {
         code: { required: true, message: "请输入验证码" },
         codeM: { required: true, message: "请输入验证码" },
       },
-      
     };
   },
   mounted() {
@@ -171,8 +172,11 @@ export default {
     },
     // 发送邮箱验证码
     sendCodeM() {
-      console.log(this.formMail.MailNew);
-      if (!/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(this.formMail.MailNew)) {
+      if (
+        !/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(
+          this.formMail.MailNew
+        )
+      ) {
         this.$message.error("请输入正确的邮箱！");
         return;
       }
@@ -211,18 +215,18 @@ export default {
                 return;
               }
               this.$message({
-                message: "绑定手机号成功！",
+                message: "绑定手机号成功！将为您跳转至上一页！",
                 type: "success",
-              })
-              
-              }).catch((err) => {
-                this.$message.error(err);
               });
 
               setTimeout(() => {
                 this.$router.push("/userEdit");
               }, 2000);
-            };
+            })
+            .catch((err) => {
+              this.$message.error(err);
+            });
+        }
       });
     },
     // 邮箱确定绑定
@@ -240,14 +244,16 @@ export default {
                 return;
               }
               this.$message({
-                message: "绑定邮箱成功！",
+                message: "绑定邮箱成功！将为您跳转至上一界面！",
                 type: "success",
-              }).catch((err) => {
-                this.$message.error(err);
               });
+
               setTimeout(() => {
                 this.$router.push("/userEdit");
               }, 2000);
+            })
+            .catch((err) => {
+              this.$message.error(err);
             });
         }
       });

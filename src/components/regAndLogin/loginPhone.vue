@@ -60,8 +60,6 @@ export default {
   methods: {
     //  发送验证码
     sendCode() {
-      // this.isSend=true;
-      // this.times=this.$utils.countDown();
       if (!/^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/.test(this.form.phone)) {
         this.$message.error("请输入正确的手机号码！");
         return;

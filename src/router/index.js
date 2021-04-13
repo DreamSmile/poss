@@ -104,7 +104,6 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, form, next) => {
-  console.log('路由守卫')
   //处理无效路由
   if (Array.isArray(to.matched) && to.matched.length == 0) {
     next({
@@ -115,51 +114,14 @@ router.beforeEach((to, form, next) => {
   }
   // 只有登录注册，首页能让游客进入
 
-  
+
   let userInfo = $store.state;//所有的用户信息，包括token
-  console.log(userInfo);
-  // console.log('用户id'+userInfo.userData.avatar);
 
   // 每次换路由就获取用户接口，检查token是否过期
-  if (to.name != "Login" && to.name != "Register") {
-    $api.getUserData().then(res => {
-      if (res.code == 13004 || res.code == 401) {
-        $api.changeToke({ "refreshToken": userInfo.refreshToken, "userId": userInfo.userData.id }).then(res => {
-          if (!res.success) {//获取新的token失败，就跳转登录界面,并清除所有存入vux的信息
-            $store.commit('clearAll');
-            if (to.name != "Home" && to.name != "Login" && to.name != "Register") {
-              next({
-                path: "/login",
-                query: { msg: encodeURIComponent('登录信息失效，请重新登录！') }
-              });
-            }
-            return;
-          }//获取新的token成功，就修改token
-            $store.commit('setUserToken', res.data);
-        }).catch(err => {
-          console.log('路由守卫获取新token失败！');
-          $store.commit('clearAll');
-        })
-        return;
-      }//用户token失败执行的更换token方法
-      // 成功获取数据，存入用户
-      // console.log('路由守卫的用户信息');
-      // console.log(res.data);
-      $store.commit("setUserData", res.data);
-    }).catch(err => {
-      console.log('获取用户信息代码错误'+err);
-      if (to.name != "Home") {
-        next({
-          path: "/login",
-          query: { msg: encodeURIComponent('登录信息失效，请重新登录！') }
-        });
-      }
-      $store.commit('clearAll');
-    })
-    next();//确保要进入下一个界面
-  } else {//注册登录界面直接进入
-    next();
-  }
+  // if (to.name != "Login" && to.name != "Register") {
+  // }
+  next();
+
 })
 
 export default router

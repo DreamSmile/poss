@@ -107,6 +107,16 @@ export function bindMail(data) {
     return $put(api + '/user/bind/email', data);
 }
 
+// 修改绑定后的邮箱
+export function editbindMail(data){
+    return $post(api+'/user/reset/email',data);
+}
+
+// 修改绑定的手机号
+export function editBindPhone(data){
+    return $post(api+'/user/reset/phone',data);
+}
+
 // 查看是否有资格成为商家
 export function isGobusiness(){
     return $get(api+'/user/apply/prepare');
@@ -148,4 +158,9 @@ export function delJob(data) {
 // 获取于用户所有存在聊天历史的聊天用户
 export function getdialogueList(){
     return $get(api+'/user/chat');
+}
+
+// 获取对应用户的聊天记录
+export function getHisByUserId(data){
+    return $post(api +'/user/chat/record',data);
 }

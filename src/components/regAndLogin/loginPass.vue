@@ -56,10 +56,6 @@ export default {
   },
   methods: {
     goLogin() {
-      // this.$utils.setLocalToken("userToken", 'test'); //将token放入缓存
-      // this.$store.commit("setUserToken", 'test'); //将token存到vuex
-      // this.$utils.test();
-      // return;
       this.$refs.form.validate((valid) => {
         if (valid) {
           this.loading = true;
@@ -69,7 +65,7 @@ export default {
               password: this.form.pass,
             })
             .then((res) => {
-              if (res.code != 200) {
+              if (!res.success) {
                 this.isErr(res.msg);
                 return;
               }

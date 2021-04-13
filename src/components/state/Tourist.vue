@@ -12,7 +12,7 @@
         >
         <span v-show="times" class="sendCode">{{ times }}秒后重发</span>
       </el-form-item>
-      <el-button type="bttton" @click="sub">登录/注册</el-button>
+      <el-button type="bttton" @click="sub">登录</el-button>
       <el-checkbox v-model="checked">同意poss直聘《用户协议》</el-checkbox>
     </el-form>
   </div>

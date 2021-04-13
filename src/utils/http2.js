@@ -1,5 +1,7 @@
 import axios from 'axios';
 import $store from '../store'
+import $router from '../router'
+import { changeToke } from '../utils/apis'
 
 const axiosIns = axios.create({
     timeout: 15 * 1000,
@@ -9,11 +11,11 @@ const axiosIns = axios.create({
 });
 const axiosInsP = axios.create({
     timeout: 15 * 1000,
-    contentType:false,
-    processData:false,
+    contentType: false,
+    processData: false,
     headers: {
         "Content-Type": "multipart/form-data",
-        "Accept":"*/*"
+        "Accept": "*/*"
     }
 });
 
@@ -36,13 +38,36 @@ axiosInsP.interceptors.request.use(config => {
     return Promise.reject(err);
 }
 );
-
+let userInfo = $store.state;//所有的用户信息，包括token
+console.log(userInfo);
 //类似于.then(()=>{},()=>{});
 axiosIns.interceptors.response.use(response => {
     //对响应数据做点处理
+    if (response.data.code == 13004 || response.data.code == 401 || response.data.code == 13025) {
+        console.log('接口中检测到token过期');
+        changeToke({ "refreshToken": userInfo.refreshToken, "userId": userInfo.userData.id }).then(res => {
+            console.log('更换token');
+            if (!res.success) {//获取新的token失败，就跳转首页,并清除所有存入vux的信息
+                $store.commit('clearAll');
+                $router.push("/login");
+                return;
+            }//获取新的token成功，就修改token
+            $store.commit('setUserToken', res.data);
+            // 重新访问接口
+            console.log(response);
+            return axiosIns(response.config);
+            //resolve(response);
+            //return response;
+        }).catch(err => {
+            console.log('接口获取新token失败！');
+            $store.commit('clearAll');
+            $router.push("/login");
+        })
+    }
     return response;
 }, error => {
     //对响应错误做点处理
+
     if (error && error.response) {
         switch (error.response.status) {
             case 400:

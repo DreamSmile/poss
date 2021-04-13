@@ -24,7 +24,7 @@
           <button type="button" v-else>已申请</button>
         </div>
       </div>
-      
+
       <!-- 底部招聘详细信息 -->
       <div class="job_box">
         <!-- 举报按钮 -->
@@ -36,9 +36,13 @@
           ></div>
           <div class="hr_data">
             <p class="hr_name">
-              {{ jobData.merchantinfo.realName || "招聘者" }}
+              {{ jobData.publisher.nickName || "招聘者" }}
             </p>
-            <router-link to="/dialogue"
+            <router-link
+              :to="{
+                name: 'Dialogue',
+                params: { id: jobData.id },
+              }"
               ><p class="hr_state">
                 <i class="el-icon-chat-dot-square"></i>刚刚在线
               </p></router-link
@@ -60,7 +64,7 @@
             <p class="title">负责人信息</p>
             <div class="box">
               <p class="list">
-                负责人：{{ jobData.merchantinfo.realName || "--" }}
+                负责人：{{ jobData.publisher.nickName || "--" }}
               </p>
               <p class="list">
                 负责人手机号：{{ jobData.publisher.phoneNumber || "--" }}
@@ -125,6 +129,7 @@ export default {
           pid: this.$route.params.id,
         })
         .then((res) => {
+          console.log(res);
           if (!res.success) {
             this.$message.error("获取兼职详情错误！原因为：" + res.msg);
             return false;
@@ -156,7 +161,7 @@ export default {
               message: "申请兼职成功！",
               type: "success",
             });
-            this.jobData.join=true;
+            this.jobData.join = true;
           })
           .catch((err) => {
             this.$$message.error(err);
@@ -167,8 +172,17 @@ export default {
     lookFile() {
       let url = this.jobData.attachment;
       window.open(
-        "http://127.0.0.1:8012/onlinePreview?url=" +
-          encodeURIComponent(Base64.encode(url))
+        "http://yggdrasill.vip:8012/onlinePreview?url=" +
+          encodeURIComponent(
+            btoa(
+              encodeURIComponent(url).replace(
+                /%([0-9A-F]{2})/g,
+                function toSolidBytes(match, p1) {
+                  return String.fromCharCode("0x" + p1);
+                }
+              )
+            )
+          )
       );
     },
   },

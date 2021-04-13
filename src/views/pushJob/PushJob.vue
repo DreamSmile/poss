@@ -106,13 +106,12 @@
             <el-button type="primary" v-if="isNew" @click="pushJob"
               >发布</el-button
             >
-            <el-button type="primary" v-if="!isNew" @click="pushJob"
+            <el-button type="primary" v-if="!isNew && this.jobInfo.status==1" @click="pushJob"
               >修改</el-button
             >
-            <el-button type="success" v-if="!isNew" @click="ingJob"
+            <el-button type="success" v-if="!isNew && this.jobInfo.status==1" @click="ingJob"
               >开始</el-button
             >
-            <!-- <el-button @click="reset">取消</el-button> -->
             <el-button type="danger" v-if="!isNew" @click="overJob"
               >结束</el-button
             >
@@ -136,6 +135,7 @@ export default {
     return {
       isNew: true,
       schoolList: [],
+      jobInfo:{},
       formData: new FormData(),
       form: {
         name: "",
@@ -245,8 +245,8 @@ export default {
             time: res.data.duration,
             content: res.data.content,
           };
-
           this.fileName = res.data.attachmentName;
+          this.jobInfo=res.data;
         })
         .catch((err) => {
           this.$message.error(err);
@@ -280,7 +280,6 @@ export default {
     },
     // 发布兼职
     pushJob() {
-      
       let jobId = this.$route.params.id;
       this.$refs.form.validate((valid) => {
         if (valid) {
@@ -309,7 +308,7 @@ export default {
         .pushJob(data)
         .then((res) => {
           if (!res.success) {
-            this.$message.error("发布兼职失败，原因为：" + res.msg);
+            this.$alert("发布兼职失败，原因为：" + res.msg);
             return;
           }
           this.$message({
@@ -321,7 +320,7 @@ export default {
           }, 2000);
         })
         .catch((err) => {
-          this.$message.error("兼职发布失败");
+          this.$alert("兼职发布失败");
         });
     },
     // 修改兼职
