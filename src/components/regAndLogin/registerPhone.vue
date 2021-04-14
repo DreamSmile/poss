@@ -97,7 +97,6 @@ export default {
             this.isErr("获取验证码失败", res.msg);
             return;
           }
-          
         })
         .catch((err) => {
           this.isErr("获取验证码失败", err);

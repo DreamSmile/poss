@@ -12,7 +12,7 @@ module.exports = {
     configureWebpack: (config) => {
         config.plugins.forEach((val) => {
             if (val instanceof HtmlWebpackPlugin) {
-                val.options.title = 'poss直聘';
+                val.options.title = '兼职无忧';
             }
         })
     },

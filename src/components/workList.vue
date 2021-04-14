@@ -56,8 +56,9 @@
         </li>
       </ul>
     </div>
-    <div class="page" v-show="jobList.length > 10">
-      <el-pagination background layout="prev, pager, next" :total="10">
+    <!-- v-show="jobList.length > 9" -->
+    <div class="page" >
+      <el-pagination @current-change="currentChange" background :hide-on-single-page="true" layout="prev, pager, next" :total="jobList.totalRows">
       </el-pagination>
     </div>
     <div class="noList" v-show="jobList.length < 1">
@@ -77,7 +78,8 @@ export default {
       default: () => [],
     },
   },
-  mounted() {},
+  mounted() {
+  },
   methods: {
     // 退出兼职
     outJob(satus, id) {
@@ -109,6 +111,15 @@ export default {
         })
         .catch(() => {});
     },
+    // 更换页码执行
+    currentChange(num){
+      this.$emit('changePage',{
+        type:this.$route.name,
+        page:num,
+        campus:this.jobList.campus,
+        keyword:this.jobList.keyword
+      })
+    }
   },
 };
 </script>

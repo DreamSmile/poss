@@ -9,6 +9,7 @@ const register1 = r => require.ensure([], () => r(require('@/views/register1/Reg
 const register = r => require.ensure([], () => r(require('@/views/register/Register')), 'register');
 const login = r => require.ensure([], () => r(require('@/views/login/Login')), 'login');
 const job = r => require.ensure([], () => r(require('@/views/job/Job')), 'job');
+// const report = r => require.ensure([], () => r(require('@/views/report/Report')), 'report');
 const pushJob = r => require.ensure([], () => r(require('@/views/pushJob/PushJob')), 'pushJob');
 const dialogue = r => require.ensure([], () => r(require('@/views/dialogue/Dialogue')), 'dialogue');
 const error = r => require.ensure([], () => r(require('@/views/error/Error')), 'error');
@@ -49,6 +50,11 @@ const routes = [
     name: 'Job',
     component: job
   },
+  // {
+  //   path: '/report/:typeId',
+  //   name: 'Report',
+  //   component: report
+  // },
   {
     path: '/dialogue/:id',
     name: 'Dialogue',
@@ -117,9 +123,13 @@ router.beforeEach((to, form, next) => {
 
   let userInfo = $store.state;//所有的用户信息，包括token
 
-  // 每次换路由就获取用户接口，检查token是否过期
-  // if (to.name != "Login" && to.name != "Register") {
-  // }
+  // 检测如果是没有token智能去注册首页登录
+  if (to.name != "Login" && to.name != "Register" && to.name!="Home" && userInfo.accessToken=="") {
+    next({
+      path: "/login",
+      query: { msg: encodeURIComponent('登录信息失效，请重新登录！') }
+    });
+  }
   next();
 
 })

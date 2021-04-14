@@ -35,7 +35,7 @@
           <!-- 左边工作列表 -->
           <el-tabs v-model="activeName">
             <el-tab-pane label="推荐职位" name="first"
-              ><workList :jobList="jobList"
+              ><workList :jobList="jobList" @changePage="changePage"
             /></el-tab-pane>
             <el-tab-pane label="最新职位" name="second"
               ><workList :jobList="jobList"
@@ -126,14 +126,21 @@ export default {
         return false;
       }
     },
-
-    jobListAxios(campus, keyword) {
+    // 子组件更换页码，先判断是不是首页的子组件
+    changePage(data){
+      if(data.type=="Home"){
+        this.jobListAxios(data.campus,data.keyword,data.page);
+      }
+    },
+// 获得分页兼职列表
+    jobListAxios(campus, keyword,page) {
+      console.log(page);
       this.$api
         .getJobBySchool({
           campus: campus,
           keyword: keyword,
           paginationInfo: {
-            pageNumber: 1,
+            pageNumber: page?page:1,
             pageSize: 10,
           },
         })
@@ -144,7 +151,7 @@ export default {
             return false;
           }
           this.jobList = res.data.content;
-          Object.assign(this.jobList, { type: "home" });
+          Object.assign(this.jobList, { type: "home" ,campus:campus,keyword:keyword,totalRows:res.data.totalRows});
         })
         .catch((err) => {
           this.$message.error(err);

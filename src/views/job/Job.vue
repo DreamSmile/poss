@@ -28,7 +28,37 @@
       <!-- 底部招聘详细信息 -->
       <div class="job_box">
         <!-- 举报按钮 -->
-        <div class="report">举报</div>
+        <div class="report" @click="dialogVisible = true">举报</div>
+        <!-- 举报界面 -->
+        <el-dialog
+          title="选择举报类型"
+          :visible.sync="dialogVisible"
+          width="650px"
+          height="800px"
+          :before-close="handleClose"
+        >
+          <div class="report_box" v-if="reportType == null">
+            <div
+              class="rows"
+              v-for="(item, i) in reportTypeList"
+              :key="i"
+              @click="reporttype(item.id)"
+            >
+              <div class="row_left">
+                <p class="row_title">{{ item.name }}</p>
+                <p class="row_msg">{{ item.description }}</p>
+              </div>
+              <i class="el-icon-arrow-right"></i>
+              <el-divider></el-divider>
+            </div>
+          </div>
+          <report-push
+            v-if="reportType != null"
+            :reportType="reportType"
+            @close="close"
+          ></report-push>
+        </el-dialog>
+        <!-- 举报界面结束 -->
         <div class="hr">
           <div
             class="imgs"
@@ -104,6 +134,7 @@
 <style scoped lang="less">
 </style>
 <script>
+import ReportPush from "../../components/ReportPush.vue";
 import Top from "../../components/top.vue";
 import "./job.less";
 export default {
@@ -114,13 +145,18 @@ export default {
       status: 1,
       imgSrc: require("@/assets/imgs/user.jpg"),
       fileUrl: "",
+      dialogVisible: false, //举报界面
+      reportTypeList: [], //举报类型，接口获取
+      reportType: null,
     };
   },
   components: {
     Top,
+    ReportPush,
   },
   mounted() {
     this.getData();
+    this.getreport();
   },
   methods: {
     getData() {
@@ -167,6 +203,38 @@ export default {
             this.$$message.error(err);
           });
       });
+    },
+    // 获得举报类型
+    getreport() {
+      this.$api
+        .reportList()
+        .then((res) => {
+          console.log(res);
+          if (!res.success) {
+            this.$message.error("获得举报类型失败，原因为：" + res.msg);
+            return;
+          }
+          this.reportTypeList = res.data;
+        })
+        .catch((err) => {
+          this.$message.error(err);
+        });
+    },
+    // 点击举报
+    reporttype(type) {
+      console.log(type);
+      this.reportType = { type: type, jobId: this.$route.params.id };
+    },
+    // 关闭举报界面
+    handleClose() {
+      this.reportType = null;
+      this.dialogVisible=false;
+    },
+    //接收子组件关闭页面
+    close(val){
+      if(val){
+        this.handleClose();
+      }
     },
     // 查看文件
     lookFile() {

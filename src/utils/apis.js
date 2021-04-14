@@ -82,6 +82,14 @@ export function getJobData(data) {
 export function addJob(data) {
     return $post(api + '/user/join/pt', data);
 }
+// 获得举报列表
+export function reportList(){
+    return $get(api+'/parttime/report/types');
+}
+//举报兼职
+export function reportJob(data){
+    return $post(api+'/user/report',data)
+}
 
 // 退出兼职
 export function outJob(data) {

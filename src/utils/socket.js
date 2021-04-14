@@ -3,7 +3,8 @@ let socket={
     socketEl:null,//websocket实例
     // 初始化
     init(){
-        socket.socketEl = new WebSocket("ws://47.97.157.142:8888/websocket/" + $store.state.userData.id);
+        socket .socketEl=new ReconnectingWebSocket("ws://47.97.157.142:8888/websocket/" + $store.state.userData.id);
+        // socket.socketEl = new WebSocket("ws://47.97.157.142:8888/websocket/" + $store.state.userData.id);
         socket.socketEl.onopen = this.onOpen;
         socket.socketEl.onmessage = this.onMessage;
         socket.socketEl.onerror = this.onError;
@@ -30,14 +31,16 @@ let socket={
         return redata;
       },
       onError(e) {
-        console.log("连接错误");
+        alert("webSocket连接错误");
         console.log(e);
       },
       onclose(e) {
-        console.log("关闭连接");
+        alert("关闭了websocket连接");
       },
 }
-socket.init();
+// if($store.state.userData.id!=null &&$store.state.userData.id!=""){
+//     socket.init();
+// }
 
 
 export default socket

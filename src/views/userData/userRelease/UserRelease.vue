@@ -6,7 +6,6 @@
       <el-tabs v-model="activeName">
         <el-tab-pane :label="'所有(' + jobList.length + ')'" name="first"
           ><div class="list_box">
-            
             <el-input
               v-model="input"
               prefix-icon="el-icon-search"
@@ -14,7 +13,10 @@
               @keyup.enter.native="selJob"
               style="width: 500px"
             ></el-input>
-            <work-list :jobList="jobList"></work-list></div
+            <work-list
+              :jobList="jobList"
+              @changePage="changePage"
+            ></work-list></div
         ></el-tab-pane>
         <el-tab-pane :label="'未开始(' + jobNo.length + ')'" name="second"
           ><work-list :jobList="jobNo"></work-list
@@ -65,7 +67,12 @@ export default {
             return;
           }
           this.jobList = res.data.content;
-          Object.assign(this.jobList, { type: "business", role: "merchant" });
+          Object.assign(this.jobList, {
+            type: "business",
+            role: "merchant",
+            totalPages: res.data.totalPages,
+            totalRows: res.data.totalRows,
+          });
           for (let i = 0; i < res.data.content.length; i++) {
             switch (res.data.content[i].status) {
               case 0:
@@ -89,19 +96,22 @@ export default {
     },
     // 搜索框查询
     selJob() {
-      if (!this.input) {
-        this.$message({
-          message: "请输入兼职关键字！",
-          type: "warning",
-        });
-        return;
+      this.jobByPage("", this.input, 1);
+    },
+    // 子组件返回的查询分页
+    changePage(data) {
+      if (data.type == "UserRelease") {
+        this.jobByPage(data.campus, data.keyword, data.page);
       }
+    },
+    // 分页查询兼职
+    jobByPage(campus, keyword, page) {
       this.$api
         .getJobBySchool({
-          campus: '',
-          keyword: this.input,
+          campus: campus,
+          keyword: keyword,
           paginationInfo: {
-            pageNumber: 1,
+            pageNumber: page ? page : 1,
             pageSize: 10,
           },
         })
@@ -112,7 +122,7 @@ export default {
             return false;
           }
           this.jobList = res.data.content;
-          Object.assign(this.jobList, { type: "business", role: "merchant" });
+          Object.assign(this.jobList, { type: "business", role: "merchant",campus:campus,keyword:keyword,totalRows:res.data.totalRows });
         })
         .catch((err) => {
           this.$message.error(err);

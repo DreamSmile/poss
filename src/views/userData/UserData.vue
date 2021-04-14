@@ -5,12 +5,11 @@
       <el-container>
         <el-aside width="200px"
           ><ul>
-            
             <li><router-link to="/userBase">基本信息</router-link></li>
             <li>
               <router-link to="/userJoin">参加过的兼职</router-link>
             </li>
-            <li  v-if="$store.state.userData.role == 'merchant'">
+            <li v-if="$store.state.userData.role == 'merchant'">
               <router-link to="/userRelease">发布过的兼职</router-link>
             </li>
           </ul></el-aside
@@ -22,32 +21,34 @@
 </template>
 <script>
 export default {
-  data(){
-    return{
-      userData:{}
-    }
+  data() {
+    return {
+      userData: {},
+    };
   },
-  mounted(){
+  mounted() {
     //  v-if="userData.role=='merchant'"
     // console.log('权限');
     // console.log(this.$store.state.userData);
     // console.log(this.userData.role);
     this.setData();
-    console.log('这边要判断');
+    console.log("这边要判断");
   },
-  methods:{
-    setData(){
-    this.userData=this.$store.state.userData;
-    console.log('设置数据');
-    }
-  }
-}
+  methods: {
+    setData() {
+      this.userData = this.$store.state.userData;
+      console.log("设置数据");
+    },
+  },
+};
 </script>
 <style scoped lang="less">
 @import "../../assets/css/common.less";
 
-
 #userData {
+  background-color: #f6f6f8;
+  min-height: calc(100vh - 50px);
+
   .content {
     width: 80%;
     min-width: 900px;

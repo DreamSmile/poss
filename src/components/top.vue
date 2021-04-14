@@ -3,7 +3,7 @@
     <div class="bg">
       <div class="inner">
         <router-link to="/">
-          <img src="@/assets/imgs/logo.png" alt="boss直聘" />
+          <img src="@/assets/imgs/login/logo_white.png" alt="boss直聘" />
         </router-link>
         <div class="nav">
           <ul>

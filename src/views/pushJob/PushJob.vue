@@ -106,10 +106,16 @@
             <el-button type="primary" v-if="isNew" @click="pushJob"
               >发布</el-button
             >
-            <el-button type="primary" v-if="!isNew && this.jobInfo.status==1" @click="pushJob"
+            <el-button
+              type="primary"
+              v-if="!isNew && this.jobInfo.status == 1"
+              @click="pushJob"
               >修改</el-button
             >
-            <el-button type="success" v-if="!isNew && this.jobInfo.status==1" @click="ingJob"
+            <el-button
+              type="success"
+              v-if="!isNew && this.jobInfo.status == 1"
+              @click="ingJob"
               >开始</el-button
             >
             <el-button type="danger" v-if="!isNew" @click="overJob"
@@ -135,7 +141,7 @@ export default {
     return {
       isNew: true,
       schoolList: [],
-      jobInfo:{},
+      jobInfo: {},
       formData: new FormData(),
       form: {
         name: "",
@@ -246,7 +252,7 @@ export default {
             content: res.data.content,
           };
           this.fileName = res.data.attachmentName;
-          this.jobInfo=res.data;
+          this.jobInfo = res.data;
         })
         .catch((err) => {
           this.$message.error(err);
@@ -446,6 +452,8 @@ export default {
     min-width: 800px;
     margin: 0 auto;
     margin-top: 80px;
+    background-color: #f6f6f8;
+    min-height: calc(100vh - 50px);
     .content_title {
       font-size: 16px;
       line-height: 54px;
