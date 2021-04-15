@@ -4,7 +4,7 @@
     <user-base-data></user-base-data>
     <div class="content">
       <el-tabs v-model="activeName">
-        <el-tab-pane :label="'所有(' + jobList.length + ')'" name="first"
+        <el-tab-pane :label="'所有(' + jobList.totalRows + ')'" name="first"
           ><div class="list_box">
             <el-input
               v-model="input"
@@ -12,9 +12,11 @@
               placeholder="请输入兼职关键字"
               @keyup.enter.native="selJob"
               style="width: 500px"
-              @changePage="changePage"
             ></el-input>
-            <work-list :jobList="jobList"></work-list></div
+            <work-list
+              :jobList="jobList"
+              @changePage="changePage"
+            ></work-list></div
         ></el-tab-pane>
         <el-tab-pane :label="'未开始(' + jobNo.length + ')'" name="second"
           ><work-list :jobList="jobNo"></work-list
@@ -54,30 +56,33 @@ export default {
   methods: {
     setData() {
       this.$api
-        .getJobHis()
+        .getHisByPage({
+          pageNumber: 1,
+          pageSize: 10,
+        })
         .then((res) => {
           if (!res.success) {
             this.$message.error("获取用户兼职历史失败，原因为：" + res.msg);
             return;
           }
-          this.jobList = res.data;
+          this.jobList = res.data.content;
           Object.assign(this.jobList, {
             type: "join",
             totalRows: res.data.totalRows,
             totalRows: res.data.totalRows,
           });
-          for (let i = 0; i < res.data.length; i++) {
-            switch (res.data[i].status) {
+          for (let i = 0; i < res.data.content.length; i++) {
+            switch (res.data.content[i].status) {
               case 0:
-                this.jobOver.push(res.data[i]);
+                this.jobOver.push(res.data.content[i]);
                 Object.assign(this.jobOver, { type: "join" });
               case 1:
-                this.jobIng.push(res.data[i]);
-                Object.assign(this.jobIng, { type: "join" });
+                this.jobNo.push(res.data.content[i]);
+                Object.assign(this.jobNo, { type: "join" });
                 break;
               case 2:
-                this.jobNo.push(res.data[i]);
-                Object.assign(this.jobNo, { type: "join" });
+                this.jobIng.push(res.data.content[i]);
+                Object.assign(this.jobIng, { type: "join" });
               default:
                 break;
             }
@@ -93,8 +98,12 @@ export default {
     },
     // 子组件返回的查询分页
     changePage(data) {
-      if (data.type == "UserRelease") {
-        this.jobByPage(data.campus, data.keyword, data.page);
+      if (data.type == "UserJoin") {
+        this.jobByPage(
+          data.campus ? data.campus : "",
+          data.keyword ? data.keyword : "",
+          data.page
+        );
       }
     },
     // 分页查询兼职
@@ -109,7 +118,6 @@ export default {
           },
         })
         .then((res) => {
-          console.log(res);
           if (!res.success) {
             this.$message.error("搜索兼职失败！原因为：" + res.msg);
             return false;

@@ -85,6 +85,7 @@ export default {
         });
         return;
       }
+      
       let num = 60;
       let interval = setInterval(() => {
         this.times = num > 0 ? num-- : clearInterval(interval);

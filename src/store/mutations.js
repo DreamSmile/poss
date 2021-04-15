@@ -28,6 +28,17 @@ const mutations = {
     editUserData(state, data) {
         Object.assign(state.userData, data);
     },
+    setDiaData(state,data){//当有数据传入，push进state
+        state.diaData.push({
+            id:data.id,
+            content:data.content,
+            createTime:data.createTime,
+            fromUser:data.fromUser,
+        })
+    },
+    clearDia(state){//打开了聊天界面就清除top的红点
+        state.diaData=[];
+    },
     getUserToken(state) {
         console.log(state);
         return state;

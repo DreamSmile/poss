@@ -25,6 +25,10 @@
                 }
 
                 .list {
+                    .list_active {
+                        background-color: #eaeaec;
+                    }
+
                     .list_box {
                         position: relative;
                         padding: 6px 10px;
@@ -38,6 +42,22 @@
                             background-size: cover;
                             background-position: 50%;
                             background-color: #ddd;
+                        }
+
+                        .isHasData {
+                            background-color: red;
+                        }
+
+                        .isHasData:after,.isHas::after {
+                            content: ".";
+                            position: absolute;
+                            top: -44px;
+                            left: 46px;
+                            font-size: 60px;
+                            color: red;
+                        }
+                        .isHas{
+
                         }
 
                         .user {
@@ -139,7 +159,8 @@
                         min-height: 28px;
                         display: flex;
                         flex-direction: row-reverse;
-                        .send_time{
+
+                        .send_time {
                             display: block;
                         }
 

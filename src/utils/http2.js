@@ -45,19 +45,18 @@ axiosIns.interceptors.response.use(response => {
     //对响应数据做点处理
     if (response.data.code == 13004 || response.data.code == 401 || response.data.code == 13025) {
         console.log('接口中检测到token过期');
-        changeToke({ "refreshToken": userInfo.refreshToken, "userId": userInfo.userData.id }).then(res => {
+        changeToke({ "refreshToken": userInfo.refreshToken}).then(res => {
             console.log('更换token');
             if (!res.success) {//获取新的token失败，就跳转首页,并清除所有存入vux的信息
                 $store.commit('clearAll');
                 $router.push("/login");
                 return;
             }//获取新的token成功，就修改token
+            console.log('修改token成功');
             $store.commit('setUserToken', res.data);
             // 重新访问接口
             console.log(response);
             return axiosIns(response.config);
-            //resolve(response);
-            //return response;
         }).catch(err => {
             console.log('接口获取新token失败！');
             $store.commit('clearAll');

@@ -13,7 +13,10 @@
           ></div>
         </router-link>
         <p>
-          <i v-show="$store.state.userData.role == 'merchant'" class="el-icon-takeaway-box"></i
+          <i
+            v-show="$store.state.userData.role == 'merchant'"
+            class="el-icon-takeaway-box"
+          ></i
           >{{ $store.state.userData.nickName || "" }}
         </p>
       </div>
@@ -75,7 +78,6 @@ export default {
             this.$message.error("获取用户兼职历史失败，原因为：" + res.msg);
             return;
           }
-
           this.jobList = res.data;
         })
         .catch((err) => {
@@ -109,8 +111,8 @@ export default {
           background-color: #ddd;
         }
       }
-      .el-icon-takeaway-box{
-        padding-right:6px;
+      .el-icon-takeaway-box {
+        padding-right: 6px;
       }
       p {
         margin-top: 10px;
@@ -149,7 +151,14 @@ export default {
       color: @msg-color;
       margin-top: 20px;
     }
+    ul::-webkit-scrollbar {
+      width: 0;
+    }
     ul {
+      height: 354px;
+      overflow: auto;
+      -ms-overflow-style: none;
+      overflow: -moz-scrollbars-none;
       li {
         position: relative;
         margin: 20px 0;

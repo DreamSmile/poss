@@ -4,7 +4,7 @@
     <user-base-data></user-base-data>
     <div class="content">
       <el-tabs v-model="activeName">
-        <el-tab-pane :label="'所有(' + jobList.length + ')'" name="first"
+        <el-tab-pane :label="'所有(' + jobList.totalRows + ')'" name="first"
           ><div class="list_box">
             <el-input
               v-model="input"
@@ -101,7 +101,7 @@ export default {
     // 子组件返回的查询分页
     changePage(data) {
       if (data.type == "UserRelease") {
-        this.jobByPage(data.campus, data.keyword, data.page);
+        this.jobByPage(data.campus?data.campus:'', data.keyword?data.keyword:'', data.page);
       }
     },
     // 分页查询兼职

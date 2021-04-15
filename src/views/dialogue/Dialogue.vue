@@ -12,14 +12,21 @@
           </p>
           <div class="list">
             <div
-              class="list_box"
+              :class="[{ list_active: i == isActive }, 'list_box']"
               v-for="(item, i) in userList"
               :key="i"
-              @click="getHisByUserId(item, item.avatar ? item.avatar : imgSrc)"
+              @click="
+                getHisByUserId(
+                  item,
+                  item.avatar ? item.avatar : imgSrc,
+                  $event,
+                  i
+                )
+              "
             >
-              <!-- getHisByUserId(item.id, item.avatar ? item.avatar : imgSrc) -->
               <div
                 class="imgs"
+                :class="{ isHas: i == item.isHas }"
                 :style="{
                   backgroundImage:
                     'url(' + (item.avatar ? item.avatar : imgSrc) + ')',
@@ -38,7 +45,6 @@
         </div>
         <div class="dialog_box">
           <div class="box_data">
-            <!-- <el-button type="button" @click="testsend">店长发</el-button> -->
             <p class="job_master">
               {{ jobData.nickName || "" }}
               <span>{{ jobData.school || "未知" }}</span>
@@ -50,14 +56,14 @@
               >
             </p> -->
           </div>
-          <div class="box">
+          <div class="box" ref="box">
             <div
               :class="item.user == 'ours' ? 'box_right' : 'box_left'"
               v-for="(item, i) in dialogueList"
               :key="i"
             >
               <div
-                class="imgs"
+                :class="['imgs', { isHasData: item.isHas == 1 }]"
                 :style="{
                   backgroundImage:
                     'url(' +
@@ -73,10 +79,10 @@
           <div class="dialog_input">
             <el-button @click="sendMess">发送</el-button>
             <el-divider></el-divider>
-            <p class="icon">
+            <!-- <p class="icon">
               <img src="@/assets/imgs/face.png" />
               <img class="photo" src="@/assets/imgs/photo.png" />
-            </p>
+            </p> -->
             <div class="inp">
               <textarea v-model="mess"></textarea>
             </div>
@@ -87,6 +93,7 @@
   </div>
 </template>
 <script>
+// import {state} from 'vuex'
 import Top from "../../components/top.vue";
 import "./dialogue.less";
 export default {
@@ -94,19 +101,55 @@ export default {
   components: {
     Top,
   },
+  watch: {
+    "$store.state.diaData"(data) {
+      //监听聊天信息改变
+      if (this.$store.state.diaData.length < 1) {
+        //数据空一般是已经循环过清空了
+        return;
+      }
+
+      for (let index = 0; index < data.length; index++) {
+        // 页面上显示的刚好就是当先监听到的用户对话页面
+        if (data[index].fromUser == this.jobData.id) {
+          this.dialogueList.push({
+            user: "business",
+            content: data[index].content,
+            time: data[index].createTime,
+            imgSrc: this.dialogueList[0].imgSrc,
+            fromUser: data[index].fromUser,
+          });
+          this.$nextTick(() => {
+            let container = this.$refs.box;
+            container.scrollTop = container.scrollHeight;
+          });
+          continue; //跳出此次循环，不用判断是不是界面其他联系人
+        }
+        // 如果会话是其他用户发的，将用户列表时间变成红色
+        for (let i = 0; i < this.userList.length; i++) {
+          if (data[index].fromUser == this.userList[i].id) {
+            this.userList[i].isHas = 1;
+          }
+        }
+      }
+      // 循环生成完就清空
+      this.$store.commit("clearDia");
+    },
+  },
   methods: {
     // 获取聊天人员的列表
     getDialogueList() {
       this.$api
         .getdialogueList()
         .then((res) => {
-          console.log(res);
           if (!res.success) {
             this.$message.error("获取聊天联系人列表失败，原因为：" + res.msg);
             return;
           }
           for (let i = 0; i < res.data.length; i++) {
-            this.userList.push(res.data[i]);
+            let data = res.data[i];
+            data["isHas"] = -1;
+            this.userList.push(data);
           }
         })
         .catch((err) => {
@@ -115,15 +158,12 @@ export default {
     },
     //根据传入的路由id获得该工作信息,并且显示历史对话
     getjobData() {
-      if (this.$route.params.id && this.$route.params.id != "top") {
-        console.log("根据工作获取参数");
+      if (this.$route.params.id && this.$route.params.id != "topF") {
         this.$api
           .getJobData({
             pid: this.$route.params.id,
           })
           .then((res) => {
-            console.log("根据头部传入的信息，获取工作内容");
-            console.log(res);
             if (!res.success) {
               this.$message.error("获得工作信息失败，原因为：" + res.msg);
               return;
@@ -135,19 +175,27 @@ export default {
               school: res.data.campus,
               money: res.data.hourlyWage,
             };
-            this.userList.push({
-              id: res.data.publisher.id,
-              nickName: res.data.publisher.nickName,
-              avatar: res.data.publisher.avatar,
-              school: res.data.campus,
-              money: res.data.hourlyWage,
-            });
-            this.getHisByUserId(res.data.publisher.id);
+            for (let i = 0; i < this.userList.length; i++) {
+              if (res.data.publisher.id == this.userList[i].id) {
+                //判断出现在要交流的用户刚好在聊天人的列表
+                let item = {
+                  id: res.data.publisher.id,
+                  nickName: res.data.publisher.nickName,
+                  avatar: res.data.publisher.avatar,
+                  school: res.data.campus,
+                  money: res.data.hourlyWage,
+                  isHas: -1,
+                };
+                this.getHisByUserId(item, item.avatar, item, i);
+              }
+            }
           });
       }
     },
     // 根据用户id 显示对应的聊天记录,但传入的参数是所有参数，头像
-    getHisByUserId(item, imgurl) {
+    getHisByUserId(item, imgurl, el, index) {
+      this.isActive = index; //当前点击的列表背景颜色变
+      item.isHas = -1; //取消界面上的红点
       this.dialogueList = [];
       this.$api
         .getHisByUserId({
@@ -173,15 +221,21 @@ export default {
                 content: res.data[i].content,
                 time: res.data[i].createTime,
                 imgSrc: imgurl,
+                fromUser: res.data[i].fromUser,
               });
             } else {
               this.dialogueList.push({
                 user: "ours",
                 content: res.data[i].content,
                 time: res.data[i].createTime,
+                fromUser: res.data[i].fromUser,
               });
             }
           }
+          this.$nextTick(() => {
+            let container = this.$refs.box;
+            container.scrollTop = container.scrollHeight;
+          });
         })
         .catch((err) => {
           this.$message.error(err);
@@ -189,8 +243,10 @@ export default {
     },
     // 发送信息按钮
     sendMess() {
-      // console.log(this.$socket.default);
-      // return;
+      if (this.mess == "" || this.mess == null) {
+        this.$message.error("不允许发送空内容~");
+        return;
+      }
       this.dialogueList.push({
         user: "ours",
         content: this.mess,
@@ -201,13 +257,10 @@ export default {
         content: this.mess,
       });
       this.mess = "";
-    },
-    testsend() {
-      this.dialogueList.push({
-        user: "business",
-        content: this.mess,
+      this.$nextTick(() => {
+        let container = this.$refs.box;
+        container.scrollTop = container.scrollHeight;
       });
-      this.mess = "";
     },
   },
   data() {
@@ -226,11 +279,12 @@ export default {
         nickName: "",
         school: "",
       }, //右侧聊天需要的参数
+      isActive: -1,
     };
   },
   mounted() {
-    // this.getjobData(); //根据传入的路由id获得该工作信息
     this.getDialogueList(); //获取聊天的人的列表
+    this.getjobData(); //根据传入的路由id获得该工作信息
   },
 };
 </script>

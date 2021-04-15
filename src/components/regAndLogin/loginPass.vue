@@ -31,11 +31,10 @@
 export default {
   name: "loginPass",
   data() {
-    
     return {
       form: {
-        email: "15059857514",
-        pass: "meng1998",
+        email: "",
+        pass: "",
       },
       loading: false,
       rules: {
@@ -82,7 +81,6 @@ export default {
             .catch((err) => {
               this.isErr(err);
             });
-            
         }
       });
     },

@@ -1,5 +1,11 @@
 <template>
-  <div id="pushJob">
+  <div
+    id="pushJob"
+    v-loading="loading"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.0)"
+  >
     <top></top>
     <div class="content">
       <p class="content_title">发布信息</p>
@@ -139,6 +145,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       isNew: true,
       schoolList: [],
       jobInfo: {},
@@ -282,10 +289,10 @@ export default {
     // 取消发布
     reset() {
       console.log(this.$utils.returntimes(this.form.date));
-      // this.formData=new FormData();
     },
     // 发布兼职
     pushJob() {
+      this.loading = true;
       let jobId = this.$route.params.id;
       this.$refs.form.validate((valid) => {
         if (valid) {
@@ -313,6 +320,7 @@ export default {
       this.$api
         .pushJob(data)
         .then((res) => {
+          this.loading = false;
           if (!res.success) {
             this.$alert("发布兼职失败，原因为：" + res.msg);
             return;
@@ -326,6 +334,7 @@ export default {
           }, 2000);
         })
         .catch((err) => {
+          this.loading = false;
           this.$alert("兼职发布失败");
         });
     },
@@ -334,6 +343,7 @@ export default {
       this.$api
         .editJob(data)
         .then((res) => {
+          this.loading = false;
           if (!res.success) {
             this.$message.error("修改兼职失败，原因为：" + res.msg);
             return;
@@ -347,6 +357,7 @@ export default {
           }, 2000);
         })
         .catch((err) => {
+          this.loading = false;
           this.$message.error("兼职修改失败");
         });
     },
@@ -357,11 +368,13 @@ export default {
         cancelButtonText: "取消",
         type: "warning",
       }).then(() => {
+        this.loading = true;
         this.$api
           .ingJob({
             pid: this.$route.params.id,
           })
           .then((res) => {
+            this.loading = false;
             if (!res.success) {
               this.$message.error(
                 "兼职信息转为开始状态失败！原因为：" + res.msg
@@ -377,6 +390,7 @@ export default {
             }, 2000);
           })
           .catch((err) => {
+            this.loading = false;
             this.$message.error(err);
           });
       });
@@ -388,11 +402,13 @@ export default {
         cancelButtonText: "取消",
         type: "warning",
       }).then(() => {
+        this.loading = true;
         this.$api
           .overJob({
             pid: this.$route.params.id,
           })
           .then((res) => {
+            this.loading = false;
             if (!res.success) {
               this.$message.error(
                 "兼职信息转为结束状态失败！原因为：" + res.msg
@@ -408,6 +424,7 @@ export default {
             }, 2000);
           })
           .catch((err) => {
+            this.loading = false;
             this.$message.error(err);
           });
       });
@@ -419,11 +436,13 @@ export default {
         cancelButtonText: "取消",
         type: "warning",
       }).then(() => {
+        this.loading = true;
         this.$api
           .delJob({
             pid: this.$route.params.id,
           })
           .then((res) => {
+            this.loading = false;
             if (!res.success) {
               this.$message.error("兼职信息删除失败！原因为：" + res.msg);
               return;
@@ -437,6 +456,7 @@ export default {
             }, 2000);
           })
           .catch((err) => {
+            this.loading = false;
             this.$message.error(err);
           });
       });
@@ -452,7 +472,6 @@ export default {
     min-width: 800px;
     margin: 0 auto;
     margin-top: 80px;
-    background-color: #f6f6f8;
     min-height: calc(100vh - 50px);
     .content_title {
       font-size: 16px;

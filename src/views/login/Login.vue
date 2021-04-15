@@ -4,7 +4,7 @@
       <div class="content">
         <!-- 左边：固定 -->
         <div class="content_left">
-          <img src="@/assets/imgs/login/logo.png" />
+          <img src="@/assets/imgs/login/logo_blue.png" />
           <div class="left_box">
             <i class="el-icon-document"></i>
             <div>

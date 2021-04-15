@@ -66,7 +66,7 @@
           ></div>
           <div class="hr_data">
             <p class="hr_name">
-              {{ jobData.publisher.nickName || "招聘者" }}
+              {{ jobData.merchantinfo.realName || "招聘者" }}
             </p>
             <router-link
               :to="{
@@ -94,7 +94,7 @@
             <p class="title">负责人信息</p>
             <div class="box">
               <p class="list">
-                负责人：{{ jobData.publisher.nickName || "--" }}
+                负责人：{{ jobData.merchantinfo.realName || "--" }}
               </p>
               <p class="list">
                 负责人手机号：{{ jobData.publisher.phoneNumber || "--" }}
@@ -134,6 +134,7 @@
 <style scoped lang="less">
 </style>
 <script>
+// import {Base64} from '../../utils/base64Util'
 import ReportPush from "../../components/ReportPush.vue";
 import Top from "../../components/top.vue";
 import "./job.less";
@@ -228,30 +229,21 @@ export default {
     // 关闭举报界面
     handleClose() {
       this.reportType = null;
-      this.dialogVisible=false;
+      this.dialogVisible = false;
     },
     //接收子组件关闭页面
-    close(val){
-      if(val){
+    close(val) {
+      if (val) {
         this.handleClose();
       }
     },
     // 查看文件
     lookFile() {
       let url = this.jobData.attachment;
+      let deUrl=decodeURIComponent(url);
+      let Base64 = require('js-base64').Base64;
       window.open(
-        "http://yggdrasill.vip:8012/onlinePreview?url=" +
-          encodeURIComponent(
-            btoa(
-              encodeURIComponent(url).replace(
-                /%([0-9A-F]{2})/g,
-                function toSolidBytes(match, p1) {
-                  return String.fromCharCode("0x" + p1);
-                }
-              )
-            )
-          )
-      );
+        "http://www.yggdrasill.vip:8012/onlinePreview?url=" +encodeURIComponent(Base64.encode(deUrl)))
     },
   },
 };

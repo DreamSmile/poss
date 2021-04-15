@@ -98,7 +98,6 @@ export default {
                   message: "登录成功！即将为您跳转至首页",
                 });
                 this.$utils.setLocalToken("userToken", res.data.accessToken); //将token放入缓存
-                this.$store.commit("setUserToken", res.data.accessToken); //将token存到vuex
                 setTimeout(() => {
                   this.$router.push("/");
                 }, 2000);

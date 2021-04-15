@@ -69,6 +69,10 @@ export function getJobBySchool(data) {
     return $post(api + '/parttime/query/page', data);
 }
 
+// 获得参加的兼职分页
+export function getHisByPage(data){
+    return $post(api+'/user/join/his/query/page/',data);
+}
 
 
 

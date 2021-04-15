@@ -23,16 +23,10 @@
               <span class="work_data" v-if="jobList.type == 'join'">{{
                 $utils.returnData(item.createTime)
               }}</span>
-              <router-link
-                :to="{
-                  name: 'Dialogue',
-                  params: { id: item.id },
-                }"
-              >
-              
+              <span @click="checkId(item.publisherId,item.id)" class="dia">
                 <span class="work_say" v-if="jobList.type == 'home'">
                   <i class="el-icon-chat-dot-round"></i>立即沟通</span
-                ></router-link
+                ></span
               >
               <i
                 class="el-icon-delete out_job"
@@ -56,9 +50,14 @@
         </li>
       </ul>
     </div>
-    <!-- v-show="jobList.length > 9" -->
-    <div class="page" >
-      <el-pagination @current-change="currentChange" background :hide-on-single-page="true" layout="prev, pager, next" :total="jobList.totalRows">
+    <div class="page">
+      <el-pagination
+        @current-change="currentChange"
+        background
+        :hide-on-single-page="true"
+        layout="prev, pager, next"
+        :total="jobList.totalRows"
+      >
       </el-pagination>
     </div>
     <div class="noList" v-show="jobList.length < 1">
@@ -78,8 +77,7 @@ export default {
       default: () => [],
     },
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
     // 退出兼职
     outJob(satus, id) {
@@ -112,14 +110,28 @@ export default {
         .catch(() => {});
     },
     // 更换页码执行
-    currentChange(num){
-      this.$emit('changePage',{
-        type:this.$route.name,
-        page:num,
-        campus:this.jobList.campus,
-        keyword:this.jobList.keyword
-      })
-    }
+    currentChange(num) {
+      this.$emit("changePage", {
+        type: this.$route.name,
+        page: num,
+        campus: this.jobList.campus,
+        keyword: this.jobList.keyword,
+      });
+    },
+    checkId(userId,jobId) {
+      if (this.$store.state.userData == {}) {
+        this.$message.error("需要登录才能使用此功能哦~");
+        return;
+      }
+      if (userId == this.$store.state.userData.id) {
+        this.$message.error("不可以跟自己对话哦~");
+        return false;
+      }
+      this.$router.push({
+        name: "Dialogue",
+        params: { id: jobId },
+      });
+    },
   },
 };
 </script>
@@ -146,6 +158,9 @@ export default {
         }
         .list_base {
           display: inline-block;
+          .dia{
+            cursor: pointer;
+          }
           .work_name,
           .work_place,
           .work_say {
@@ -178,6 +193,7 @@ export default {
           top: 5px;
           color: #f95500;
           font-size: 20px;
+          cursor: pointer;
         }
         .list_secondary {
           margin-top: 4px;

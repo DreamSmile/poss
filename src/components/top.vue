@@ -28,20 +28,31 @@
             <router-link to="/login">登录</router-link>
           </button>
           <!-- 已登录区 -->
-          <span v-if="$store.state.accessToken"
-            ><router-link   :to="{
-                  name: 'Dialogue',
-                  params: { id: 'topF' },
-                }">聊天</router-link></span
+          <span
+            v-if="$store.state.accessToken"
+            :class="$store.state.diaData.length > 0 ? 'hasDia' : ''"
+            ><router-link
+              :to="{
+                name: 'Dialogue',
+                params: { id: 'topF' },
+              }"
+              >聊天</router-link
+            ></span
           >
-          
-          <span v-if="$store.state.accessToken">{{ $store.state.userData.nickName || '' }}</span>
+
+          <span v-if="$store.state.accessToken">{{
+            $store.state.userData.nickName || ""
+          }}</span>
           <router-link to="/userData">
-            <el-dropdown  v-if="$store.state.accessToken">
+            <el-dropdown v-if="$store.state.accessToken">
               <div
                 v-if="$store.state.accessToken"
                 class="imgs"
-                :style="{ backgroundImage: 'url(' +this.$store.state.userData.avatar || require('@/assets/imgs/user.jpg') + ')' }"
+                :style="{
+                  backgroundImage:
+                    'url(' + this.$store.state.userData.avatar ||
+                    require('@/assets/imgs/user.jpg') + ')',
+                }"
               ></div>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="dialogVisible = true"
@@ -190,7 +201,7 @@ export default {
     },
     // 退出
     signOut() {
-       this.$confirm("是否退出当前账号?", "提示", {
+      this.$confirm("是否退出当前账号?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
@@ -205,6 +216,7 @@ export default {
               }
               this.$store.commit("clearAll");
               this.$router.push("/");
+              this.$store.commit('editWebsocket',false);
             })
             .catch((err) => {
               console.log(err);
@@ -213,9 +225,7 @@ export default {
         .catch((err) => {});
     },
     // 注销用户
-    logout() {
-     
-    },
+    logout() {},
   },
 };
 </script>
@@ -295,6 +305,14 @@ export default {
       top: 0;
       .btns {
         display: inline-block;
+        .hasDia::after {
+          content: ".";
+          position: absolute;
+          left: 54px;
+          top: -26px;
+          font-size: 60px;
+          color: red;
+        }
         button {
           margin: 0 13px;
           width: 54px;

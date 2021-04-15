@@ -38,7 +38,7 @@
               ><workList :jobList="jobList" @changePage="changePage"
             /></el-tab-pane>
             <el-tab-pane label="最新职位" name="second"
-              ><workList :jobList="jobList"
+              ><workList :jobList="jobListHot" @changePage="changePageHot"
             /></el-tab-pane>
           </el-tabs>
         </div>
@@ -67,6 +67,7 @@ export default {
       select: "",
       activeName: "first",
       jobList: [], //传给子组件的搜索工作列表
+      jobListHot: [], //推荐
     };
   },
   components: {
@@ -78,7 +79,8 @@ export default {
   mounted() {
     this.getUserData();
     this.getSchoolList();
-    this.jobListAxios(this.select, this.jobName);
+    this.jobListAxios(this.select, this.jobName, "asc");
+    this.jobListAxios(this.select, this.jobName, "desc");
   },
   methods: {
     // 获取用户信息
@@ -117,8 +119,7 @@ export default {
     queryJob() {
       if (!this.select || !this.jobName) {
         this.jobListAxios(this.select, this.jobName);
-      }
-      else{
+      } else {
         this.$message({
           message: "请选择学校名称或兼职关键字再搜索！",
           type: "warning",
@@ -127,20 +128,29 @@ export default {
       }
     },
     // 子组件更换页码，先判断是不是首页的子组件
-    changePage(data){
-      if(data.type=="Home"){
-        this.jobListAxios(data.campus,data.keyword,data.page);
+    changePage(data) {
+      if (data.type == "Home") {
+        this.jobListAxios(data.campus, data.keyword, "asc", data.page);
       }
     },
-// 获得分页兼职列表
-    jobListAxios(campus, keyword,page) {
-      console.log(page);
+    // 热门
+    changePageHot(data) {
+      if (data.type == "Home") {
+        this.jobListAxios(data.campus, data.keyword, "desc", data.page);
+      }
+    },
+    // 获得分页兼职列表
+    jobListAxios(campus, keyword, direction, page) {
       this.$api
         .getJobBySchool({
           campus: campus,
           keyword: keyword,
           paginationInfo: {
-            pageNumber: page?page:1,
+            order: {
+              direction: direction,
+              property: "campus",
+            },
+            pageNumber: page ? page : 1,
             pageSize: 10,
           },
         })
@@ -150,8 +160,23 @@ export default {
             this.$message.error("获取兼职列表失败！原因为：" + res.msg);
             return false;
           }
-          this.jobList = res.data.content;
-          Object.assign(this.jobList, { type: "home" ,campus:campus,keyword:keyword,totalRows:res.data.totalRows});
+          if (direction == "asc") {
+            this.jobList = res.data.content;
+            Object.assign(this.jobList, {
+              type: "home",
+              campus: campus,
+              keyword: keyword,
+              totalRows: res.data.totalRows,
+            });
+          } else {
+            this.jobListHot = res.data.content;
+            Object.assign(this.jobListHot, {
+              type: "home",
+              campus: campus,
+              keyword: keyword,
+              totalRows: res.data.totalRows,
+            });
+          }
         })
         .catch((err) => {
           this.$message.error(err);
