@@ -124,7 +124,8 @@ router.beforeEach((to, form, next) => {
   let userInfo = $store.state;//所有的用户信息，包括token
 
   // 检测如果是没有token智能去注册首页登录
-  if (to.name != "Login" && to.name != "Register" && to.name!="Home" && userInfo.accessToken=="") {
+  if (to.name != "Login" && to.name != "Register" && to.name != "Home" && userInfo.accessToken == "") {
+    this.$socket.default.onClose();
     next({
       path: "/login",
       query: { msg: encodeURIComponent('登录信息失效，请重新登录！') }

@@ -4,12 +4,8 @@
     <div class="content">
       <div class="content_flex">
         <div class="user_list">
-          <p v-show="userList.length > 0">
-            30天内联系人{{ this.$store.state.userData.id }}
-          </p>
-          <p v-show="userList.length == 0">
-            近30天都没有联系人哦~{{ this.$store.state.userData.id }}
-          </p>
+          <p v-show="userList.length > 0">30天内联系人</p>
+          <p v-show="userList.length == 0">近30天都没有联系人哦~</p>
           <div class="list">
             <div
               :class="[{ list_active: i == isActive }, 'list_box']"
@@ -36,10 +32,17 @@
                 <p class="user_name">{{ item.nickName }}</p>
                 <p class="user_data">
                   {{ item.campus || "未知"
-                  }}<el-divider direction="vertical"></el-divider>招聘者
+                  }}<el-divider direction="vertical"></el-divider
+                  >{{
+                    item.role == "admin"
+                      ? "管理员"
+                      : item.role == "merchant"
+                      ? "招聘者"
+                      : "求职者"
+                  }}
                 </p>
               </div>
-              <p class="time">11:20</p>
+              <!-- <p class="time">11:20</p> -->
             </div>
           </div>
         </div>
@@ -103,12 +106,23 @@ export default {
   },
   watch: {
     "$store.state.diaData"(data) {
+      if(this.$route.name=="Dialogue"){
+      this.setDia(data);
+      }
+    },
+  },
+  methods: {
+    // 取出state中的数据，取消top上的红点
+    getStateData() {
+      this.setDia(this.$store.state.diaData);
+    },
+    // 监听到的返回对话内容
+    setDia(data) {
       //监听聊天信息改变
       if (this.$store.state.diaData.length < 1) {
         //数据空一般是已经循环过清空了
         return;
       }
-
       for (let index = 0; index < data.length; index++) {
         // 页面上显示的刚好就是当先监听到的用户对话页面
         if (data[index].fromUser == this.jobData.id) {
@@ -116,7 +130,7 @@ export default {
             user: "business",
             content: data[index].content,
             time: data[index].createTime,
-            imgSrc: this.dialogueList[0].imgSrc,
+            imgSrc: this.jobData.avatar,
             fromUser: data[index].fromUser,
           });
           this.$nextTick(() => {
@@ -135,8 +149,6 @@ export default {
       // 循环生成完就清空
       this.$store.commit("clearDia");
     },
-  },
-  methods: {
     // 获取聊天人员的列表
     getDialogueList() {
       this.$api
@@ -151,6 +163,7 @@ export default {
             data["isHas"] = -1;
             this.userList.push(data);
           }
+          this.getStateData(); //state中有存储信息，这步模拟点击进来top上的红点取消
         })
         .catch((err) => {
           this.$message.error(err);
@@ -211,6 +224,7 @@ export default {
             id: item.id,
             nickName: item.nickName,
             school: item.campus,
+            avatar: item.avatar,
           };
           // 生成对话
           for (let i = 0; i < res.data.length; i++) {
@@ -245,6 +259,11 @@ export default {
     sendMess() {
       if (this.mess == "" || this.mess == null) {
         this.$message.error("不允许发送空内容~");
+        return;
+      }
+      if (this.jobData.id == undefined) {
+        this.$message.error("请选择对话人员再发信息哦~");
+        this.mess="";
         return;
       }
       this.dialogueList.push({
@@ -285,6 +304,7 @@ export default {
   mounted() {
     this.getDialogueList(); //获取聊天的人的列表
     this.getjobData(); //根据传入的路由id获得该工作信息
+    this.$socket.default.init();
   },
 };
 </script>

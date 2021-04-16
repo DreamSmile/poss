@@ -43,8 +43,11 @@
     </div>
     <div class="work_list">
       <p class="list_title">正在进行中的兼职列表</p>
+      <div v-show="jobList.length < 1" class="no">
+        暂时没有数据，快去兼职吧~
+      </div>
       <ul>
-        <li v-for="(item, i) in jobList" :key="i">
+        <li v-for="(item, i) in jobList" :key="i" v-show="item.status == 2">
           {{ i + 1 }}、
           <el-tooltip :content="item.title" placement="top">
             <span class="list_data">{{ item.title }}</span>
@@ -52,9 +55,6 @@
           <span class="list_time">{{ $utils.returnData(item.startTime) }}</span>
         </li>
       </ul>
-      <div v-show="jobList.length < 1" class="no">
-        暂时没有数据，快去兼职吧~
-      </div>
     </div>
   </div>
 </template>

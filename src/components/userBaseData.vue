@@ -19,14 +19,20 @@
       ></i>
       <button
         type="button"
-        @click="dialogVisible = true"
-        v-if="!this.$store.state.userData.applying&& $store.state.userData.role != 'merchant'"
+        @click="isGobusiness"
+        v-if="
+          !this.$store.state.userData.applying &&
+          $store.state.userData.role != 'merchant'
+        "
       >
         成为商家
       </button>
       <button
         type="button"
-        v-if="this.$store.state.userData.applying && $store.state.userData.role != 'merchant'"
+        v-if="
+          this.$store.state.userData.applying &&
+          $store.state.userData.role != 'merchant'
+        "
       >
         申请商家中
       </button>
@@ -35,7 +41,7 @@
         <p class="box_number">{{ $store.state.userData.joinCount || 0 }}</p>
         <p class="box_msg">参加过的兼职</p>
       </div>
-      
+
       <div class="box_second" v-if="$store.state.userData.role == 'merchant'">
         <p class="box_number">{{ $store.state.userData.publishCount || 0 }}</p>
         <p class="box_msg">发布过的兼职</p>
@@ -67,11 +73,8 @@ export default {
       business: false,
     };
   },
-  mounted() {
-    this.isGobusiness();
-  },
+  mounted() {},
   methods: {
-
     // 接收子组件的值，将申请商家按钮变为提示正在申请
     isBusiness(data) {
       this.business = data;
@@ -83,9 +86,10 @@ export default {
         .isGobusiness()
         .then((res) => {
           if (!res.success) {
-            console.log( "查看是否有资格申请商家失败，原因为：" + res.msg)
+            this.$message.error("申请成为商家失败原因为：" + res.msg);
             return;
           }
+          this.dialogVisible = true;
         })
         .catch((err) => {
           this.$message.error(err);

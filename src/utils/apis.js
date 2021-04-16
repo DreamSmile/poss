@@ -129,6 +129,10 @@ export function editBindPhone(data){
     return $post(api+'/user/reset/phone',data);
 }
 
+// 分页查看加入的兼职历史
+export function getAddHisByPage(data){
+    return $post(api+'/user/join/his/query/page/',data);
+}
 // 查看是否有资格成为商家
 export function isGobusiness(){
     return $get(api+'/user/apply/prepare');
@@ -141,9 +145,17 @@ export function toBusiness(data) {
 
 
 /*商家功能*/
-// 获取发布过的兼职列表
+// 获取发布过的兼职列表,所有不分页
 export function getPushJobHis(data) {
-    return $post(api + '/merchant/pblish/already/page', data);
+    return $get(api + '/merchant/pblish/already', data);
+}
+// 获取分页发布的兼职列表
+export function getPushByPage(data){
+    return $post(api+'/merchant/pblish/already/page',data);
+}
+// 删除工作申请工作的某个学生
+export function selUserById(data){
+    return $put(api+'/merchant/pt/user/remove',data);
 }
 // 商家发布兼职
 export function pushJob(data) {

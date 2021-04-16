@@ -23,7 +23,7 @@
               <span class="work_data" v-if="jobList.type == 'join'">{{
                 $utils.returnData(item.createTime)
               }}</span>
-              <span @click="checkId(item.publisherId,item.id)" class="dia">
+              <span @click="checkId(item.publisherId, item.id)" class="dia">
                 <span class="work_say" v-if="jobList.type == 'home'">
                   <i class="el-icon-chat-dot-round"></i>立即沟通</span
                 ></span
@@ -33,6 +33,25 @@
                 v-if="jobList.type == 'join'"
                 @click="outJob(item.status, item.id)"
               ></i>
+              <div class="out_job" v-if="jobList.type == 'business'">
+                <div
+                  class="face"
+                  v-for="(face, i) in item.joinUsers"
+                  :key="i"
+                  :style="{
+                    backgroundImage:
+                      'url(' + face.avatar ||
+                      require('@/assets/imgs/user.jpg') + ')',
+                  }"
+                >
+                  <div
+                    class="img_hover"
+                    @click="delImg(index, i, item.id, face.id)"
+                  >
+                    <i class="el-icon-close"></i>
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="list_secondary">
               <span class="work_money">{{ item.hourlyWage }}/小时</span>
@@ -118,7 +137,7 @@ export default {
         keyword: this.jobList.keyword,
       });
     },
-    checkId(userId,jobId) {
+    checkId(userId, jobId) {
       if (this.$store.state.userData == {}) {
         this.$message.error("需要登录才能使用此功能哦~");
         return;
@@ -131,6 +150,34 @@ export default {
         name: "Dialogue",
         params: { id: jobId },
       });
+    },
+    // 删除兼职工作中的人呢
+    delImg(index, i, pid, userId) {
+      this.$confirm("是否取消该学生兼职申请", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+          this.$api
+            .selUserById({
+              pid: pid,
+              userId: userId,
+            })
+            .then((res) => {
+              if (!res.success) {
+                this.$message.error(res.msg);
+                return;
+              }
+              this.jobList[index].joinUsers.splice(i, 1);
+              this.$message({
+                message: "移除成功！",
+                type: "success",
+              });
+            }).catch(err=>{
+              this.$message.error(err);
+            });
+        })
+        .catch(() => {});
     },
   },
 };
@@ -158,7 +205,7 @@ export default {
         }
         .list_base {
           display: inline-block;
-          .dia{
+          .dia {
             cursor: pointer;
           }
           .work_name,
@@ -194,6 +241,34 @@ export default {
           color: #f95500;
           font-size: 20px;
           cursor: pointer;
+          .face {
+            width: 22px;
+            height: 22px;
+            overflow: hidden;
+            display: inline-block;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: 50%;
+            background-color: #ddd;
+            .img_hover {
+              background-color: rgba(0, 0, 0, 0.3);
+              color: #fff;
+              height: 100%;
+              width: 100%;
+              display: none;
+              text-align: center;
+
+              .el-icon-close {
+                font-size: 24px;
+                color: #fff;
+              }
+            }
+          }
+          .face:hover {
+            .img_hover {
+              display: block;
+            }
+          }
         }
         .list_secondary {
           margin-top: 4px;

@@ -3,7 +3,7 @@
     <top message="绑定信息"></top>
     <!-- 主要修改区 -->
     <div class="content">
-      <p class="content_title">poss直聘通行证</p>
+      <p class="content_title">兼职无忧通行证</p>
       <div class="main">
         <hr />
         <el-tabs v-model="activeName" stretch @tab-click="handleClick">
@@ -40,7 +40,11 @@
                   </el-input></el-form-item
                 ></el-form
               >
-              <el-button class="sub" type="primary" @click="upPhone"
+              <el-button
+                class="sub"
+                type="primary"
+                @click="upPhone"
+                :disabled="hasPhone"
                 >提交</el-button
               >
             </div></el-tab-pane
@@ -77,7 +81,11 @@
                   </el-input></el-form-item
                 >
               </el-form>
-              <el-button class="sub" type="primary" @click="upMail"
+              <el-button
+                class="sub"
+                type="primary"
+                @click="upMail"
+                :disabled="hasMail"
                 >提交</el-button
               >
             </div></el-tab-pane
@@ -104,6 +112,8 @@ export default {
         select: "+86",
         code: "",
       },
+      hasPhone: this.$store.state.userData.phoneNumber == null ? false : true,
+      hasMail: this.$store.state.userData.email == null ? false : true,
       formMail: {
         mailNew: "",
         codeM: "",
@@ -140,11 +150,25 @@ export default {
     },
     // 点击tab弹出提示，已经绑定过邮箱是否重新绑定
     handleClick(tab, event) {
-      // console.log(tab);
-      // console.log(event);
+      if (this.activeName == "first" && this.hasPhone) {
+        //手机编辑
+        this.$message({
+          message: "您已绑定手机号，需要换绑请使用修改手机号功能！",
+          type: "warning",
+        });
+      }
+      if (this.activeName == "second" && this.hasMail) {
+        this.$message({
+          message: "您已绑定邮箱，需要换绑请使用修改手机号功能！",
+          type: "warning",
+        });
+      }
     },
     // 发送手机验证码
     sendCode() {
+      if (this.hasPhone) {
+        return;
+      }
       if (
         !/^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/.test(this.formPhone.phoneNew)
       ) {
@@ -172,6 +196,9 @@ export default {
     },
     // 发送邮箱验证码
     sendCodeM() {
+      if (this.hasMail) {
+        return;
+      }
       if (
         !/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(
           this.formMail.MailNew

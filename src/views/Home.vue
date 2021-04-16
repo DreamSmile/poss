@@ -34,11 +34,11 @@
           </div>
           <!-- 左边工作列表 -->
           <el-tabs v-model="activeName">
-            <el-tab-pane label="推荐职位" name="first"
-              ><workList :jobList="jobList" @changePage="changePage"
-            /></el-tab-pane>
             <el-tab-pane label="最新职位" name="second"
               ><workList :jobList="jobListHot" @changePage="changePageHot"
+            /></el-tab-pane>
+            <el-tab-pane label="推荐职位" name="first"
+              ><workList :jobList="jobList" @changePage="changePage"
             /></el-tab-pane>
           </el-tabs>
         </div>
@@ -79,8 +79,8 @@ export default {
   mounted() {
     this.getUserData();
     this.getSchoolList();
-    this.jobListAxios(this.select, this.jobName, "asc");
-    this.jobListAxios(this.select, this.jobName, "desc");
+    this.jobListAxios(this.select, this.jobName, "participantNumber");
+    this.jobListAxios(this.select, this.jobName, "createTime");
   },
   methods: {
     // 获取用户信息
@@ -94,6 +94,7 @@ export default {
           }
           // 已经获取到了用户信息
           this.$store.dispatch("setUserAysc", res.data);
+          this.$socket.default.init(); //开启websocket
         })
         .catch((err) => {
           this.$message.error("获取登录信息失败，请登录！");
@@ -117,38 +118,43 @@ export default {
     },
     // 搜索工作
     queryJob() {
-      if (!this.select || !this.jobName) {
-        this.jobListAxios(this.select, this.jobName);
+      if (this.select != "" || this.jobName != "") {
+        this.jobListAxios(this.select, this.jobName, "participantNumber");
+        this.jobListAxios(this.select, this.jobName, "createTime");
       } else {
         this.$message({
           message: "请选择学校名称或兼职关键字再搜索！",
           type: "warning",
         });
-        return false;
       }
     },
     // 子组件更换页码，先判断是不是首页的子组件
     changePage(data) {
       if (data.type == "Home") {
-        this.jobListAxios(data.campus, data.keyword, "asc", data.page);
+        this.jobListAxios(
+          data.campus,
+          data.keyword,
+          "participantNumber",
+          data.page
+        );
       }
     },
     // 热门
     changePageHot(data) {
       if (data.type == "Home") {
-        this.jobListAxios(data.campus, data.keyword, "desc", data.page);
+        this.jobListAxios(data.campus, data.keyword, "createTime", data.page);
       }
     },
     // 获得分页兼职列表
-    jobListAxios(campus, keyword, direction, page) {
+    jobListAxios(campus, keyword, property, page) {
       this.$api
         .getJobBySchool({
           campus: campus,
           keyword: keyword,
           paginationInfo: {
             order: {
-              direction: direction,
-              property: "campus",
+              direction: "desc",
+              property: property,
             },
             pageNumber: page ? page : 1,
             pageSize: 10,
@@ -160,7 +166,7 @@ export default {
             this.$message.error("获取兼职列表失败！原因为：" + res.msg);
             return false;
           }
-          if (direction == "asc") {
+          if (property == "participantNumber") {
             this.jobList = res.data.content;
             Object.assign(this.jobList, {
               type: "home",

@@ -39,11 +39,10 @@
               >聊天</router-link
             ></span
           >
-
+          <router-link to="/userData">
           <span v-if="$store.state.accessToken">{{
             $store.state.userData.nickName || ""
           }}</span>
-          <router-link to="/userData">
             <el-dropdown v-if="$store.state.accessToken">
               <div
                 v-if="$store.state.accessToken"
@@ -211,12 +210,12 @@ export default {
             .logout()
             .then((res) => {
               if (!res.success) {
-                console.log("退出账号失败，原因为：" + res.msg);
+                $alert("退出账号失败，原因为：" + res.msg);
                 return;
               }
               this.$store.commit("clearAll");
               this.$router.push("/");
-              this.$store.commit('editWebsocket',false);
+              this.$socket.default.onClose();
             })
             .catch((err) => {
               console.log(err);

@@ -19,13 +19,13 @@
             ></work-list></div
         ></el-tab-pane>
         <el-tab-pane :label="'未开始(' + jobNo.length + ')'" name="second"
-          ><work-list :jobList="jobNo"></work-list
+          ><work-list :jobList="jobNo" @changePage="changePage"></work-list
         ></el-tab-pane>
         <el-tab-pane :label="'已结束(' + jobOver.length + ')'" name="third"
-          ><work-list :jobList="jobOver"></work-list
+          ><work-list :jobList="jobOver" @changePage="changePage"></work-list
         ></el-tab-pane>
         <el-tab-pane :label="'进行中(' + jobIng.length + ')'" name="fourth"
-          ><work-list :jobList="jobIng"></work-list
+          ><work-list :jobList="jobIng" @changePage="changePage"></work-list
         ></el-tab-pane>
       </el-tabs>
     </div>
@@ -52,13 +52,17 @@ export default {
   },
   mounted() {
     this.setData();
+    this.setOtherPage();
   },
   methods: {
     setData() {
       this.$api
-        .getPushJobHis({
-          pageNumber: 1,
-          pageSize: 10,
+        .getPushByPage({
+          keyword: "",
+          paginationInfo: {
+            pageNumber: 1,
+            pageSize: 10,
+          },
         })
         .then((res) => {
           console.log(res);
@@ -73,42 +77,66 @@ export default {
             totalPages: res.data.totalPages,
             totalRows: res.data.totalRows,
           });
-          for (let i = 0; i < res.data.content.length; i++) {
-            switch (res.data.content[i].status) {
+        })
+        .catch((err) => {
+          this.$message.err(err);
+        });
+    },
+    setOtherPage() {
+      this.$api
+        .getPushJobHis()
+        .then((res) => {
+          console.log(res);
+          if (!res.success) {
+            this.$message.error(res.msg);
+            return;
+          }
+          for (let i = 0; i < res.data.length; i++) {
+            switch (res.data[i].status) {
               case 0:
-                this.jobOver.push(res.data.content[i]);
-                Object.assign(this.jobOver, { type: "business" });
+                this.jobOver.push(res.data[i]);
+                Object.assign(this.jobOver, {
+                  type: "business",
+                });
+                break;
               case 1:
-                this.jobNo.push(res.data.content[i]);
-                Object.assign(this.jobNo, { type: "business" });
+                this.jobNo.push(res.data[i]);
+                Object.assign(this.jobNo, {
+                  type: "business",
+                });
                 break;
               case 2:
-                this.jobIng.push(res.data.content[i]);
-                Object.assign(this.jobIng, { type: "business" });
+                this.jobIng.push(res.data[i]);
+                Object.assign(this.jobIng, {
+                  type: "business",
+                });
+                break;
               default:
                 break;
             }
           }
         })
         .catch((err) => {
-          this.$message.err(err);
+          this.$message.error(err);
         });
     },
     // 搜索框查询
     selJob() {
-      this.jobByPage("", this.input, 1);
+      this.jobByPage(this.input, 1);
     },
     // 子组件返回的查询分页
     changePage(data) {
       if (data.type == "UserRelease") {
-        this.jobByPage(data.campus?data.campus:'', data.keyword?data.keyword:'', data.page);
+        this.jobByPage(
+          data.keyword == "undefined" ? data.keyword : "",
+          data.page
+        );
       }
     },
     // 分页查询兼职
-    jobByPage(campus, keyword, page) {
+    jobByPage(keyword, page) {
       this.$api
-        .getJobBySchool({
-          campus: campus,
+        .getPushByPage({
           keyword: keyword,
           paginationInfo: {
             pageNumber: page ? page : 1,
@@ -116,13 +144,16 @@ export default {
           },
         })
         .then((res) => {
-          console.log(res);
           if (!res.success) {
             this.$message.error("搜索兼职失败！原因为：" + res.msg);
             return false;
           }
           this.jobList = res.data.content;
-          Object.assign(this.jobList, { type: "business", role: "merchant",campus:campus,keyword:keyword,totalRows:res.data.totalRows });
+          Object.assign(this.jobList, {
+            type: "business",
+            role: "merchant",
+            totalRows: res.data.totalRows,
+          });
         })
         .catch((err) => {
           this.$message.error(err);

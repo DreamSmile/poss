@@ -2,7 +2,14 @@
   <div id="userEdit">
     <top message="修改信息"></top>
     <div class="content">
-      <div class="imgs" :style="{ backgroundImage: 'url(' +this.$store.state.userData.avatar || require('@/assets/imgs/user.jpg') + ')' }">
+      <div
+        class="imgs"
+        :style="{
+          backgroundImage:
+            'url(' + this.$store.state.userData.avatar ||
+            require('@/assets/imgs/user.jpg') + ')',
+        }"
+      >
         <el-upload
           class="avatar-uploader"
           action="#"
@@ -41,7 +48,7 @@
             ><router-link v-if="!form.phone" to="/mailPhoneConnect/phone"
               >去绑定</router-link
             >
-            
+
             <router-link v-else to="/MailPhoneEdit/phone">修改</router-link>
           </el-form-item>
           <el-form-item label="个性签名">
@@ -88,7 +95,6 @@ export default {
   components: {
     Top,
   },
-  inject: ["reload"],
   data() {
     return {
       imgSrc: require("@/assets/imgs/user.jpg"),
@@ -215,15 +221,30 @@ export default {
             return;
           }
           this.$message({
-            message: "修改头像成功！即将跳入用户基本信息页",
+            message: "修改头像成功！",
             type: "success",
           });
-           setTimeout(() => {
-            this.$router.push("/userBase");
-          }, 2000);
+          this.$api
+            .getUserData()
+            .then((res) => {
+              if (!res.success) {
+                this.$store.commit("clearAll");
+                return;
+              }
+              console.log("首页获取用户信息");
+              // 已经获取到了用户信息
+              this.$store.dispatch("setUserAysc", res.data);
+            })
+            .catch((err) => {
+              this.$message.error("获取登录信息失败，请登录！");
+              this.$store.commit("clearAll");
+            });
+          // setTimeout(() => {
+          //   this.$router.push("/userBase");
+          // }, 2000);
         })
         .catch((err) => {
-          this.$message.error("上传头像错误！");
+          this.$message.error(err);
         });
       return false;
     },

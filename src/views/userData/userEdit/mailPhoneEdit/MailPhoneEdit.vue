@@ -3,10 +3,10 @@
     <top message="修改信息"></top>
     <!-- 主要修改区 -->
     <div class="content">
-      <p class="content_title">poss直聘通行证</p>
+      <p class="content_title">兼职无忧通行证</p>
       <div class="main">
         <hr />
-        <el-tabs v-model="activeName" stretch>
+        <el-tabs v-model="activeName" stretch @tab-click="handleClick">
           <el-tab-pane label="修改手机号" name="first"
             ><div class="forms">
               <el-form
@@ -18,14 +18,9 @@
                 <el-input
                   style="margin-top: 16px"
                   v-model="formPhone.phoneOld"
+                  :disabled="true"
                   placeholder="原手机号"
                 ></el-input>
-                <el-input
-                  placeholder="新手机号"
-                  v-model="formPhone.phoneNew"
-                  style="margin-top: 20px"
-                >
-                </el-input>
                 <el-input
                   placeholder="请输入验证码"
                   v-model="formPhone.code"
@@ -33,7 +28,11 @@
                   style="margin-top: 20px"
                 >
                   <span slot="prepend">验证码</span>
-                  <span v-show="!times" slot="append" class="send_ode" @click="sendCodes"
+                  <span
+                    v-show="!times"
+                    slot="append"
+                    class="send_ode"
+                    @click="sendCodes"
                     >发送验证码</span
                   >
                   <span v-show="times" slot="append" class="send_ode"
@@ -41,7 +40,11 @@
                   >
                 </el-input></el-form
               >
-              <el-button class="sub" type="primary" @click="editPhone"
+              <el-button
+                class="sub"
+                type="primary"
+                :disabled="hasph"
+                @click="editPhone"
                 >提交</el-button
               >
             </div></el-tab-pane
@@ -57,8 +60,9 @@
               >
                 <el-input
                   style="margin-top: 16px"
-                  v-model="formMail.MailNew"
-                  placeholder="新邮箱"
+                  v-model="formMail.mailOld"
+                  placeholder="旧邮箱"
+                  :disabled="true"
                 ></el-input>
 
                 <el-input
@@ -101,14 +105,15 @@ export default {
     return {
       activeName: "first",
       formPhone: {
-        phoneOld: "",
-        phoneNew: "",
+        phoneOld: this.$store.state.userData.phoneNumber,
         code: "",
       },
+      hasph: false,
       formMail: {
-        mailNew: "",
+        mailOld: this.$store.state.userData.email,
         codeM: "",
       },
+      hasma: false,
       times: null,
       timesM: null,
     };
@@ -122,25 +127,37 @@ export default {
         ? (this.activeName = "first")
         : (this.activeName = "second");
     },
+    // 点击tab弹出提示，已经绑定过邮箱是否重新绑定
+    handleClick(tab, event) {
+      let hasPhone =
+        this.$store.state.userData.phoneNumber == null ? false : true;
+      let hasMail = this.$store.state.userData.email == null ? false : true;
+      if (this.activeName == "first" && !hasPhone) {
+        //手机编辑
+        this.$message({
+          message: "您还未绑定手机号，不可以修改哦！",
+          type: "warning",
+        });
+        this.hasph = true;
+      }
+      if (this.activeName == "second" && !hasMail) {
+        this.$message({
+          message: "您还未绑定邮箱号，不可以修改哦！",
+          type: "warning",
+        });
+        this.hasma = true;
+      }
+    },
     // 发送邮箱验证码
     senCodeByMail() {
-      if (
-        !/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(
-          this.formMail.MailNew
-        )
-      ) {
-        this.$message.error("请输入正确的邮箱！");
-        return;
-      }
       let num = 60;
       let interval = setInterval(() => {
         this.timesM = num > 0 ? num-- : clearInterval(interval);
       }, 1000);
-
       this.$api
         .getCodeByMail({
           operationType: "restEmail",
-          email: this.formMail.MailNew,
+          email: this.formMail.mailOld,
         })
         .then((res) => {
           if (!res.success) {
@@ -154,14 +171,6 @@ export default {
     },
     // 确定修改邮箱，修改后再去绑定邮箱
     editMail() {
-      if (
-        !/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(
-          this.formMail.MailNew
-        )
-      ) {
-        this.$message.error("请输入正确的邮箱！");
-        return;
-      }
       if (!this.formMail.codeM) {
         this.$message.error("请输入验证码！");
         return;
@@ -169,36 +178,21 @@ export default {
       this.$api
         .editbindMail({
           verifyCode: this.formMail.codeM,
-          email: this.formMail.MailNew,
+          email: this.formMail.mailOld,
         })
         .then((res) => {
           if (!res.success) {
             this.$alert("修改邮箱失败，原因为：" + res.msg);
             return;
           }
+          this.$message({
+            message: "即将转入绑定邮箱界面，请绑定新邮箱！",
+            type: "success",
+          });
           // 修改邮箱成功，再去绑定邮箱
-          this.$api
-            .bindMail({
-              email: this.formMail.MailNew,
-              verifyCode: this.formMail.codeM,
-            })
-            .then((res) => {
-              if (!res.success) {
-                this.$alert("重新绑定邮箱失败！原因为：" + res.msg);
-                return;
-              }
-              this.$message({
-                message: "重新绑定邮箱成功！将为您跳转至上一界面！",
-                type: "success",
-              });
-
-              setTimeout(() => {
-                this.$router.push("/userEdit");
-              }, 2000);
-            })
-            .catch((err) => {
-              this.$message.error(err);
-            });
+          setTimeout(() => {
+            this.$router.push("/mailPhoneConnect/phone");
+          }, 2000);
         })
         .catch((err) => {
           this.$message.error("修改邮箱失败错误" + err);
@@ -206,10 +200,7 @@ export default {
     },
     // 发送验证码到旧手机号
     sendCodes() {
-      if (
-        !/^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/.test(this.formPhone.phoneNew)
-      ) {
-        this.$message.error("请输入正确的手机号码！");
+      if (this.hasph) {
         return;
       }
       let num = 60;
@@ -233,15 +224,6 @@ export default {
     },
     // 修改手机号
     editPhone() {
-      if (
-        !/^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/.test(
-          this.formPhone.phoneNew
-        ) &&
-        !/^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/.test(this.formPhone.phoneOld)
-      ) {
-        this.$message.error("请输入正确的手机号码！");
-        return;
-      }
       if (!this.formPhone.code) {
         this.$message.error("请输入验证码！");
         return;
@@ -257,29 +239,14 @@ export default {
             this.$message.error("修改绑定的手机号失败，原因为：" + res.msg);
             return;
           }
-          // 可以修改后，将新手机号绑定
-          this.$api
-            .bindPhone({
-              phoneNumber: this.formPhone.phoneNew,
-              verifyCode: this.formPhone.code,
-            })
-            .then((res) => {
-              if (!res.success) {
-                this.$alert("修改绑定手机号失败！原因为：" + res.msg);
-                return;
-              }
-              this.$message({
-                message: "修改绑定手机号成功！将为您跳转至上一页！",
-                type: "success",
-              });
-
-              setTimeout(() => {
-                this.$router.push("/userEdit");
-              }, 2000);
-            })
-            .catch((err) => {
-              this.$message.error(err);
-            });
+          this.$message({
+            message: "即将转入绑定手机界面，请绑定新手机！",
+            type: "success",
+          });
+          // 可以修改后，跳转到绑定界面
+          setTimeout(() => {
+            this.$router.push("/mailPhoneConnect/phone");
+          }, 2000);
         })
         .catch((err) => {
           this.$message.error(err);

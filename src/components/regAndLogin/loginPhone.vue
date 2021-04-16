@@ -14,10 +14,10 @@
           placeholder="请输入验证码"
           :validate-event="false"
         ></el-input>
-        <span class="sendCode" @click="sendCode" v-if="isSend">{{
-          times
-        }}</span>
-        <span class="sendCode" @click="sendCode" v-else>发送验证码</span>
+        <span class="sendCode" @click="sendCode" v-show="!times"
+          >发送验证码</span
+        >
+        <span class="sendCode" v-show="times">{{ times }}秒后重发</span>
       </el-form-item>
       <el-button type="primary" @click="login" :loading="loading"
         >登录</el-button
@@ -40,7 +40,7 @@ export default {
       },
       loading: false,
       isSend: false,
-      times: "60",
+      times: null,
       rules: {
         phone: [
           { required: true, message: "请输入手机号", trigger: "blur" },
@@ -65,7 +65,10 @@ export default {
         return;
       }
       this.isSend = true;
-      this.times = "已发送。。。";
+      let num = 60;
+      let interval = setInterval(() => {
+        this.times = num > 0 ? num-- : clearInterval(interval);
+      }, 1000);
       this.$api
         .getCode({
           operationType: "login",
@@ -97,7 +100,7 @@ export default {
                   type: "success",
                   message: "登录成功！即将为您跳转至首页",
                 });
-                this.$utils.setLocalToken("userToken", res.data.accessToken); //将token放入缓存
+                this.$store.commit("setUserToken", res.data); //将token存到vuex
                 setTimeout(() => {
                   this.$router.push("/");
                 }, 2000);
@@ -119,7 +122,6 @@ export default {
     },
   },
 };
-
 </script>
 <style lang="less" scoped>
 #loginPhone {

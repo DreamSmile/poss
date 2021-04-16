@@ -16,6 +16,7 @@
           </div>
           <div class="post">
             {{ jobData.title }}<span>{{ jobData.hourlyWage }}元/小时</span>
+            <span class="createTime">开始时间：{{ jobData.createTime }}</span>
           </div>
           <div class="school">{{ jobData.workplace }}</div>
           <button type="button" @click="addJob" v-if="!jobData.join">
@@ -210,7 +211,6 @@ export default {
       this.$api
         .reportList()
         .then((res) => {
-          console.log(res);
           if (!res.success) {
             this.$message.error("获得举报类型失败，原因为：" + res.msg);
             return;
@@ -240,10 +240,12 @@ export default {
     // 查看文件
     lookFile() {
       let url = this.jobData.attachment;
-      let deUrl=decodeURIComponent(url);
-      let Base64 = require('js-base64').Base64;
+      let deUrl = decodeURIComponent(url);
+      let Base64 = require("js-base64").Base64;
       window.open(
-        "http://www.yggdrasill.vip:8012/onlinePreview?url=" +encodeURIComponent(Base64.encode(deUrl)))
+        "http://www.yggdrasill.vip:8012/onlinePreview?url=" +
+          encodeURIComponent(Base64.encode(deUrl))
+      );
     },
   },
 };

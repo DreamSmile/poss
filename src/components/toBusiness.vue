@@ -106,10 +106,10 @@
             type="primary"
             v-show="active == 2"
             @click="sub"
+            :loading="loading"
             >提交</el-button
           >
         </div>
-        
       </div>
     </div>
   </div>
@@ -129,6 +129,7 @@ export default {
       imgOne: "上传身份证正面",
       imgTwo: "上传身份证背面",
       imgThree: "上传商家证明",
+      loading: false,
     };
   },
   methods: {
@@ -140,15 +141,26 @@ export default {
           }
         });
       } else if (this.active == 1) {
-        this.active++;
+        if (
+          this.imgOne != "上传身份证正面" &&
+          this.imgTwo != "上传身份证背面"
+        ) {
+          this.active++;
+        } else {
+          this.$message.error("请上传完整的身份证信息再点击下一步");
+        }
       }
     },
     // 点击步骤
     step(num) {
-      this.active = num;
+      // this.active = num;
     },
     // 上传文件
     beforeupload(file) {
+      if (file.type != "image/png" && file.type != "image/jpeg") {
+        this.$message.error("上传证明信息只能是图片！");
+        return false;
+      }
       this.fileList.push({
         file: file,
       });
@@ -156,17 +168,25 @@ export default {
     },
     // 身份证正面图片显示
     changeOne(file) {
-      console.log(file);
+      if (file.raw.type != "image/png" && file.raw.type != "image/jpeg") {
+        return false;
+      }
       this.imgOne = "已上传";
       this.moreFile.append("idCardBack", file.raw);
     },
     // 身份证背面
     changeTwo(file) {
+      if (file.raw.type != "image/png" && file.raw.type != "image/jpeg") {
+        return false;
+      }
       this.imgTwo = "已上传";
       this.moreFile.append("idCardFront", file.raw);
     },
     // 商家证明
     changeThree(file) {
+      if (file.raw.type != "image/png" && file.raw.type != "image/jpeg") {
+        return false;
+      }
       this.imgThree = "已上传";
       this.moreFile.append("mercahntCertify", file.raw);
     },
@@ -180,10 +200,12 @@ export default {
         this.$message.error("请填写真实姓名！");
         return false;
       }
+      this.loading = true;
       this.moreFile.append("realName", this.firstForm.name);
       this.$api
         .toBusiness(this.moreFile)
         .then((res) => {
+          this.loading = false;
           if (!res.success) {
             this.$message.error("文件上传失败！原因为：" + res.msg);
             this.isErr();
@@ -196,6 +218,7 @@ export default {
           this.$emit("business", true);
         })
         .catch((err) => {
+          this.loading = false;
           this.$message.error(err);
           this.isErr();
         });

@@ -4,10 +4,10 @@
     <user-base-data></user-base-data>
     <div class="content">
       <el-tabs v-model="activeName">
-        <el-tab-pane :label="'所有(' + jobList.totalRows + ')'" name="first"
+        <el-tab-pane :label="'所有(' + jobList.length + ')'" name="first"
           ><div class="list_box">
             <el-input
-              v-model="input"
+              v-model="inputs"
               prefix-icon="el-icon-search"
               placeholder="请输入兼职关键字"
               @keyup.enter.native="selJob"
@@ -43,7 +43,7 @@ export default {
   data() {
     return {
       activeName: "first",
-      input: "",
+      inputs: "",
       jobList: [],
       jobNo: [],
       jobOver: [],
@@ -56,9 +56,12 @@ export default {
   methods: {
     setData() {
       this.$api
-        .getHisByPage({
-          pageNumber: 1,
-          pageSize: 10,
+        .getAddHisByPage({
+          keyword: "",
+          paginationInfo: {
+            pageNumber: 1,
+            pageSize: 10,
+          },
         })
         .then((res) => {
           if (!res.success) {
@@ -94,26 +97,24 @@ export default {
     },
     // 搜索兼职
     selJob() {
-      this.jobByPage("", this.input, 1);
+      this.jobByPage(this.inputs, 1);
     },
     // 子组件返回的查询分页
     changePage(data) {
       if (data.type == "UserJoin") {
         this.jobByPage(
-          data.campus ? data.campus : "",
           data.keyword ? data.keyword : "",
           data.page
         );
       }
     },
     // 分页查询兼职
-    jobByPage(campus, keyword, page) {
+    jobByPage(keyword, pageNumber) {
       this.$api
-        .getJobBySchool({
-          campus: campus,
+        .getAddHisByPage({
           keyword: keyword,
           paginationInfo: {
-            pageNumber: page ? page : 1,
+            pageNumber: pageNumber ? pageNumber : 1,
             pageSize: 10,
           },
         })
@@ -126,7 +127,6 @@ export default {
           Object.assign(this.jobList, {
             type: "business",
             role: "merchant",
-            campus: campus,
             keyword: keyword,
             totalRows: res.data.totalRows,
           });

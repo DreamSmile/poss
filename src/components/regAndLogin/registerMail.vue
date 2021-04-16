@@ -42,11 +42,10 @@
           v-model="form.code"
           placeholder="请输入验证码"
         ></el-input>
-        <!-- <span class="sendCode" @click="sendCode">{{ times }}</span> -->
         <span class="sendCode" @click="sendCode" v-show="!times"
           >发送验证码</span
         >
-        <span class="sendCode" @click="sendCode" v-show="times"
+        <span class="sendCode" v-show="times"
           >{{ times }}秒后重发</span
         >
       </el-form-item>
@@ -78,7 +77,6 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           //邮箱正确
-          this.tiems = "已发送。。";
           let num = 60;
           let interval = setInterval(() => {
             this.times = num > 0 ? num-- : clearInterval(interval);
