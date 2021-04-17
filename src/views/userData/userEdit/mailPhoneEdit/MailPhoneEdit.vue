@@ -6,7 +6,7 @@
       <p class="content_title">兼职无忧通行证</p>
       <div class="main">
         <hr />
-        <el-tabs v-model="activeName" stretch @tab-click="handleClick">
+        <el-tabs v-model="activeName" stretch :before-leave="handleClick">
           <el-tab-pane label="修改手机号" name="first"
             ><div class="forms">
               <el-form
@@ -40,11 +40,7 @@
                   >
                 </el-input></el-form
               >
-              <el-button
-                class="sub"
-                type="primary"
-                :disabled="hasph"
-                @click="editPhone"
+              <el-button class="sub" type="primary" @click="editPhone"
                 >提交</el-button
               >
             </div></el-tab-pane
@@ -108,12 +104,12 @@ export default {
         phoneOld: this.$store.state.userData.phoneNumber,
         code: "",
       },
-      hasph: false,
+      hasPhone: this.$store.state.userData.phoneNumber == null ? false : true,
       formMail: {
         mailOld: this.$store.state.userData.email,
         codeM: "",
       },
-      hasma: false,
+      hasMail: this.$store.state.userData.email == null ? false : true,
       times: null,
       timesM: null,
     };
@@ -128,24 +124,21 @@ export default {
         : (this.activeName = "second");
     },
     // 点击tab弹出提示，已经绑定过邮箱是否重新绑定
-    handleClick(tab, event) {
-      let hasPhone =
-        this.$store.state.userData.phoneNumber == null ? false : true;
-      let hasMail = this.$store.state.userData.email == null ? false : true;
-      if (this.activeName == "first" && !hasPhone) {
+    handleClick(activeName, oldActiveName) {
+      if (activeName == "first" && !this.hasPhone) {
         //手机编辑
         this.$message({
           message: "您还未绑定手机号，不可以修改哦！",
           type: "warning",
         });
-        this.hasph = true;
+        return false;
       }
-      if (this.activeName == "second" && !hasMail) {
+      if (this.activeName == "second" && !this.hasMail) {
         this.$message({
           message: "您还未绑定邮箱号，不可以修改哦！",
           type: "warning",
         });
-        this.hasma = true;
+        return false;
       }
     },
     // 发送邮箱验证码
@@ -200,7 +193,7 @@ export default {
     },
     // 发送验证码到旧手机号
     sendCodes() {
-      if (this.hasph) {
+      if (this.hasphone) {
         return;
       }
       let num = 60;

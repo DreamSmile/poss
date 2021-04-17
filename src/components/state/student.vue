@@ -11,14 +11,14 @@
                 require('@/assets/imgs/user.jpg') + ')',
             }"
           ></div>
+          <p>
+            <i
+              v-show="$store.state.userData.role == 'merchant'"
+              class="el-icon-takeaway-box"
+            ></i
+            >{{ $store.state.userData.nickName || "" }}
+          </p>
         </router-link>
-        <p>
-          <i
-            v-show="$store.state.userData.role == 'merchant'"
-            class="el-icon-takeaway-box"
-          ></i
-          >{{ $store.state.userData.nickName || "" }}
-        </p>
       </div>
       <div class="student_data">
         <div class="rows">
@@ -47,7 +47,7 @@
         暂时没有数据，快去兼职吧~
       </div>
       <ul>
-        <li v-for="(item, i) in jobList" :key="i" v-show="item.status == 2">
+        <li v-for="(item, i) in jobList" :key="i">
           {{ i + 1 }}、
           <el-tooltip :content="item.title" placement="top">
             <span class="list_data">{{ item.title }}</span>
@@ -66,7 +66,8 @@ export default {
     };
   },
   mounted() {
-    this.getJobHis();
+    if (this.$store.state.userData.role == "merchant") this.getPushJobHis();
+    else this.getJobHis();
   },
   methods: {
     // 获取兼职列表
@@ -78,11 +79,29 @@ export default {
             this.$message.error("获取用户兼职历史失败，原因为：" + res.msg);
             return;
           }
-          this.jobList = res.data;
+          for (let i = 0; i < res.data.length; i++) {
+            if (res.data[i].status == 2) {
+              this.jobList.push(res.data[i]);
+            }
+          }
         })
         .catch((err) => {
           this.$message.error("获取用户兼职历史失败，原因为：" + err);
         });
+    },
+    // 获取商家的兼职列表
+    getPushJobHis() {
+      this.$api.getPushJobHis().then((res) => {
+        if (!res.success) {
+          this.$message.error(res.msg);
+          return;
+        }
+        for (let i = 0; i < res.data.length; i++) {
+          if (res.data[i].status == 2) {
+            this.jobList.push(res.data[i]);
+          }
+        }
+      });
     },
   },
 };
@@ -98,6 +117,10 @@ export default {
       padding: 21px 0;
       text-align: center;
       margin-bottom: 10px;
+      /deep/a {
+        text-decoration: none;
+        color: @font-color;
+      }
       a {
         .img  {
           width: 60px;
@@ -116,6 +139,8 @@ export default {
       }
       p {
         margin-top: 10px;
+        text-decoration: none;
+        color: @font-color;
       }
     }
     .student_data {

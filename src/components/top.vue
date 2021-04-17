@@ -40,9 +40,9 @@
             ></span
           >
           <router-link to="/userData">
-          <span v-if="$store.state.accessToken">{{
-            $store.state.userData.nickName || ""
-          }}</span>
+            <span class="user_name" v-if="$store.state.accessToken">{{
+              $store.state.userData.nickName || ""
+            }}</span>
             <el-dropdown v-if="$store.state.accessToken">
               <div
                 v-if="$store.state.accessToken"
@@ -279,6 +279,9 @@ export default {
               color: #fff;
               text-decoration: none;
             }
+            /deep/a:hover {
+              color: #8bcdef;
+            }
           }
           .top_title {
             padding-left: 14px;
@@ -343,6 +346,12 @@ export default {
             color: #fff;
             text-decoration: none;
           }
+          /deep/a:hover {
+            color: #8bcdef;
+          }
+        }
+        .user_name:hover {
+          color: #8bcdef;
         }
         .imgs {
           width: 26px;

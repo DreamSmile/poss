@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import $store from '../store'
+import $socket from '../utils/socket'
 import * as $api from '../utils/apis'
 import Home from '../views/Home.vue'
 // import { Message} from 'element-ui'
@@ -125,7 +126,12 @@ router.beforeEach((to, form, next) => {
 
   // 检测如果是没有token智能去注册首页登录
   if (to.name != "Login" && to.name != "Register" && to.name != "Home" && userInfo.accessToken == "") {
-    this.$socket.default.onClose();
+    try {
+      $socket.default.onClose();
+    } catch (error) {
+      console.log(error);
+
+    }
     next({
       path: "/login",
       query: { msg: encodeURIComponent('登录信息失效，请重新登录！') }

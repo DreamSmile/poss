@@ -118,15 +118,15 @@ export default {
     },
     // 搜索工作
     queryJob() {
-      if (this.select != "" || this.jobName != "") {
+      // if (this.select != "" || this.jobName != "") {
         this.jobListAxios(this.select, this.jobName, "participantNumber");
         this.jobListAxios(this.select, this.jobName, "createTime");
-      } else {
-        this.$message({
-          message: "请选择学校名称或兼职关键字再搜索！",
-          type: "warning",
-        });
-      }
+      // } else {
+      //   this.$message({
+      //     message: "请选择学校名称或兼职关键字再搜索！",
+      //     type: "warning",
+      //   });
+      // }
     },
     // 子组件更换页码，先判断是不是首页的子组件
     changePage(data) {

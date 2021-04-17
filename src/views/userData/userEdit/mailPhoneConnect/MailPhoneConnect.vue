@@ -6,7 +6,7 @@
       <p class="content_title">兼职无忧通行证</p>
       <div class="main">
         <hr />
-        <el-tabs v-model="activeName" stretch @tab-click="handleClick">
+        <el-tabs v-model="activeName" stretch :before-leave="handleClick">
           <el-tab-pane label="綁定手机号" name="first"
             ><div class="forms">
               <el-form ref="formPhone" :model="formPhone" :rules="rules">
@@ -40,11 +40,7 @@
                   </el-input></el-form-item
                 ></el-form
               >
-              <el-button
-                class="sub"
-                type="primary"
-                @click="upPhone"
-                :disabled="hasPhone"
+              <el-button class="sub" type="primary" @click="upPhone"
                 >提交</el-button
               >
             </div></el-tab-pane
@@ -81,11 +77,7 @@
                   </el-input></el-form-item
                 >
               </el-form>
-              <el-button
-                class="sub"
-                type="primary"
-                @click="upMail"
-                :disabled="hasMail"
+              <el-button class="sub" type="primary" @click="upMail"
                 >提交</el-button
               >
             </div></el-tab-pane
@@ -148,20 +140,25 @@ export default {
         ? (this.activeName = "first")
         : (this.activeName = "second");
     },
+    cli() {
+      alert("点击");
+    },
     // 点击tab弹出提示，已经绑定过邮箱是否重新绑定
-    handleClick(tab, event) {
-      if (this.activeName == "first" && this.hasPhone) {
+    handleClick(activeName, oldActiveName) {
+      if (activeName == "first" && this.hasPhone) {
         //手机编辑
         this.$message({
           message: "您已绑定手机号，需要换绑请使用修改手机号功能！",
           type: "warning",
         });
+        return false;
       }
-      if (this.activeName == "second" && this.hasMail) {
+      if (activeName == "second" && this.hasMail) {
         this.$message({
-          message: "您已绑定邮箱，需要换绑请使用修改手机号功能！",
+          message: "您已绑定邮箱，需要换绑请使用修改邮箱功能！",
           type: "warning",
         });
+        return false;
       }
     },
     // 发送手机验证码

@@ -44,7 +44,7 @@ console.log(userInfo);
 //类似于.then(()=>{},()=>{});
 axiosIns.interceptors.response.use(response => {
     //对响应数据做点处理
-    if (response.data.code == 13004 || response.data.code == 401 || response.data.code == 13025) {
+    if (response.data.code == 13005 || response.data.code == 401) {
         console.log('接口中检测到token过期');
         changeToke({ "refreshToken": userInfo.refreshToken }).then(res => {
             console.log('更换token');
@@ -65,8 +65,13 @@ axiosIns.interceptors.response.use(response => {
             $socket.default.onclose();//关闭websocket
             $router.push("/login");
         })
-    } else
+    } else if (response.data.code == 13025) {//token未传直接跳转登录页
+        $store.commit('clearAll');
+        $socket.default.onclose();//关闭websocket
+        $router.push("/login");
+    } else {
         return response;
+    }
 }, error => {
     //对响应错误做点处理
 

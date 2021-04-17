@@ -3,54 +3,58 @@
     <top></top>
     <div class="content">
       <div class="content_flex">
+        <!-- 左侧列表 -->
         <div class="user_list">
           <p v-show="userList.length > 0">30天内联系人</p>
           <p v-show="userList.length == 0">近30天都没有联系人哦~</p>
           <div class="list">
-            <div
-              :class="[{ list_active: i == isActive }, 'list_box']"
-              v-for="(item, i) in userList"
-              :key="i"
-              @click="
-                getHisByUserId(
-                  item,
-                  item.avatar ? item.avatar : imgSrc,
-                  $event,
-                  i
-                )
-              "
-            >
+            <el-scrollbar style="height: 100%">
               <div
-                class="imgs"
-                :class="{ isHas: i == item.isHas }"
-                :style="{
-                  backgroundImage:
-                    'url(' + (item.avatar ? item.avatar : imgSrc) + ')',
-                }"
-              ></div>
-              <div class="user">
-                <p class="user_name">{{ item.nickName }}</p>
-                <p class="user_data">
-                  {{ item.campus || "未知"
-                  }}<el-divider direction="vertical"></el-divider
-                  >{{
-                    item.role == "admin"
-                      ? "管理员"
-                      : item.role == "merchant"
-                      ? "招聘者"
-                      : "求职者"
-                  }}
-                </p>
+                :class="[{ list_active: i == isActive }, 'list_box']"
+                v-for="(item, i) in userList"
+                :key="i"
+                @click="
+                  getHisByUserId(
+                    item,
+                    item.avatar ? item.avatar : imgSrc,
+                    $event,
+                    i
+                  )
+                "
+              >
+                <div
+                  class="imgs"
+                  :class="{ isHas: i == item.isHas }"
+                  :style="{
+                    backgroundImage:
+                      'url(' + (item.avatar ? item.avatar : imgSrc) + ')',
+                  }"
+                ></div>
+                <div class="user">
+                  <p class="user_name">{{ item.nickName }}</p>
+                  <p class="user_data">
+                    {{ item.campus || "未知"
+                    }}<el-divider direction="vertical"></el-divider
+                    >{{
+                      item.role == "admin"
+                        ? "管理员"
+                        : item.role == "merchant"
+                        ? "招聘者"
+                        : "求职者"
+                    }}
+                  </p>
+                </div>
+                <!-- <p class="time">11:20</p> -->
               </div>
-              <!-- <p class="time">11:20</p> -->
-            </div>
+            </el-scrollbar>
           </div>
         </div>
+        <!-- 右侧 -->
         <div class="dialog_box">
           <div class="box_data">
             <p class="job_master">
               {{ jobData.nickName || "" }}
-              <span>{{ jobData.school || "未知" }}</span>
+              <span>{{ jobData.school || "" }}</span>
             </p>
             <!-- <p class="job_data" v-show="jobData.title">
               沟通职位<span class="job_name">{{ jobData.title }}</span
@@ -59,7 +63,12 @@
               >
             </p> -->
           </div>
-          <div class="box" ref="box">
+          <div class="box" ref="box" v-loading="loading">
+            <div class="box_no" v-show="jobData.nickName == null">
+              <i class="el-icon-set-up icon"></i>
+              <p class="tip">与您沟通过的人员都会在左侧列表展示</p>
+            </div>
+            <!-- <el-scrollbar style="height: 100%"> -->
             <div
               :class="item.user == 'ours' ? 'box_right' : 'box_left'"
               v-for="(item, i) in dialogueList"
@@ -78,9 +87,10 @@
                 {{ item.content }}
               </p>
             </div>
+            <!-- </el-scrollbar> -->
           </div>
           <div class="dialog_input">
-            <el-button @click="sendMess">发送</el-button>
+            <el-button size="mini" @click="sendMess">发送</el-button>
             <el-divider></el-divider>
             <!-- <p class="icon">
               <img src="@/assets/imgs/face.png" />
@@ -106,8 +116,8 @@ export default {
   },
   watch: {
     "$store.state.diaData"(data) {
-      if(this.$route.name=="Dialogue"){
-      this.setDia(data);
+      if (this.$route.name == "Dialogue") {
+        this.setDia(data);
       }
     },
   },
@@ -118,14 +128,23 @@ export default {
     },
     // 监听到的返回对话内容
     setDia(data) {
+      if(data.lenegth<1){
+        console.log('没有聊天数据');
+        console.log(data);
+        return;
+      }
       //监听聊天信息改变
       if (this.$store.state.diaData.length < 1) {
         //数据空一般是已经循环过清空了
+        console.log('数据为空');
         return;
       }
       for (let index = 0; index < data.length; index++) {
         // 页面上显示的刚好就是当先监听到的用户对话页面
-        if (data[index].fromUser == this.jobData.id) {
+        if (
+          data[index].fromUser == this.jobData.id &&
+          this.jobData.nickName != null
+        ) {
           this.dialogueList.push({
             user: "business",
             content: data[index].content,
@@ -141,7 +160,11 @@ export default {
         }
         // 如果会话是其他用户发的，将用户列表时间变成红色
         for (let i = 0; i < this.userList.length; i++) {
+          console.log(
+            data[index].fromUser + "&&&&&&&&&&" + this.userList[i].id
+          );
           if (data[index].fromUser == this.userList[i].id) {
+            console.log("有用户信息");
             this.userList[i].isHas = 1;
           }
         }
@@ -163,7 +186,9 @@ export default {
             data["isHas"] = -1;
             this.userList.push(data);
           }
-          this.getStateData(); //state中有存储信息，这步模拟点击进来top上的红点取消
+          setTimeout(() => {
+            this.getStateData(); //state中有存储信息，这步模拟点击进来top上的红点取消
+          }, 4000);
         })
         .catch((err) => {
           this.$message.error(err);
@@ -177,6 +202,7 @@ export default {
             pid: this.$route.params.id,
           })
           .then((res) => {
+            console.log(res);
             if (!res.success) {
               this.$message.error("获得工作信息失败，原因为：" + res.msg);
               return;
@@ -207,6 +233,7 @@ export default {
     },
     // 根据用户id 显示对应的聊天记录,但传入的参数是所有参数，头像
     getHisByUserId(item, imgurl, el, index) {
+      this.loading = true;
       this.isActive = index; //当前点击的列表背景颜色变
       item.isHas = -1; //取消界面上的红点
       this.dialogueList = [];
@@ -249,10 +276,12 @@ export default {
           this.$nextTick(() => {
             let container = this.$refs.box;
             container.scrollTop = container.scrollHeight;
+            this.loading = false;
           });
         })
         .catch((err) => {
           this.$message.error(err);
+          this.loading = false;
         });
     },
     // 发送信息按钮
@@ -263,7 +292,7 @@ export default {
       }
       if (this.jobData.id == undefined) {
         this.$message.error("请选择对话人员再发信息哦~");
-        this.mess="";
+        this.mess = "";
         return;
       }
       this.dialogueList.push({
@@ -299,6 +328,7 @@ export default {
         school: "",
       }, //右侧聊天需要的参数
       isActive: -1,
+      loading: false,
     };
   },
   mounted() {

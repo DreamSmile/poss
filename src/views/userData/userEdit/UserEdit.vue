@@ -231,7 +231,6 @@ export default {
                 this.$store.commit("clearAll");
                 return;
               }
-              console.log("首页获取用户信息");
               // 已经获取到了用户信息
               this.$store.dispatch("setUserAysc", res.data);
             })

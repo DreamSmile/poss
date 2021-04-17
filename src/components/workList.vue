@@ -4,7 +4,7 @@
       <ul>
         <li v-for="(item, index) in jobList" :key="index">
           <div>
-            <span class="work_NO">{{ index + 1 }}、</span>
+            <!-- <span class="work_NO">{{ index + 1 }}、</span> -->
             <div class="list_base">
               <router-link
                 :to="{
@@ -33,23 +33,24 @@
                 v-if="jobList.type == 'join'"
                 @click="outJob(item.status, item.id)"
               ></i>
+              <!-- 显示兼职人员的头像 -->
               <div class="out_job" v-if="jobList.type == 'business'">
                 <div
                   class="face"
                   v-for="(face, i) in item.joinUsers"
+                  v-show="i<3"
                   :key="i"
-                  :style="{
-                    backgroundImage:
+                  :style="{backgroundImage:
                       'url(' + face.avatar ||
                       require('@/assets/imgs/user.jpg') + ')',
-                  }"
-                >
-                  <div
+                  }">
+                  <!-- <div
                     class="img_hover"
                     @click="delImg(index, i, item.id, face.id)"
                   >
                     <i class="el-icon-close"></i>
-                  </div>
+                  </div> -->
+                  
                 </div>
               </div>
             </div>
@@ -66,6 +67,8 @@
             <img v-show="item.status == 1" src="@/assets/imgs/no.png" />
             <img v-show="item.status == 2" src="@/assets/imgs/ing.png" />
           </div>
+          <!-- 移动出现头像兼职列表 -->
+          <!-- <div class="face_list">这是头像兼职列表</div> -->
         </li>
       </ul>
     </div>
@@ -157,7 +160,8 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      }).then(() => {
+      })
+        .then(() => {
           this.$api
             .selUserById({
               pid: pid,
@@ -173,7 +177,8 @@ export default {
                 message: "移除成功！",
                 type: "success",
               });
-            }).catch(err=>{
+            })
+            .catch((err) => {
               this.$message.error(err);
             });
         })

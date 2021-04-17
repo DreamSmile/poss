@@ -89,6 +89,31 @@
             ></el-input>
           </el-form-item>
 
+          <el-form-item label=" " style="display: inline-block">
+            <el-button
+              v-if="jobInfo.status == 1 && jobInfo.joinList.length > 0"
+              @click="userList"
+              >参与者申请列表</el-button
+            >
+          </el-form-item>
+          <!-- 参与者界面 -->
+          <el-dialog :visible.sync="dialogVisible" title="移除申请用户" width="380px" height="524px">
+            <ul>
+              <li v-for="(item, i) in jobInfo.joinList" :key="i">
+                <div
+                  class="face"
+                  :style="{
+                    backgroundImage:
+                      'url(' + item.avatar ||
+                      require('@/assets/imgs/user.jpg') + ')',
+                  }"
+                ></div>
+                <span class="name">{{ item.nickName }}</span>
+                <i class="el-icon-close del" @click="delUser(item.id, i)"></i>
+              </li>
+            </ul>
+          </el-dialog>
+
           <el-form-item label=" ">
             <el-upload
               class="upload-demo"
@@ -145,6 +170,7 @@ export default {
   },
   data() {
     return {
+      dialogVisible: false,
       loading: false,
       isNew: true,
       schoolList: [],
@@ -279,6 +305,40 @@ export default {
         .catch((err) => {
           this.$message.error("获取学校列表失败！" + err);
         });
+    },
+    // 获取兼职参与者列表
+    userList() {
+      this.dialogVisible = true;
+    },
+    // 移除某员工
+    delUser(userId, index) {
+      this.$confirm("是否取消该学生兼职申请", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$api
+            .selUserById({
+              pid: this.$route.params.id,
+              userId: userId,
+            })
+            .then((res) => {
+              if (!res.success) {
+                this.$message.error(res.msg);
+                return;
+              }
+              this.jobInfo.joinList.splice(index, 1);
+              this.$message({
+                message: "移除成功！",
+                type: "success",
+              });
+            })
+            .catch((err) => {
+              this.$message.error(err);
+            });
+        })
+        .catch(() => {});
     },
     // 文件上传前阻止文件上传，一起提交
     beforeAvatarUpload(file) {
@@ -482,6 +542,45 @@ export default {
       margin-top: 10px;
       .title {
         color: @font-color;
+      }
+      /deep/.el-dialog__body{
+        padding-top:0;
+      }
+      li {
+        position: relative;
+        padding:10px 0;
+        .face {
+          width: 32px;
+          height: 32px;
+          overflow: hidden;
+          display: inline-block;
+          border-radius: 50%;
+          background-size: cover;
+          background-position: 50%;
+          background-color: #ddd;
+          vertical-align: middle;
+          margin-right: 20px;
+        }
+        .name {
+          line-height: 32px;
+          vertical-align: middle;
+          color: @font-color;
+        }
+        .el-icon-close {
+          position: absolute;
+          right: 0;
+          top: 16px;
+          font-size: 16px;
+        }
+        .del{
+          display: none;
+        }
+      }
+      li:hover {
+        background-color: rgb(236, 245, 255);
+        .del{
+          display: block;
+        }
       }
 
       /deep/.el-input__inner:after {
