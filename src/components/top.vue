@@ -39,6 +39,11 @@
               >聊天</router-link
             ></span
           >
+          <!-- <router-link to="/admin">
+            <span class="user_name" v-if="$store.state.userData.role == 'admin'"
+              >后台</span
+            ></router-link
+          > -->
           <router-link to="/userData">
             <span class="user_name" v-if="$store.state.accessToken">{{
               $store.state.userData.nickName || ""

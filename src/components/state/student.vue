@@ -96,17 +96,22 @@ export default {
     },
     // 获取商家的兼职列表
     getPushJobHis() {
-      this.$api.getPushJobHis().then((res) => {
-        if (!res.success) {
-          this.$message.error(res.msg);
-          return;
-        }
-        for (let i = 0; i < res.data.length; i++) {
-          if (res.data[i].status == 2) {
-            this.jobList.push(res.data[i]);
+      this.$api
+        .getPushJobHis()
+        .then((res) => {
+          if (!res.success) {
+            this.$message.error(res.msg);
+            return;
           }
-        }
-      });
+          for (let i = 0; i < res.data.length; i++) {
+            if (res.data[i].status == 2) {
+              this.jobList.push(res.data[i]);
+            }
+          }
+        })
+        .catch((err) => {
+          this.message.error(err);
+        });
     },
   },
 };
@@ -141,7 +146,7 @@ export default {
       }
       .icon {
         padding-right: 6px;
-        color:@base-color;
+        color: @base-color;
       }
       p {
         margin-top: 10px;

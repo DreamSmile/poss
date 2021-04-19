@@ -6,15 +6,14 @@ import * as $api from '../utils/apis'
 import Home from '../views/Home.vue'
 import { Message } from 'element-ui'
 
+// 前台
+const error = r => require.ensure([], () => r(require('@/views/error/Error')), 'error');
 const register1 = r => require.ensure([], () => r(require('@/views/register1/Register1')), 'Register1');
 const register = r => require.ensure([], () => r(require('@/views/register/Register')), 'register');
 const login = r => require.ensure([], () => r(require('@/views/login/Login')), 'login');
 const job = r => require.ensure([], () => r(require('@/views/job/Job')), 'job');
 const pushJob = r => require.ensure([], () => r(require('@/views/pushJob/PushJob')), 'pushJob');
 const dialogue = r => require.ensure([], () => r(require('@/views/dialogue/Dialogue')), 'dialogue');
-const error = r => require.ensure([], () => r(require('@/views/error/Error')), 'error');
-
-
 const userData = r => require.ensure([], () => r(require('@/views/userData/UserData')), 'userData');
 const userBase = r => require.ensure([], () => r(require('@/views/userData/userBase/UserBase')), 'userBase');
 const userJoin = r => require.ensure([], () => r(require('@/views/userData/userJoin/UserJoin')), 'userJoin');
@@ -22,6 +21,12 @@ const userRelease = r => require.ensure([], () => r(require('@/views/userData/us
 const userEdit = r => require.ensure([], () => r(require('@/views/userData/userEdit/UserEdit')), 'userEdit');
 const mailPhoneEdit = r => require.ensure([], () => r(require('@/views/userData/userEdit/mailPhoneEdit/MailPhoneEdit')), 'mailPhoneEdit');
 const mailPhoneConnect = r => require.ensure([], () => r(require('@/views/userData/userEdit/mailPhoneConnect/MailPhoneConnect')), 'mailPhoneConnect');
+// 后台管理
+
+// const admin = r => require.ensure([], () => r(require('@/views/admin')), 'admin');
+
+
+
 
 Vue.use(VueRouter)
 
@@ -42,18 +47,15 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: login
-  },
-  {
+  }, {
     path: '/job/:id',
     name: 'Job',
     component: job
-  },
-  {
+  }, {
     path: '/dialogue/:id',
     name: 'Dialogue',
     component: dialogue
-  },
-  {
+  }, {
     path: '/pushJob/:id',
     name: 'PushJob',
     component: pushJob
@@ -67,8 +69,7 @@ const routes = [
         path: '/userBase',
         name: 'UserBase',
         component: userBase,
-      },
-      {
+      }, {
         path: '/userJoin',
         name: 'UserJoin',
         component: userJoin,
@@ -78,8 +79,7 @@ const routes = [
         component: userRelease,
       }
     ]
-  }
-  , {
+  }, {
     path: '/userEdit',
     name: 'UserEdit',
     component: userEdit,
@@ -95,7 +95,8 @@ const routes = [
     path: '/error',
     name: 'Error',
     component: error,
-  }
+  },
+  // 后台管理
 ]
 
 const router = new VueRouter({
@@ -122,10 +123,9 @@ router.beforeEach((to, form, next) => {
     } catch (error) {
       console.log(error);
     }
-    Message.error('登录信息失效，请重新登录！');
+    Message.error('请登录！');
     next({
-      path: "/login",
-      query: { msg: encodeURIComponent('登录信息失效，请重新登录！') }
+      path: "/login"
     });
   }
   next();
