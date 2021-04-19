@@ -77,7 +77,12 @@ export default {
     tourist,
   },
   mounted() {
-    this.getUserData();
+    if (
+      this.$store.state.accessToken != null &&
+      this.$store.state.accessToken != ""
+    ) {
+      this.getUserData();
+    }
     this.getSchoolList();
     this.jobListAxios(this.select, this.jobName, "participantNumber");
     this.jobListAxios(this.select, this.jobName, "createTime");
@@ -92,9 +97,13 @@ export default {
             this.$store.commit("clearAll");
             return;
           }
-          // 已经获取到了用户信息
+          // 已经获取到了用户信息;
           this.$store.dispatch("setUserAysc", res.data);
-          this.$socket.default.init(); //开启websocket
+          try {
+            this.$socket.default.init(); //开启websocket
+          } catch (error) {
+            console.log(error);
+          }
         })
         .catch((err) => {
           this.$message.error("获取登录信息失败，请登录！");
@@ -119,8 +128,8 @@ export default {
     // 搜索工作
     queryJob() {
       // if (this.select != "" || this.jobName != "") {
-        this.jobListAxios(this.select, this.jobName, "participantNumber");
-        this.jobListAxios(this.select, this.jobName, "createTime");
+      this.jobListAxios(this.select, this.jobName, "participantNumber");
+      this.jobListAxios(this.select, this.jobName, "createTime");
       // } else {
       //   this.$message({
       //     message: "请选择学校名称或兼职关键字再搜索！",
@@ -161,7 +170,6 @@ export default {
           },
         })
         .then((res) => {
-          console.log(res);
           if (!res.success) {
             this.$message.error("获取兼职列表失败！原因为：" + res.msg);
             return false;

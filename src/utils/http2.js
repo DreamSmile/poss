@@ -3,6 +3,7 @@ import $store from '../store'
 import $router from '../router'
 import $socket from '../utils/socket'
 import { changeToke } from '../utils/apis'
+import { Message } from 'element-ui';
 
 const axiosIns = axios.create({
     timeout: 15 * 1000,
@@ -45,13 +46,13 @@ console.log(userInfo);
 axiosIns.interceptors.response.use(response => {
     //对响应数据做点处理
     if (response.data.code == 13005 || response.data.code == 401) {
-        console.log('接口中检测到token过期');
         changeToke({ "refreshToken": userInfo.refreshToken }).then(res => {
             console.log('更换token');
             if (!res.success) {//获取新的token失败，就跳转首页,并清除所有存入vux的信息
                 $store.commit('clearAll');
-                $socket.default.onclose();//关闭websocket
+                $socket.default.onClose();//关闭websocket
                 $router.push("/login");
+                Message.error('登录信息失效，请重新登录!');
                 return;
             }//获取新的token成功，就修改token
             console.log('修改token成功');
@@ -60,16 +61,24 @@ axiosIns.interceptors.response.use(response => {
             console.log(response);
             return axiosIns(response.config);
         }).catch(err => {
-            console.log('接口获取新token失败！');
             $store.commit('clearAll');
-            $socket.default.onclose();//关闭websocket
+            $socket.default.onClose();//关闭websocket
             $router.push("/login");
+            Message.error('登录信息失效，请重新登录!');
         })
-    } else if (response.data.code == 13025) {//token未传直接跳转登录页
+    } else if (response.data.code == 13025) {//token未传直接跳转登录页,用户未登录
         $store.commit('clearAll');
         $socket.default.onclose();//关闭websocket
         $router.push("/login");
-    } else {
+        Message.error('请登录！');
+
+    } else if (response.data.code == 13066) {//登录状态失败，一般是账号同时登录，提示其他地方登录，并跳转到登录界面
+        $store.commit('clearAll');
+        $socket.default.onClose();//关闭websocket
+        $router.push("/login");
+        Message.error('账号已在其他地区登录，请重新登录！');
+    }
+    else {
         return response;
     }
 }, error => {

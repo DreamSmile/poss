@@ -106,6 +106,8 @@ export default {
       },
       hasPhone: this.$store.state.userData.phoneNumber == null ? false : true,
       hasMail: this.$store.state.userData.email == null ? false : true,
+      isEditPhone: parseInt(this.$route.query.isEP),
+      isEditMail: parseInt(this.$route.query.isEM),
       formMail: {
         mailNew: "",
         codeM: "",
@@ -145,7 +147,7 @@ export default {
     },
     // 点击tab弹出提示，已经绑定过邮箱是否重新绑定
     handleClick(activeName, oldActiveName) {
-      if (activeName == "first" && this.hasPhone) {
+      if (activeName == "first" && this.hasPhone && !this.isEditPhone) {
         //手机编辑
         this.$message({
           message: "您已绑定手机号，需要换绑请使用修改手机号功能！",
@@ -153,7 +155,7 @@ export default {
         });
         return false;
       }
-      if (activeName == "second" && this.hasMail) {
+      if (activeName == "second" && this.hasMail && !this.isEditMail) {
         this.$message({
           message: "您已绑定邮箱，需要换绑请使用修改邮箱功能！",
           type: "warning",
@@ -163,13 +165,18 @@ export default {
     },
     // 发送手机验证码
     sendCode() {
-      if (this.hasPhone) {
+      if (this.hasPhone && !this.isEditPhone) {
+        $this.$message.error("当前账户已绑定手机，请使用修改手机功能换绑！");
         return;
       }
       if (
         !/^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/.test(this.formPhone.phoneNew)
       ) {
         this.$message.error("请输入正确的手机号码！");
+        return;
+      }
+      if (this.formPhone.phoneNew == this.$store.state.userData.phoneNumber) {
+        this.$message.error("新旧号码不允许相同~");
         return;
       }
       let num = 60;
@@ -193,7 +200,8 @@ export default {
     },
     // 发送邮箱验证码
     sendCodeM() {
-      if (this.hasMail) {
+      if (this.hasMail && !this.isEditMail) {
+        $this.$message.error("当前账户已绑定邮箱，请使用修改邮箱功能换绑！");
         return;
       }
       if (
@@ -202,6 +210,10 @@ export default {
         )
       ) {
         this.$message.error("请输入正确的邮箱！");
+        return;
+      }
+      if (this.formMail.MailNew == this.$store.state.userData.email) {
+        this.$message.error("新旧邮箱不允许相同~");
         return;
       }
       let num = 60;

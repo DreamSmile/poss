@@ -58,7 +58,7 @@ let socket = {
   },
   onClose(e) {
     socket.socketEl.close();
-    socket.socketEl = null;
+    // socket.socketEl = null;
     console.log("关闭websocket连接");
   },
 }

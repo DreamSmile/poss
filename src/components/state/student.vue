@@ -13,8 +13,13 @@
           ></div>
           <p>
             <i
-              v-show="$store.state.userData.role == 'merchant'"
-              class="el-icon-takeaway-box"
+              :class="
+                $store.state.userData.role == 'merchant'
+                  ? 'el-icon-takeaway-box icon'
+                  : $store.state.userData.role == 'admin'
+                  ? 'el-icon-edit icon'
+                  : 'el-icon-user icon'
+              "
             ></i
             >{{ $store.state.userData.nickName || "" }}
           </p>
@@ -134,8 +139,9 @@ export default {
           background-color: #ddd;
         }
       }
-      .el-icon-takeaway-box {
+      .icon {
         padding-right: 6px;
+        color:@base-color;
       }
       p {
         margin-top: 10px;

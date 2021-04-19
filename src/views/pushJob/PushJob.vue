@@ -97,21 +97,27 @@
             >
           </el-form-item>
           <!-- 参与者界面 -->
-          <el-dialog :visible.sync="dialogVisible" title="移除申请用户" width="380px" height="524px">
-            <ul>
-              <li v-for="(item, i) in jobInfo.joinList" :key="i">
-                <div
-                  class="face"
-                  :style="{
-                    backgroundImage:
-                      'url(' + item.avatar ||
-                      require('@/assets/imgs/user.jpg') + ')',
-                  }"
-                ></div>
-                <span class="name">{{ item.nickName }}</span>
-                <i class="el-icon-close del" @click="delUser(item.id, i)"></i>
-              </li>
-            </ul>
+          <el-dialog
+            :visible.sync="dialogVisible"
+            title="移除申请用户"
+            width="380px"
+          >
+            <el-scrollbar style="height: 100%;">
+              <ul>
+                <li v-for="(item, i) in jobInfo.joinList" :key="i">
+                  <div
+                    class="face"
+                    :style="{
+                      backgroundImage:
+                        'url(' + item.avatar ||
+                        require('@/assets/imgs/user.jpg') + ')',
+                    }"
+                  ></div>
+                  <span class="name">{{ item.nickName }}</span>
+                  <i class="el-icon-close del" @click="delUser(item.id, i)"></i>
+                </li>
+              </ul>
+            </el-scrollbar>
           </el-dialog>
 
           <el-form-item label=" ">
@@ -543,43 +549,52 @@ export default {
       .title {
         color: @font-color;
       }
-      /deep/.el-dialog__body{
-        padding-top:0;
+      /deep/.el-dialog__body {
+        padding-top: 0;
+        height: 250px;
       }
-      li {
-        position: relative;
-        padding:10px 0;
-        .face {
-          width: 32px;
-          height: 32px;
-          overflow: hidden;
-          display: inline-block;
-          border-radius: 50%;
-          background-size: cover;
-          background-position: 50%;
-          background-color: #ddd;
-          vertical-align: middle;
-          margin-right: 20px;
-        }
-        .name {
-          line-height: 32px;
-          vertical-align: middle;
-          color: @font-color;
-        }
-        .el-icon-close {
-          position: absolute;
-          right: 0;
-          top: 16px;
-          font-size: 16px;
-        }
-        .del{
-          display: none;
-        }
+      /deep/.el-scrollbar__wrap {
+        overflow-x: hidden;
       }
-      li:hover {
-        background-color: rgb(236, 245, 255);
-        .del{
-          display: block;
+      ul {
+        max-height: 350px;
+        overflow-y: auto;
+        height: 100%;
+        li {
+          position: relative;
+          padding: 10px 0;
+          .face {
+            width: 32px;
+            height: 32px;
+            overflow: hidden;
+            display: inline-block;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: 50%;
+            background-color: #ddd;
+            vertical-align: middle;
+            margin-right: 20px;
+          }
+          .name {
+            line-height: 32px;
+            vertical-align: middle;
+            color: @font-color;
+          }
+          .el-icon-close {
+            position: absolute;
+            right: 0;
+            top: 16px;
+            font-size: 16px;
+          }
+          .del {
+            display: none;
+          }
+        }
+        li:hover {
+          background-color: rgb(236, 245, 255);
+          .del {
+            display: block;
+          }
         }
       }
 

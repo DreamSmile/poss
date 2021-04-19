@@ -149,7 +149,7 @@ export default {
       }, 1000);
       this.$api
         .getCodeByMail({
-          operationType: "restEmail",
+          operationType: "resetEmail",
           email: this.formMail.mailOld,
         })
         .then((res) => {
@@ -184,7 +184,10 @@ export default {
           });
           // 修改邮箱成功，再去绑定邮箱
           setTimeout(() => {
-            this.$router.push("/mailPhoneConnect/phone");
+            this.$router.push({
+              path: "/mailPhoneConnect/mail",
+              query: { isEP: 0, isEM: 1 },
+            });
           }, 2000);
         })
         .catch((err) => {
@@ -202,7 +205,7 @@ export default {
       }, 1000);
       this.$api
         .getCode({
-          operationType: "restPhone",
+          operationType: "resetPhone",
           phoneNumber: this.formPhone.phoneOld,
         })
         .then((res) => {
@@ -238,7 +241,11 @@ export default {
           });
           // 可以修改后，跳转到绑定界面
           setTimeout(() => {
-            this.$router.push("/mailPhoneConnect/phone");
+            // this.$router.push("/mailPhoneConnect/phone");
+            this.$router.push({
+              path: "/mailPhoneConnect/phone",
+              query: { isEP: 1, isEM: 0 },
+            });
           }, 2000);
         })
         .catch((err) => {

@@ -181,30 +181,36 @@ export default {
         });
     },
     addJob() {
+      if (Object.keys(this.$store.state.userData).length == 0) {
+        this.$message.error("请登录再加入兼职！");
+        return;
+      }
       this.$confirm("是否申请加入该兼职?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      }).then(() => {
-        this.$api
-          .addJob({
-            pid: this.$route.params.id,
-          })
-          .then((res) => {
-            if (!res.success) {
-              this.$message.error("申请兼职失败！原因为：" + res.msg);
-              return;
-            }
-            this.$message({
-              message: "申请兼职成功！",
-              type: "success",
+      })
+        .then(() => {
+          this.$api
+            .addJob({
+              pid: this.$route.params.id,
+            })
+            .then((res) => {
+              if (!res.success) {
+                this.$message.error("申请兼职失败！原因为：" + res.msg);
+                return;
+              }
+              this.$message({
+                message: "申请兼职成功！",
+                type: "success",
+              });
+              this.jobData.join = true;
+            })
+            .catch((err) => {
+              this.$$message.error(err);
             });
-            this.jobData.join = true;
-          })
-          .catch((err) => {
-            this.$$message.error(err);
-          });
-      });
+        })
+        .catch((err) => {});
     },
     // 获得举报类型
     getreport() {

@@ -4,13 +4,12 @@ import $store from '../store'
 import $socket from '../utils/socket'
 import * as $api from '../utils/apis'
 import Home from '../views/Home.vue'
-// import { Message} from 'element-ui'
+import { Message } from 'element-ui'
 
 const register1 = r => require.ensure([], () => r(require('@/views/register1/Register1')), 'Register1');
 const register = r => require.ensure([], () => r(require('@/views/register/Register')), 'register');
 const login = r => require.ensure([], () => r(require('@/views/login/Login')), 'login');
 const job = r => require.ensure([], () => r(require('@/views/job/Job')), 'job');
-// const report = r => require.ensure([], () => r(require('@/views/report/Report')), 'report');
 const pushJob = r => require.ensure([], () => r(require('@/views/pushJob/PushJob')), 'pushJob');
 const dialogue = r => require.ensure([], () => r(require('@/views/dialogue/Dialogue')), 'dialogue');
 const error = r => require.ensure([], () => r(require('@/views/error/Error')), 'error');
@@ -25,9 +24,7 @@ const mailPhoneEdit = r => require.ensure([], () => r(require('@/views/userData/
 const mailPhoneConnect = r => require.ensure([], () => r(require('@/views/userData/userEdit/mailPhoneConnect/MailPhoneConnect')), 'mailPhoneConnect');
 
 Vue.use(VueRouter)
-// Vue.prototype.$message = Message;
 
-let checkLogin = { isLogin: false }
 const routes = [
   {
     path: '/',
@@ -51,11 +48,6 @@ const routes = [
     name: 'Job',
     component: job
   },
-  // {
-  //   path: '/report/:typeId',
-  //   name: 'Report',
-  //   component: report
-  // },
   {
     path: '/dialogue/:id',
     name: 'Dialogue',
@@ -121,17 +113,16 @@ router.beforeEach((to, form, next) => {
   }
   // 只有登录注册，首页能让游客进入
 
-
   let userInfo = $store.state;//所有的用户信息，包括token
 
   // 检测如果是没有token智能去注册首页登录
-  if (to.name != "Login" && to.name != "Register" && to.name != "Home" && userInfo.accessToken == "") {
+  if (to.name != "Login" && to.name != "Register" && to.name != "Home" && to.name != "Job" && userInfo.accessToken == "") {
     try {
       $socket.default.onClose();
     } catch (error) {
       console.log(error);
-
     }
+    Message.error('登录信息失效，请重新登录！');
     next({
       path: "/login",
       query: { msg: encodeURIComponent('登录信息失效，请重新登录！') }

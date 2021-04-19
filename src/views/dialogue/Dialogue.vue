@@ -68,7 +68,6 @@
               <i class="el-icon-set-up icon"></i>
               <p class="tip">与您沟通过的人员都会在左侧列表展示</p>
             </div>
-            <!-- <el-scrollbar style="height: 100%"> -->
             <div
               :class="item.user == 'ours' ? 'box_right' : 'box_left'"
               v-for="(item, i) in dialogueList"
@@ -87,7 +86,6 @@
                 {{ item.content }}
               </p>
             </div>
-            <!-- </el-scrollbar> -->
           </div>
           <div class="dialog_input">
             <el-button size="mini" @click="sendMess">发送</el-button>
@@ -97,7 +95,7 @@
               <img class="photo" src="@/assets/imgs/photo.png" />
             </p> -->
             <div class="inp">
-              <textarea v-model="mess"></textarea>
+              <textarea v-model="mess" @keydown="messageSend"></textarea>
             </div>
           </div>
         </div>
@@ -128,15 +126,12 @@ export default {
     },
     // 监听到的返回对话内容
     setDia(data) {
-      if(data.lenegth<1){
-        console.log('没有聊天数据');
-        console.log(data);
+      if (data.lenegth < 1) {
         return;
       }
       //监听聊天信息改变
       if (this.$store.state.diaData.length < 1) {
         //数据空一般是已经循环过清空了
-        console.log('数据为空');
         return;
       }
       for (let index = 0; index < data.length; index++) {
@@ -160,9 +155,6 @@ export default {
         }
         // 如果会话是其他用户发的，将用户列表时间变成红色
         for (let i = 0; i < this.userList.length; i++) {
-          console.log(
-            data[index].fromUser + "&&&&&&&&&&" + this.userList[i].id
-          );
           if (data[index].fromUser == this.userList[i].id) {
             console.log("有用户信息");
             this.userList[i].isHas = 1;
@@ -186,9 +178,9 @@ export default {
             data["isHas"] = -1;
             this.userList.push(data);
           }
-          setTimeout(() => {
-            this.getStateData(); //state中有存储信息，这步模拟点击进来top上的红点取消
-          }, 4000);
+          // setTimeout(() => {
+          this.getStateData(); //state中有存储信息，这步模拟点击进来top上的红点取消
+          // }, 4000);
         })
         .catch((err) => {
           this.$message.error(err);
@@ -283,6 +275,12 @@ export default {
           this.$message.error(err);
           this.loading = false;
         });
+    },
+    //输入框回车发送信息
+    messageSend(event) {
+      if (event.keyCode === 13) {
+        this.sendMess();
+      }
     },
     // 发送信息按钮
     sendMess() {
