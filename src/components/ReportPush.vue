@@ -37,7 +37,7 @@ export default {
             message: "举报成功！有后续我们将会通知您!",
             type: "success",
           });
-          this.$emit('close',true);
+          this.$emit("close", true);
         })
         .catch((err) => {
           this.$message.error(err);
@@ -49,8 +49,8 @@ export default {
 <style scoped lang="less">
 @import "../assets/css/common.less";
 #report {
-    position: relative;
-    height:376px;
+  position: relative;
+  height: 376px;
   span {
     color: @font-color;
     vertical-align: top;
@@ -61,9 +61,9 @@ export default {
     height: 300px;
   }
   .el-button {
-      position: absolute;
-      bottom: 0;
-      right:34px;
+    position: absolute;
+    bottom: 0;
+    right: 34px;
   }
 }
 </style>

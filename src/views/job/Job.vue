@@ -29,7 +29,7 @@
       <!-- 底部招聘详细信息 -->
       <div class="job_box">
         <!-- 举报按钮 -->
-        <div class="report" @click="dialogVisible = true">举报</div>
+        <div class="report" @click="beforeRepost">举报</div>
         <!-- 举报界面 -->
         <el-dialog
           title="选择举报类型"
@@ -67,17 +67,18 @@
           ></div>
           <div class="hr_data">
             <p class="hr_name">
-              {{ jobData.merchantinfo.realName || "招聘者" }}
+              {{ merchantinfo.realName || "招聘者" }}
             </p>
-            <router-link
+            <!-- <router-link
               :to="{
                 name: 'Dialogue',
                 params: { id: jobData.id },
-              }"
-              ><p class="hr_state">
-                <i class="el-icon-chat-dot-square"></i>刚刚在线
-              </p></router-link
-            >
+              }"> -->
+            <p class="hr_state" @click="checkId">
+              <i class="el-icon-chat-dot-square"></i>刚刚在线
+            </p>
+            <!-- </router-link
+            > -->
           </div>
         </div>
         <!-- 职位描述 -->
@@ -94,22 +95,18 @@
           <div class="job_describe_list job_middle">
             <p class="title">负责人信息</p>
             <div class="box">
+              <p class="list">负责人：{{ merchantinfo.realName || "--" }}</p>
               <p class="list">
-                负责人：{{ jobData.merchantinfo.realName || "--" }}
+                负责人手机号：{{ publisher.phoneNumber || "--" }}
               </p>
-              <p class="list">
-                负责人手机号：{{ jobData.publisher.phoneNumber || "--" }}
-              </p>
-              <p class="list">
-                负责人所属学校：{{ jobData.publisher.campusInfo.name || "--" }}
-              </p>
+              <p class="list">负责人所属学校：{{ campusInfo.name || "--" }}</p>
             </div>
           </div>
           <div class="job_describe_list job_end">
             <p class="title">学校信息</p>
             <div class="box">
               <p class="list">
-                {{ jobData.publisher.campusInfo.description || "学校简介空~" }}
+                {{ campusInfo.description || "学校简介空~" }}
               </p>
             </div>
           </div>
@@ -135,7 +132,6 @@
 <style scoped lang="less">
 </style>
 <script>
-// import {Base64} from '../../utils/base64Util'
 import ReportPush from "../../components/ReportPush.vue";
 import Top from "../../components/top.vue";
 import "./job.less";
@@ -150,6 +146,10 @@ export default {
       dialogVisible: false, //举报界面
       reportTypeList: [], //举报类型，接口获取
       reportType: null,
+      merchantinfo: {}, //商家真实名字
+      publisher: {}, //商家电话等
+      campusInfo: {}, //商家学校
+      peportNum: 0, //举报次数
     };
   },
   components: {
@@ -174,6 +174,9 @@ export default {
           }
           this.jobData = res.data;
           this.imgSrc = res.data.publisher.avatar;
+          this.merchantinfo = res.data.merchantinfo;
+          this.publisher = res.data.publisher;
+          this.campusInfo = res.data.publisher.campusInfo;
           this.status = res.data.status;
         })
         .catch((err) => {
@@ -212,6 +215,34 @@ export default {
         })
         .catch((err) => {});
     },
+    // 在发起沟通前判断是不是在跟自己对话
+    checkId() {
+      if (this.$store.state.userData == {}) {
+        this.$message.error("需要登录才能使用此功能哦~");
+        return;
+      }
+      if (this.publisher.id == this.$store.state.userData.id) {
+        this.$message.error("不可以跟自己对话哦~");
+        return false;
+      }
+      this.$router.push({
+        name: "Dialogue",
+        params: { id: this.jobData.id },
+      });
+    },
+    // 在举报前判断是否有用户
+    beforeRepost() {
+      if (!this.$store.state.hasUser) {
+        this.$message.error("请登录！");
+        return;
+      }
+      if (this.$store.state.userData.id == this.jobData.publisherId) {
+        this.$message.error("请不要举报自己~");
+        return;
+      }
+      this.dialogVisible = true;
+      return true;
+    },
     // 获得举报类型
     getreport() {
       this.$api
@@ -229,8 +260,11 @@ export default {
     },
     // 点击举报
     reporttype(type) {
-      console.log(type);
-      this.reportType = { type: type, jobId: this.$route.params.id };
+      this.reportType = {
+        type: type,
+        jobId: this.$route.params.id,
+        peportNum: this.peportNum,
+      };
     },
     // 关闭举报界面
     handleClose() {

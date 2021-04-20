@@ -29,7 +29,11 @@
         <div class="data_box">
           <p class="data_title">基本信息</p>
           <el-form-item label="用户名">
-            <el-input v-model="form.name"></el-input>
+            <el-input
+              v-model="form.name"
+              maxlength="12"
+              show-word-limit
+            ></el-input>
           </el-form-item>
           <el-form-item label="性别">
             <el-radio-group v-model="form.sex">
@@ -52,7 +56,8 @@
             <router-link v-else to="/MailPhoneEdit/phone">修改</router-link>
           </el-form-item>
           <el-form-item label="个性签名">
-            <el-input type="textarea" v-model="form.autograph"></el-input>
+            <el-input type="textarea" v-model="form.autograph" maxlength="10"
+              show-word-limit></el-input>
           </el-form-item>
         </div>
         <!-- 教育背景 -->
@@ -79,7 +84,8 @@
             <span class="education">{{ form.education || "学历不详" }}</span>
           </el-form-item>
           <el-form-item label="专业">
-            <el-input v-model="form.major"></el-input>
+            <el-input v-model="form.major" maxlength="8"
+              show-word-limit></el-input>
           </el-form-item>
         </div>
       </el-form>

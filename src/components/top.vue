@@ -342,7 +342,7 @@ export default {
         span {
           color: #fff;
           cursor: pointer;
-          line-height: 48px;
+          line-height: 50px;
           display: inline-block;
           margin-left: 32px;
           font-size: 14px;
@@ -354,6 +354,15 @@ export default {
           /deep/a:hover {
             color: #8bcdef;
           }
+        }
+        .user_name {
+          width: 4em;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          display: inline-block;
+          vertical-align: middle;
+          line-height: 50px;
         }
         .user_name:hover {
           color: #8bcdef;
