@@ -41,7 +41,6 @@ axiosInsP.interceptors.request.use(config => {
 }
 );
 let userInfo = $store.state;//所有的用户信息，包括token
-console.log(userInfo);
 //类似于.then(()=>{},()=>{});
 axiosIns.interceptors.response.use(response => {
     //对响应数据做点处理
@@ -53,7 +52,7 @@ axiosIns.interceptors.response.use(response => {
                 $socket.onClose();//关闭websocket
                 $router.push("/login");
                 Message.error('登录信息失效，请重新登录!');
-                return;
+                return response;
             }//获取新的token成功，就修改token
             console.log('修改token成功');
             $store.commit('setUserToken', res.data);
@@ -64,6 +63,7 @@ axiosIns.interceptors.response.use(response => {
             $socket.onClose();//关闭websocket
             $router.push("/login");
             Message.error('登录信息失效，请重新登录!');
+            return response;
         })
     } else if (response.data.code == 13025) {//token未传直接跳转登录页,用户未登录
         $store.commit('clearAll');
@@ -71,7 +71,7 @@ axiosIns.interceptors.response.use(response => {
         $router.push("/login");
         Message.error('请登录！');
         return response;
-    } else if (response.data.code == 13066) {//登录状态失败，一般是账号同时登录，提示其他地方登录，并跳转到登录界面
+    }else if (response.data.code == 13066) {//登录状态失败，一般是账号同时登录，提示其他地方登录，并跳转到登录界面
         $store.commit('clearAll');
         $router.push("/login");
         $socket.onClose();//关闭websocket

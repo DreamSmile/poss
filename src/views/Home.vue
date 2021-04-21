@@ -77,6 +77,7 @@ export default {
     tourist,
   },
   mounted() {
+    console.log(this.$store.state.userData.role)
     if (
       this.$store.state.accessToken != null &&
       this.$store.state.accessToken != ""

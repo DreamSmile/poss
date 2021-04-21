@@ -22,9 +22,9 @@ module.exports = {
         port: 8080,
         proxy: {
             '/possApi': {
-                target: 'http://www.yggdrasill.vip:8888',
+                target: process.env.VUE_APP_FOREGROUND,
                 changeOrigin: true,
-                pathRewrite:{
+                pathRewrite: {
                     '^/possApi': ''
                 }
             }

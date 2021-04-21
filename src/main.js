@@ -12,10 +12,13 @@ Vue.use(ElementUI)
 
 Vue.config.productionTip = false;
 import * as apis from '@/utils/apis.js';
+import * as adminApi from '@/utils/adminApi.js';
+
 import * as utils from '@/utils/common.js';
 import * as socket from '@/utils/socket.js';
 
 Vue.prototype.$api = apis;
+Vue.prototype.$adminApi = adminApi;
 Vue.prototype.$utils = utils;
 Vue.prototype.$socket = socket
 

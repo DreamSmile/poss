@@ -39,11 +39,9 @@
               >聊天</router-link
             ></span
           >
-          <!-- <router-link to="/admin">
-            <span class="user_name" v-if="$store.state.userData.role == 'admin'"
-              >后台</span
-            ></router-link
-          > -->
+          <router-link to="/admin" v-if="$store.state.userData.role == 'admin'">
+            <span class="user_name">后台</span></router-link
+          >
           <router-link to="/userData">
             <span class="user_name" v-if="$store.state.accessToken">{{
               $store.state.userData.nickName || ""
@@ -219,7 +217,10 @@ export default {
                 return;
               }
               this.$store.commit("clearAll");
-              this.$router.push("/");
+              try {
+                //使用trycatch 是因为如果在home页面退出，控制台会报错重复跳转路由
+                this.$router.push("/");
+              } catch (error) {}
               this.$socket.default.onClose();
             })
             .catch((err) => {
@@ -356,13 +357,13 @@ export default {
           }
         }
         .user_name {
-          width: 4em;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
           display: inline-block;
           vertical-align: middle;
           line-height: 50px;
+          width:82px;
         }
         .user_name:hover {
           color: #8bcdef;

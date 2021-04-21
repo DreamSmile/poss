@@ -23,7 +23,13 @@ const mailPhoneEdit = r => require.ensure([], () => r(require('@/views/userData/
 const mailPhoneConnect = r => require.ensure([], () => r(require('@/views/userData/userEdit/mailPhoneConnect/MailPhoneConnect')), 'mailPhoneConnect');
 // 后台管理
 
-// const admin = r => require.ensure([], () => r(require('@/views/admin')), 'admin');
+const admin = r => require.ensure([], () => r(require('@/views/admin')), 'admin');
+const homePage = r => require.ensure([], () => r(require('@/views/admin/home')), 'homePage');
+
+const userIndex = r => require.ensure([], () => r(require('@/views/admin/user')), 'userIndex');
+const merchantIndex = r => require.ensure([], () => r(require('@/views/admin/merchant')), 'merchantIndex');
+const applyMerchantIndex = r => require.ensure([], () => r(require('@/views/admin/applyMerchant')), 'applyMerchantIndex');
+const schoolIndex = r => require.ensure([], () => r(require('@/views/admin/school')), 'schoolIndex');
 
 
 
@@ -97,6 +103,36 @@ const routes = [
     component: error,
   },
   // 后台管理
+  {
+    path: '/admin',
+    name: 'Admin',
+    component: admin,
+    redirect:'/homePage',
+    children: [
+      {
+        path: '/homePage',
+        name: 'HomePage',
+        component: homePage,
+      },{
+      path: '/userIndex',
+      name: 'UserIndex',
+      component: userIndex,
+    },{
+      path: '/merchantIndex',
+      name: 'MerchantIndex',
+      component: merchantIndex,
+    },{
+      path: '/applyMerchantIndex',
+      name: 'applyMerchantIndex',
+      component: applyMerchantIndex,
+    }
+    ,{
+      path: '/schoolIndex',
+      name: 'SchoolIndex',
+      component: schoolIndex,
+    }
+    ]
+  }
 ]
 
 const router = new VueRouter({

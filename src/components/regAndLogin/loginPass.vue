@@ -33,8 +33,8 @@ export default {
   data() {
     return {
       form: {
-        email: "",
-        pass: "",
+        email: "15280032596",
+        pass: "ss88888888",
       },
       loading: false,
       rules: {
