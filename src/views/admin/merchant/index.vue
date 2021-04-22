@@ -2,7 +2,7 @@
   <div id="merchant">
     <!-- 头部查询 -->
     <div class="search">
-      <el-select v-model="select" placeholder="选择学校">
+      <el-select v-model="select" placeholder="选择学校" size="mini">
         <el-option label="全部学校" value=""></el-option>
         <el-option
           :label="item.name"
@@ -17,12 +17,14 @@
         placeholder="请输入用户名称"
         v-model="userName"
         autocomplete="off"
+        size="mini"
       >
       </el-input>
       <el-button
         type="primary"
         slot="append"
         icon="el-icon-search"
+        size="mini"
         @click="selUser"
         >查询</el-button
       >
@@ -30,7 +32,18 @@
     <!-- 表格 -->
     <div class="merchant_table">
       <el-table :data="merChantList" border style="width: 100%">
-        <el-table-column prop="id" label="id"> </el-table-column>
+        <el-table-column prop="avatar" label="头像" width="70px">
+          <template slot-scope="scope">
+            <div
+              class="imgs"
+              :style="{
+                backgroundImage:
+                  'url(' + scope.row.avatar ||
+                  require('@/assets/imgs/user.jpg') + ')',
+              }"
+            ></div>
+          </template>
+        </el-table-column>
         <el-table-column prop="nickName" sortable label="名称">
         </el-table-column>
         <el-table-column prop="campus" sortable label="学校">
@@ -87,7 +100,7 @@
       </el-dialog>
       <!-- 查看商家证明 -->
       <el-dialog
-      top="40vh"
+        top="40vh"
         :title="'商家证明 (' + certify.realName + ')'"
         :visible.sync="certifyOPen"
         width="450px"
@@ -201,6 +214,8 @@ export default {
             return;
           }
           this.merChantList = res.data.content;
+        }).catch(err=>{
+          this.$message.error(err);
         });
     },
     // 根据学校和用户名称查询信息
@@ -359,11 +374,20 @@ export default {
 };
 </script>
 <style scoped lang="less">
+.imgs {
+  width: 30px;
+  height: 30px;
+  background-size: cover;
+  background-position: 50%;
+  background-color: #ddd;
+}
 /deep/.el-dialog__body {
   padding-top: 0;
 }
 .search {
-  margin-bottom: 20px;
+  background-color: #fff;
+  padding: 10px;
+  margin-bottom: 10px;
   box-sizing: border-box;
   /deep/.el-select {
     /deep/.el-input {

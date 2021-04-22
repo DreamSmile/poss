@@ -20,25 +20,11 @@
   </div>
 </template>
 <script>
+import top from "../../components/top.vue";
 export default {
-  data() {
-    return {
-      userData: {},
-    };
-  },
-  mounted() {
-    //  v-if="userData.role=='merchant'"
-    // console.log('权限');
-    // console.log(this.$store.state.userData);
-    // console.log(this.userData.role);
-    this.setData();
-    console.log("这边要判断");
-  },
-  methods: {
-    setData() {
-      this.userData = this.$store.state.userData;
-      console.log("设置数据");
-    },
+  name: "userData",
+  components: {
+    top,
   },
 };
 </script>
@@ -77,12 +63,3 @@ export default {
   }
 }
 </style>
-<script>
-import top from "../../components/top";
-export default {
-  name: "userData",
-  components: {
-    top,
-  },
-};
-</script>

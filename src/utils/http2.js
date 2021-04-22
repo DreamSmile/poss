@@ -49,7 +49,11 @@ axiosIns.interceptors.response.use(response => {
             console.log('更换token');
             if (!res.success) {//获取新的token失败，就跳转首页,并清除所有存入vux的信息
                 $store.commit('clearAll');
-                $socket.onClose();//关闭websocket
+                try {
+                    $socket.onClose();//关闭websocket
+                } catch (error) {
+                    console.log(error);
+                }
                 $router.push("/login");
                 Message.error('登录信息失效，请重新登录!');
                 return response;
@@ -60,22 +64,33 @@ axiosIns.interceptors.response.use(response => {
             return axiosIns(response.config);
         }).catch(err => {
             $store.commit('clearAll');
-            $socket.onClose();//关闭websocket
-            $router.push("/login");
+            try {
+                $socket.onClose();//关闭websocket
+            } catch (error) {
+                console.log(error);
+            } $router.push("/login");
             Message.error('登录信息失效，请重新登录!');
             return response;
         })
     } else if (response.data.code == 13025) {//token未传直接跳转登录页,用户未登录
         $store.commit('clearAll');
-        $socket.onClose();//关闭websocket
+        try {
+            $socket.onClose();//关闭websocket
+        } catch (error) {
+            console.log(error);
+        }
         $router.push("/login");
         Message.error('请登录！');
         return response;
-    }else if (response.data.code == 13066) {//登录状态失败，一般是账号同时登录，提示其他地方登录，并跳转到登录界面
+    } else if (response.data.code == 13066) {//登录状态失败，一般是账号同时登录，提示其他地方登录，并跳转到登录界面
         $store.commit('clearAll');
         $router.push("/login");
-        $socket.onClose();//关闭websocket
         Message.error('账号已在其他地区登录，请重新登录！');
+        try {
+            $socket.onClose();//关闭websocket
+        } catch (error) {
+            console.log(error);
+        }
         return response;
     }
     else {

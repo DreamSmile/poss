@@ -151,6 +151,7 @@ export default {
           pageSize: data.pageSize,
         })
         .then((res) => {
+          console.log(res);
           if (!res.success) {
             this.$message.error(res.msg);
             return;

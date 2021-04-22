@@ -40,7 +40,7 @@
             ></span
           >
           <router-link to="/admin" v-if="$store.state.userData.role == 'admin'">
-            <span class="user_name">后台</span></router-link
+            <span class="user_admin">后台</span></router-link
           >
           <router-link to="/userData">
             <span class="user_name" v-if="$store.state.accessToken">{{
@@ -356,6 +356,7 @@ export default {
             color: #8bcdef;
           }
         }
+        
         .user_name {
           overflow: hidden;
           text-overflow: ellipsis;

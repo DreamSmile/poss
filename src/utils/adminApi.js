@@ -37,3 +37,19 @@ export function getapplyByPage(data) {
 export function handleApply(data) {
     return $post(api + '/admin/process/apply', data);
 }
+
+/*学校管理*/
+// 增加学校
+export function addSchool(data) {
+    return $post(api + '/admin/campus/add', data);
+}
+
+/*举报管理*/
+// 分页查看所有举报信息
+export function getReportByPage(data) {
+    return $post(api + '/admin/fetch/report/page', data);
+}
+// 将举报信息设置成已经处理
+export function setReportByIdArr(data) {
+    return $post(api + '/admin/process/report', data);
+}

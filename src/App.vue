@@ -4,8 +4,12 @@
   </div>
 </template>
 <script>
+// import { addAdminRouter } from "@/router/index.js";
 export default {
   name: "App",
+  created() {
+    // addAdminRouter(); //动态路由
+  },
 };
 </script>
 

@@ -30,12 +30,12 @@ const userIndex = r => require.ensure([], () => r(require('@/views/admin/user'))
 const merchantIndex = r => require.ensure([], () => r(require('@/views/admin/merchant')), 'merchantIndex');
 const applyMerchantIndex = r => require.ensure([], () => r(require('@/views/admin/applyMerchant')), 'applyMerchantIndex');
 const schoolIndex = r => require.ensure([], () => r(require('@/views/admin/school')), 'schoolIndex');
-
-
+const reportIndex = r => require.ensure([], () => r(require('@/views/admin/report')), 'reportIndex');
 
 
 Vue.use(VueRouter)
 
+// 默认路由
 const routes = [
   {
     path: '/',
@@ -102,56 +102,97 @@ const routes = [
     name: 'Error',
     component: error,
   },
-  // 后台管理
+  // 后台
   {
     path: '/admin',
     name: 'Admin',
     component: admin,
-    redirect:'/homePage',
+    redirect: '/homePage',
     children: [
       {
         path: '/homePage',
         name: 'HomePage',
         component: homePage,
-      },{
+      }, {
+        path: '/userIndex',
+        name: 'UserIndex',
+        component: userIndex,
+      }, {
+        path: '/merchantIndex',
+        name: 'MerchantIndex',
+        component: merchantIndex,
+      }, {
+        path: '/applyMerchantIndex',
+        name: 'applyMerchantIndex',
+        component: applyMerchantIndex,
+      }
+      , {
+        path: '/schoolIndex',
+        name: 'SchoolIndex',
+        component: schoolIndex,
+      }, {
+        path: '/reportIndex',
+        name: 'ReportIndex',
+        component: reportIndex,
+      }
+    ]
+  }
+]
+// 后台管理路由
+const adminRouter =
+{
+  path: '/admin',
+  name: 'Admin',
+  component: admin,
+  redirect: '/homePage',
+  children: [
+    {
+      path: '/homePage',
+      name: 'HomePage',
+      component: homePage,
+    }, {
       path: '/userIndex',
       name: 'UserIndex',
       component: userIndex,
-    },{
+    }, {
       path: '/merchantIndex',
       name: 'MerchantIndex',
       component: merchantIndex,
-    },{
+    }, {
       path: '/applyMerchantIndex',
       name: 'applyMerchantIndex',
       component: applyMerchantIndex,
     }
-    ,{
+    , {
       path: '/schoolIndex',
       name: 'SchoolIndex',
       component: schoolIndex,
+    }, {
+      path: '/reportIndex',
+      name: 'ReportIndex',
+      component: reportIndex,
     }
-    ]
-  }
-]
+  ]
+}
+
 
 const router = new VueRouter({
   routes
 })
 
 router.beforeEach((to, form, next) => {
+  // if ($store.state.userData.role == 'admin' && router.options.routes.length == 12) {
+  //   console.log('导航添加路由');
+  //   router.addRoute(adminRouter);
+  // }  
   //处理无效路由
   if (Array.isArray(to.matched) && to.matched.length == 0) {
     next({
       path: "/error",
-      query: { msg: encodeURIComponent("很抱歉，页面它不小心迷路了..") }
     });
     return;
   }
-  // 只有登录注册，首页能让游客进入
-
   let userInfo = $store.state;//所有的用户信息，包括token
-
   // 检测如果是没有token智能去注册首页登录
   if (to.name != "Login" && to.name != "Register" && to.name != "Home" && to.name != "Job" && userInfo.accessToken == "") {
     try {
@@ -165,7 +206,12 @@ router.beforeEach((to, form, next) => {
     });
   }
   next();
-
 })
+
+export function addAdminRouter() {
+  if ($store.state.userData.role == 'admin' && router.options.routes.length == 12) {
+    router.addRoute(adminRouter);
+  }
+}
 
 export default router

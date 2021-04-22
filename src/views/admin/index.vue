@@ -61,6 +61,10 @@
               <el-menu-item index="SchoolIndex"
                 ><i class="el-icon-document"></i>学校管理</el-menu-item
               >
+             <!-- 举报管理 -->
+              <el-menu-item index="ReportIndex"
+                ><i class="el-icon-document"></i>举报管理</el-menu-item
+              >
             </el-menu>
           </el-scrollbar>
         </el-aside>
@@ -121,11 +125,12 @@ export default {
 #admin {
   height: 100%;
   min-width: 1024px;
+  background-color: #F3F4F8;
   .content {
     height: 100vh;
     .header {
       padding-left: 0;
-      background-color: #56a3f5;
+      background-color: #333951FF;
       position: relative;
 
       .title {

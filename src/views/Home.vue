@@ -57,6 +57,7 @@ import top from "@/components/top.vue";
 import workList from "@/components/workList.vue";
 import student from "@/components/state/student.vue";
 import tourist from "@/components/state/Tourist.vue";
+import { addAdminRouter } from "@/router/index.js";
 
 export default {
   name: "Home",
@@ -77,7 +78,7 @@ export default {
     tourist,
   },
   mounted() {
-    console.log(this.$store.state.userData.role)
+    console.log(this.$router);
     if (
       this.$store.state.accessToken != null &&
       this.$store.state.accessToken != ""
@@ -105,9 +106,11 @@ export default {
           } catch (error) {
             console.log(error);
           }
+          // console.log('调用方法');
+          // addAdminRouter();//动态路由
         })
         .catch((err) => {
-          this.$message.error("获取登录信息失败，请登录！");
+          this.$message.error("获取用户信息失败，请登录！"+err);
           this.$store.commit("clearAll");
         });
     },
