@@ -53,6 +53,7 @@
             label=" "
             style="display: inline-block"
           >
+          
             <el-input
               v-model="form.money"
               placeholder="请输入时薪"

@@ -79,6 +79,7 @@ axiosIns.interceptors.response.use(response => {
         } catch (error) {
             console.log(error);
         }
+        
         $router.push("/login");
         Message.error('请登录！');
         return response;

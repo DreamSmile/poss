@@ -42,6 +42,7 @@
                   require('@/assets/imgs/user.jpg') + ')',
               }"
             ></div>
+            
           </template>
           </el-table-column>
         <el-table-column prop="nickName" sortable label="名称">

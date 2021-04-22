@@ -114,6 +114,7 @@ export default {
           this.$store.commit("clearAll");
         });
     },
+    
     // 获取学校列表
     getSchoolList() {
       this.$api

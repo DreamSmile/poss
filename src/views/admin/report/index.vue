@@ -121,6 +121,7 @@ export default {
   mounted() {
     this.setData();
   },
+  
   methods: {
     setData() {
       this.reportAxios({

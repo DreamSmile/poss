@@ -44,6 +44,7 @@ export function addSchool(data) {
     return $post(api + '/admin/campus/add', data);
 }
 
+
 /*举报管理*/
 // 分页查看所有举报信息
 export function getReportByPage(data) {

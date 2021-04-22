@@ -42,6 +42,7 @@
           <router-link to="/admin" v-if="$store.state.userData.role == 'admin'">
             <span class="user_admin">后台</span></router-link
           >
+          
           <router-link to="/userData">
             <span class="user_name" v-if="$store.state.accessToken">{{
               $store.state.userData.nickName || ""

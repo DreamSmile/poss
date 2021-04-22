@@ -13,6 +13,7 @@
       height="550"
       :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
     >
+    
       <el-table-column prop="id" sortable label="id" width="100"> </el-table-column>
       <el-table-column prop="name" sortable label="学校名称" > </el-table-column>
       <el-table-column prop="type" sortable label="学历"> </el-table-column>

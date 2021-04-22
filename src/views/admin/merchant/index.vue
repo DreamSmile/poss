@@ -113,6 +113,7 @@
             @click="lookFile(certify.idCardFront)"
             >身份证正面</el-button
           >
+          
           <el-button
             type="primary"
             icon="el-icon-postcard"

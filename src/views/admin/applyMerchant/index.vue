@@ -162,6 +162,7 @@ export default {
           this.$messge.error(err);
         });
     },
+    
     // 查看商家证明
     certifyopenBox(data) {
       this.certifyOPen = true;
