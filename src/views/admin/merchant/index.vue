@@ -63,9 +63,9 @@
         <el-table-column prop="status" sortable label="状态">
           <template slot-scope="scope">
             <el-tag
-              :type="scope.row.status ? 'succes' : 'danger'"
+              :type="scope.row.status ? 'danger' : 'succes'"
               disable-transitions
-              >{{ scope.row.status ? "正常" : "已注销" }}</el-tag
+              >{{ scope.row.isBanned ? "封禁中" : "正常" }}</el-tag
             >
           </template>
         </el-table-column>
@@ -90,11 +90,11 @@
         </el-table-column>
       </el-table>
       <!-- 页码 -->
-      <div class="page">
+      <div class="page" v-show="allData.totalRows>0">
         <el-pagination
           @current-change="currentChange"
           background
-          :hide-on-single-page="true"
+          :hide-on-single-page="false"
           layout="prev, pager, next"
           :total="allData.totalRows"
         >
@@ -221,7 +221,6 @@ export default {
           },
         })
         .then((res) => {
-          console.log(res);
           if (!res.success) {
             this.$message.error(res.msg);
             return;
@@ -267,7 +266,6 @@ export default {
           mercahntId: data.id,
         })
         .then((res) => {
-          console.log(res);
           if (!res.success) {
             this.$message.error(res.msg);
             return;
@@ -430,5 +428,10 @@ export default {
     position: absolute;
     right: 26px;
   }
+}
+.page {
+  background-color: #fff;
+  text-align: center;
+  margin: 10px 0;
 }
 </style>

@@ -83,13 +83,13 @@
         </el-table-column>
       </el-table>
       <!-- 页码 -->
-      <div class="page">
+      <div class="page" v-show="allData.totalRows > 0">
         <el-pagination
           @current-change="currentChange"
           background
-          :hide-on-single-page="true"
+          :hide-on-single-page="false"
           layout="prev, pager, next"
-          :total="userList.totalRows"
+          :total="allData.totalRows"
         >
         </el-pagination>
       </div>
@@ -136,6 +136,7 @@ export default {
   name: "user",
   data() {
     return {
+      allData: {},
       select: "", //查询学校名称
       schoolList: [],
       userName: "", //查询名称
@@ -205,7 +206,6 @@ export default {
           },
         })
         .then((res) => {
-          console.log(res);
           if (!res.success) {
             this.$messge.error(res.msg);
             return;
@@ -222,6 +222,7 @@ export default {
               editUserList[i].role = "未知";
             }
           }
+          this.allData = res.data;
           this.userList = editUserList;
         })
         .catch((err) => {
@@ -240,6 +241,7 @@ export default {
             return;
           }
           this.userData = res.data;
+          console.log(this.userData);
           Object.assign(this.userData, { loading: false });
           this.dialogVisible = true;
         })
@@ -376,5 +378,10 @@ export default {
     position: absolute;
     right: 26px;
   }
+}
+.page {
+  background-color: #fff;
+  text-align: center;
+  margin: 10px 0;
 }
 </style>

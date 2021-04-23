@@ -30,7 +30,7 @@
       <button
         type="button"
         v-if="
-          this.$store.state.userData.applying &&
+          (this.$store.state.userData.applying || hasApply) &&
           $store.state.userData.role != 'merchant'
         "
       >
@@ -71,6 +71,7 @@ export default {
     return {
       dialogVisible: false,
       business: false,
+      hasApply: false,
     };
   },
   mounted() {},
@@ -90,6 +91,7 @@ export default {
             return;
           }
           this.dialogVisible = true;
+          this.hasApply = true;
         })
         .catch((err) => {
           this.$message.error(err);

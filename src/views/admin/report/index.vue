@@ -69,10 +69,11 @@
       </el-table-column>
     </el-table>
     <!-- 分页 -->
-    <div class="page">
+    <div class="page" v-show="allData.totalRows > 0">
       <el-pagination
-        :hide-on-single-page="true"
+        :hide-on-single-page="false"
         :total="allData.totalRows"
+        background
         @current-change="changePage"
         :page-size="5"
         layout="prev, pager, next"
@@ -176,7 +177,6 @@ export default {
           pageSize: data.pageSize,
         })
         .then((res) => {
-          console.log(res);
           if (!res.success) {
             this.$message.error(res.msg);
             return;
@@ -240,7 +240,6 @@ export default {
           processAll: data.processAll,
         })
         .then((res) => {
-          console.log(res);
           if (!res.success) {
             this.$message.error(res.msg);
             return;

@@ -31,15 +31,15 @@
     <div class="block">
       <div class="rows">
         <span class="problem">学校名称</span>
-        <span class="answer">{{ userData.campusInfo.mame || "无" }}</span>
+        <span class="answer">{{ campusInfo.mame || "未知" }}</span>
       </div>
       <div class="rows">
         <span class="problem">学历</span>
-        <span class="answer">{{ userData.campusInfo.type }}</span>
+        <span class="answer">{{ campusInfo.type || "未知" }}</span>
       </div>
       <div class="rows">
         <span class="problem">专业</span>
-        <span class="answer">{{ userData.major }}</span>
+        <span class="answer">{{ userData.major || "未知"}}</span>
       </div>
     </div>
     <p class="title">其他信息</p>
@@ -72,6 +72,10 @@ export default {
   data() {
     return {
       loading: true,
+      campusInfo:{
+        name:"",
+        type:""
+      }
     };
   },
   mounted() {
@@ -82,6 +86,7 @@ export default {
     setData() {
       this.loading = this.userData.loading;
       console.log(this.userData);
+      this.campusInfo = this.userData.campusInfo;
     },
   },
 };

@@ -37,11 +37,11 @@
         </el-table-column>
       </el-table>
       <!-- 页码 -->
-      <div class="page">
+      <div class="page" v-show="applyList.totalRows > 0">
         <el-pagination
           @current-change="currentChange"
           background
-          :hide-on-single-page="true"
+          :hide-on-single-page="false"
           layout="prev, pager, next"
           :total="applyList.totalRows"
         >
@@ -104,7 +104,7 @@
           <el-form-item label="驳回理由：" v-if="handleapply.opinion != 'true'">
             <el-input
               type="textarea"
-              maxlength="50"
+              maxlength="30"
               show-word-limit
               v-model="handleapply.reason"
               class="textarea"
@@ -162,7 +162,6 @@ export default {
           pageSize: data.pageSize,
         })
         .then((res) => {
-          console.log(res);
           if (!res.success) {
             this.$message.error(res.msg);
             return;
@@ -173,7 +172,6 @@ export default {
           this.$message.error(err);
         });
     },
-
     // 查看商家证明
     certifyopenBox(data) {
       this.certifyOPen = true;
@@ -195,7 +193,6 @@ export default {
     },
     // 打开处理申请页面
     handleApplyOpen(data) {
-      console.log(data);
       Object.assign(this.handleapply, {
         id: data.id,
         realName: data.user.nickName,
@@ -206,7 +203,6 @@ export default {
     },
     // 提交申请处理
     applyOpinion() {
-      console.log(this.handleapply);
       if (this.handleapply.opinion != "true" && this.handleapply.reason == "") {
         this.$message.error("请填写驳回意见，再提交~");
         return;
@@ -226,12 +222,9 @@ export default {
         };
         message = "驳回";
       }
-      console.log(info);
-      console.log(this.handleapply);
       this.$adminApi
         .handleApply(info)
         .then((res) => {
-          console.log(res);
           if (!res.success) {
             this.$message.error(res.msg);
             return;
@@ -249,11 +242,17 @@ export default {
           // opinion: false
           // toUser: "8b54281e-7bff-4c83-ab24-0501d3704189"
           // 使用websocket传信息给用户，驳回信息
-          this.$socket.default.socketsend({
-            fromUser: this.$store.state.userData.id, //当前登录用户的id,
-            toUser: this.jobData.id, //接收人id
-            content: this.mess,
-          });
+          try {
+            this.$socket.default.socketsend({
+              fromUser: this.$store.state.userData.id, //当前登录用户的id,
+              toUser: this.handleapply.toUser, //接收人id
+              content: res.data.msg,
+            });
+          } catch (error) {
+            this.$message.error("未连接到websocket");
+            console.log(err);
+          }
+          this.handleClose();
         })
         .catch((err) => {
           this.$message.error(err);
@@ -297,5 +296,10 @@ export default {
       height: 100px;
     }
   }
+}
+.page {
+  background-color: #fff;
+  text-align: center;
+  margin: 10px 0;
 }
 </style>

@@ -120,7 +120,6 @@ export default {
       this.$api
         .getSchoolList()
         .then((res) => {
-          console.log(res);
           if (!res.success) {
             this.$messsge.error(res.msg);
             return;
@@ -143,7 +142,6 @@ export default {
               type: this.add.type,
             })
             .then((res) => {
-              console.log(res);
               if (!res.success) {
                 this.$message.error(res.msg);
                 return;
@@ -168,9 +166,7 @@ export default {
     },
     // 清除学校增加页面的数据
     clear() {
-      console.log("关闭");
       this.schoolOpen = false;
-
       this.add = {
         id: "",
         name: "",

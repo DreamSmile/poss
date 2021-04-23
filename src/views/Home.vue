@@ -34,7 +34,7 @@
           </div>
           <!-- 左边工作列表 -->
           <el-tabs v-model="activeName">
-            <el-tab-pane label="最新职位" name="first" 
+            <el-tab-pane label="最新职位" name="first"
               ><workList :jobList="jobListHot" @changePage="changePageHot"
             /></el-tab-pane>
             <el-tab-pane label="推荐职位" name="second"
@@ -78,7 +78,6 @@ export default {
     tourist,
   },
   mounted() {
-    console.log(this.$router);
     if (
       this.$store.state.accessToken != null &&
       this.$store.state.accessToken != ""
@@ -106,15 +105,14 @@ export default {
           } catch (error) {
             console.log(error);
           }
-          // console.log('调用方法');
-          // addAdminRouter();//动态路由
+          // addAdminRouter(); //动态路由
         })
         .catch((err) => {
-          this.$message.error("获取用户信息失败，请登录！"+err);
+          this.$message.error("获取用户信息失败，请登录！" + err);
           this.$store.commit("clearAll");
         });
     },
-    
+
     // 获取学校列表
     getSchoolList() {
       this.$api

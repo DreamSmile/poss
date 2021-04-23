@@ -175,16 +175,11 @@ const adminRouter =
   ]
 }
 
-
 const router = new VueRouter({
   routes
 })
 
 router.beforeEach((to, form, next) => {
-  // if ($store.state.userData.role == 'admin' && router.options.routes.length == 12) {
-  //   console.log('导航添加路由');
-  //   router.addRoute(adminRouter);
-  // }  
   //处理无效路由
   if (Array.isArray(to.matched) && to.matched.length == 0) {
     next({
@@ -193,7 +188,6 @@ router.beforeEach((to, form, next) => {
     return;
   }
   let userInfo = $store.state;//所有的用户信息，包括token
-  console.log(userInfo);
   // 检测如果是没有token智能去注册首页登录
   if (to.name != "Login" && to.name != "Register" && to.name != "Home" && to.name != "Job" && userInfo.accessToken == "") {
     try {
