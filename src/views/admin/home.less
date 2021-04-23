@@ -28,6 +28,24 @@
         height: 320px;
     }
 
+    // 所有日
+    .el-step__title,
+    .is-process {
+        font-size: 14px;
+        color: #333951;
+        font-weight: 400;
+    }
+
+    .el-step__icon.is-text {
+        background-color: #F0F7FD;
+        width: 18px;
+        height: 18px;
+    }
+
+    .el-step__title.is-finish {
+        color: #2C9EF7;
+    }
+
     .title {
         padding-left: 16px;
         border-left: 4px solid @title-blue;
@@ -100,13 +118,10 @@
         }
     }
 
-
     //图表和日志
     .home_data {
         display: flex;
         margin-top: 20px;
-
-
 
         .home_echart {
             margin-right: 20px;
@@ -177,13 +192,11 @@
                 // background-color: #F0F7FD;
                 border-radius: 50%;
             }
-
-
         }
 
-        // 所有日志
-        .el-dialog__body {
-            max-height: 30px;
+        .el-step.is-vertical .el-step__icon.is-icon {
+            // background-color: #F0F7FD;
+            border-radius: 50%;
         }
     }
 }
