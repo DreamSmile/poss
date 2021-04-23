@@ -52,6 +52,7 @@
               text-color="#fff"
               router
             >
+            
               <!-- 首页 -->
               <el-menu-item index="HomePage"
                 ><i class="el-icon-document"></i>首页</el-menu-item
