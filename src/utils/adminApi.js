@@ -1,6 +1,11 @@
 import { $post, $get, $put, $putP, $postP } from './http2.js';
 const api = './possApi';
 
+/*首页*/
+export function getBase(){
+    return $get(api+'/admin/fetch/management/basic');
+}
+
 // 分页获取用户列表
 export function getUserByPage(data) {
     return $post(api + '/admin/fetch/user/list/page', data);

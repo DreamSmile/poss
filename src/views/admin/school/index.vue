@@ -6,16 +6,10 @@
       >
     </div>
     <!-- 表格 -->
-    <el-table
-      :data="schoolList"
-      lazy
-      style="width: 100%"
-      height="550"
-      :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
-    >
-    
-      <el-table-column prop="id" sortable label="id" width="100"> </el-table-column>
-      <el-table-column prop="name" sortable label="学校名称" > </el-table-column>
+    <el-table :data="schoolList" lazy style="width: 100%" height="550">
+      <el-table-column prop="id" sortable label="id" width="100">
+      </el-table-column>
+      <el-table-column prop="name" sortable label="学校名称"> </el-table-column>
       <el-table-column prop="type" sortable label="学历"> </el-table-column>
       <el-table-column prop="description" sortable label="备注">
       </el-table-column>
@@ -176,12 +170,16 @@ export default {
     clear() {
       console.log("关闭");
       this.schoolOpen = false;
+
       this.add = {
         id: "",
         name: "",
         type: "",
         description: "",
       };
+      this.$nextTick(() => {
+        this.$refs.form.resetFields();
+      });
     },
   },
 };
@@ -190,6 +188,7 @@ export default {
 .work_space {
   background-color: #fff;
   padding: 10px;
+  margin-bottom: 10px;
 }
 ::-webkit-scrollbar {
   width: 6px;

@@ -1,6 +1,33 @@
 @import '../../assets/css/common.less';
 
+@media screen and (max-width:1440px) {
+
+    //当屏幕小于于1440px，不让图表和日志并排
+    .home_data {
+        display: block !important;
+
+        .home_echart {
+            margin-right: 0 !important;
+        }
+
+        .home_journal {
+            width: 100% !important;
+            margin-top: 20px;
+        }
+    }
+
+}
+
 #home_age {
+    .el-scrollbar__wrap {
+        overflow-x: hidden;
+    }
+
+    .el-dialog__body {
+        padding-top: 10px;
+        height: 320px;
+    }
+
     .title {
         padding-left: 16px;
         border-left: 4px solid @title-blue;
@@ -15,15 +42,18 @@
         padding: 20px;
         box-sizing: border-box;
         box-shadow: 0px 1px 6px rgba(165, 165, 165, 0.15);
+        width: 100%;
 
         .tabs_box {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
+            // display: flex;
+            // flex-wrap: wrap;
+            // justify-content: space-between;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(174px, 1fr));
 
             .tabs {
                 width: 120px;
-                background-size: 46px 58px;
+                background-size: 46px 54px;
                 background-repeat: no-repeat;
                 background-position: left bottom;
                 overflow: hidden;
@@ -40,6 +70,25 @@
                     bottom: 30px;
                 }
 
+                .tab_num_green {
+                    font-size: 28px;
+                    font-weight: bold;
+                    line-height: 36px;
+                    color: #0DD78D;
+                    ;
+                    position: absolute;
+                    bottom: 30px;
+                }
+
+                .tab_num_red {
+                    font-size: 28px;
+                    font-weight: bold;
+                    line-height: 36px;
+                    color: #FD5451;
+                    position: absolute;
+                    bottom: 30px;
+                }
+
                 .tab_msg {
                     line-height: 19px;
                     color: @font-black;
@@ -51,18 +100,36 @@
         }
     }
 
-    
+
     //图表和日志
     .home_data {
         display: flex;
         margin-top: 20px;
 
+
+
         .home_echart {
+            margin-right: 20px;
             background-color: #fff;
             padding: 20px;
             box-sizing: border-box;
             flex: 1;
             box-shadow: 0px 1px 6px rgba(165, 165, 165, 0.15);
+
+            .echert_title {
+                color: #333951;
+                font-size: 16px;
+            }
+
+            .user {
+                display: inline-block;
+                text-align: center;
+            }
+
+            .merchant {
+                display: inline-block;
+                text-align: center;
+            }
         }
 
         .home_journal {
@@ -73,18 +140,50 @@
             flex: 1;
             box-shadow: 0px 1px 6px rgba(165, 165, 165, 0.15);
             position: relative;
-            .all_journal{
+
+            .all_journal {
                 position: absolute;
-                right:20px;
-                top:26px;
+                right: 20px;
+                top: 26px;
                 color: @time-color;
                 font-size: 12px;
                 cursor: pointer;
             }
-            .journal_box{
-                padding-left:20px;
-                padding-top:20px;
+
+            .journal_box {
+                padding-left: 20px;
+                padding-top: 20px;
+                max-height: 660px;
             }
+
+            .el-step__title,
+            .is-process {
+                font-size: 14px;
+                color: #333951;
+                font-weight: 400;
+            }
+
+            .el-step__icon.is-text {
+                background-color: #F0F7FD;
+                width: 18px;
+                height: 18px;
+            }
+
+            .el-step__title.is-finish {
+                color: #2C9EF7;
+            }
+
+            .el-step.is-vertical .el-step__icon.is-icon {
+                // background-color: #F0F7FD;
+                border-radius: 50%;
+            }
+
+
+        }
+
+        // 所有日志
+        .el-dialog__body {
+            max-height: 30px;
         }
     }
 }

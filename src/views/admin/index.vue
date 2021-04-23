@@ -6,6 +6,17 @@
         <span class="title">兼职无忧后台管理</span>
         <div class="top_right">
           <router-link to="/">前台</router-link>
+          <span
+            v-if="$store.state.accessToken"
+            :class="$store.state.diaData.length > 0 ? 'hasDia' : ''"
+            ><router-link
+              :to="{
+                name: 'Dialogue',
+                params: { id: 'topF' },
+              }"
+              ><i class="el-icon-bell"></i>消息</router-link
+            ></span
+          >
           <router-link to="/userData">
             <span class="user_name" v-if="$store.state.accessToken">{{
               $store.state.userData.nickName || ""
@@ -57,18 +68,18 @@
               <el-menu-item index="ApplyMerchantIndex"
                 ><i class="el-icon-document"></i>商家申请</el-menu-item
               >
-               <!-- 学校管理 -->
+              <!-- 学校管理 -->
               <el-menu-item index="SchoolIndex"
                 ><i class="el-icon-document"></i>学校管理</el-menu-item
               >
-             <!-- 举报管理 -->
+              <!-- 举报管理 -->
               <el-menu-item index="ReportIndex"
                 ><i class="el-icon-document"></i>举报管理</el-menu-item
               >
             </el-menu>
           </el-scrollbar>
         </el-aside>
-        
+
         <!-- 主体 -->
         <el-main><router-view></router-view></el-main>
       </el-container>
@@ -126,12 +137,12 @@ export default {
 #admin {
   height: 100%;
   min-width: 1024px;
-  background-color: #F3F4F8;
+  background-color: #f3f4f8;
   .content {
     height: 100vh;
     .header {
       padding-left: 0;
-      background-color: #333951FF;
+      background-color: #333951ff;
       position: relative;
 
       .title {
@@ -148,6 +159,10 @@ export default {
         position: absolute;
         right: 10px;
         height: 60px;
+        .el-icon-bell{
+          margin-right:6px;
+          font-size: 16px;
+        }
         a {
           margin-left: 20px;
           line-height: 60px;

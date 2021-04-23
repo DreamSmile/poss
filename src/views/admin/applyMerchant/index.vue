@@ -36,6 +36,17 @@
           </template>
         </el-table-column>
       </el-table>
+      <!-- 页码 -->
+      <div class="page">
+        <el-pagination
+          @current-change="currentChange"
+          background
+          :hide-on-single-page="true"
+          layout="prev, pager, next"
+          :total="applyList.totalRows"
+        >
+        </el-pagination>
+      </div>
       <!-- 查看商家证明 -->
       <el-dialog
         top="40vh"
@@ -159,10 +170,10 @@ export default {
           this.applyList = res.data;
         })
         .catch((err) => {
-          this.$messge.error(err);
+          this.$message.error(err);
         });
     },
-    
+
     // 查看商家证明
     certifyopenBox(data) {
       this.certifyOPen = true;
@@ -186,8 +197,9 @@ export default {
     handleApplyOpen(data) {
       console.log(data);
       Object.assign(this.handleapply, {
-        id: data.userId,
+        id: data.id,
         realName: data.user.nickName,
+        toUser: data.userId,
         opinion: "true",
       });
       this.applyOpen = true;
@@ -214,6 +226,8 @@ export default {
         };
         message = "驳回";
       }
+      console.log(info);
+      console.log(this.handleapply);
       this.$adminApi
         .handleApply(info)
         .then((res) => {
@@ -230,6 +244,16 @@ export default {
           this.applyList.content = this.applyList.content.filter(
             (item) => item.userId != this.handleapply.id
           );
+          // msg: "管理员已拒绝了您本次的商家申请，原因为===>请重新发起"
+          // nickName: "新的用户"
+          // opinion: false
+          // toUser: "8b54281e-7bff-4c83-ab24-0501d3704189"
+          // 使用websocket传信息给用户，驳回信息
+          this.$socket.default.socketsend({
+            fromUser: this.$store.state.userData.id, //当前登录用户的id,
+            toUser: this.jobData.id, //接收人id
+            content: this.mess,
+          });
         })
         .catch((err) => {
           this.$message.error(err);
@@ -244,6 +268,13 @@ export default {
         reason: "",
       };
       this.applyOpen = false;
+    },
+    // 更换页码
+    currentChange(num) {
+      this.applyAxios({
+        pageNumber: num,
+        pageSize: 5,
+      });
     },
   },
 };

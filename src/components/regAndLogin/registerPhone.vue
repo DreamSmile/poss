@@ -135,7 +135,7 @@ export default {
               }, 3000);
             })
             .catch((err) => {
-              this.isErr("邮箱注册失败", err);
+              this.isErr("手机注册失败", err);
             });
         }
       });

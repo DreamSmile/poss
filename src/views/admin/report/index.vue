@@ -1,6 +1,11 @@
 <template>
   <div id="report">
-    <el-table :data="reportList" border style="width: 100%">
+    <!-- 意见处理举报 -->
+    <div class="report_edit">
+      <el-button type="primary" @click="batchReport">批量处理</el-button>
+      <el-button type="primary" @click="allReport">一键处理所申请</el-button>
+    </div>
+    <el-table ref="reportTable" :data="reportList" border style="width: 100%">
       <el-table-column type="selection" width="55" align="center">
       </el-table-column>
       <el-table-column prop="user.nickName" sortable label="举报者" width="200">
@@ -63,6 +68,17 @@
         </template>
       </el-table-column>
     </el-table>
+    <!-- 分页 -->
+    <div class="page">
+      <el-pagination
+        :hide-on-single-page="true"
+        :total="allData.totalRows"
+        @current-change="changePage"
+        :page-size="5"
+        layout="prev, pager, next"
+      >
+      </el-pagination>
+    </div>
     <!-- 详情页面 -->
     <el-dialog
       top="15vh"
@@ -73,8 +89,18 @@
       <el-form ref="form" :model="openInfo" label-width="80px" size="mini">
         <p class="form_title">基础信息</p>
         <el-form-item label="工作标题:">
-          {{ parttimeInfo.title }}
+          <el-tooltip
+            class="item"
+            effect="dark"
+            content="点击查看兼职"
+            placement="top"
+          >
+            <span class="work_title" @click="goWork(parttimeInfo.id)">{{
+              parttimeInfo.title
+            }}</span>
+          </el-tooltip>
         </el-form-item>
+
         <el-form-item label="举报人:">
           {{ user.nickName }}
         </el-form-item>
@@ -115,18 +141,26 @@ export default {
       parttimeInfo: {}, //弹出层的工作信息
       content: {}, //弹出层的基础举报信息
       user: {}, //弹出层举报人信息
-      ids:[],//提交给接口的举报数据id
+      ids: [], //提交给接口的举报数据id
     };
   },
   mounted() {
     this.setData();
   },
-  
+
   methods: {
     setData() {
       this.reportAxios({
         property: "createTime",
         pageNumber: 1,
+        pageSize: 5,
+      });
+    },
+    // 点击更换页码
+    changePage(page) {
+      this.reportAxios({
+        property: "createTime",
+        pageNumber: page,
         pageSize: 5,
       });
     },
@@ -162,30 +196,89 @@ export default {
       this.parttimeInfo = data.content.parttimeInfo;
       this.dataOpen = true;
     },
-    // 点击处理举报
+    // 点击单条处理举报
     handelReport(data) {
-      console.log(data);
+      this.setReportByIdArr({
+        ids: [data.id],
+        processAll: false,
+        type: "one",
+      });
+    },
+    // 批量处理举报
+    batchReport() {
+      let ids = [];
+      let data = this.$refs.reportTable.selection;
+      data.forEach((element) => {
+        ids.push(element.id);
+      });
+      this.setReportByIdArr({
+        ids: ids,
+        processAll: false,
+        type: "batch",
+      });
+    },
+    // 一键处理举报
+    allReport() {
+      this.$confirm("此操作将会将所有举报信息标记为已处理, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "info",
+      })
+        .then(() => {
+          this.setReportByIdArr({
+            ids: [],
+            processAll: true,
+          });
+        })
+        .catch((err) => {});
     },
     // 处理举报axios
     setReportByIdArr(data) {
-      this.$adminApi.setReportByIdArr({
-        ids: data,
-        processAll: true,
-      }).then(res=>{
+      this.$adminApi
+        .setReportByIdArr({
+          ids: data.ids,
+          processAll: data.processAll,
+        })
+        .then((res) => {
           console.log(res);
-          if(!res.success){
-              this.$message.error(res.msg);
-              return;
+          if (!res.success) {
+            this.$message.error(res.msg);
+            return;
           }
           this.$message({
-              message:'处理举报信息成功！',
-              type:'success'
-          })
-        //   要将页面上数据清除
-
-      }).catch(err=>{
+            message: "处理举报信息成功！",
+            type: "success",
+          });
+          //   要将页面上数据清除
+          if (data.processAll) {
+            //一键清除
+            this.reportList = [];
+          } else if (data.type == "batch") {
+            //批量
+            let data = this.$refs.reportTable.selection;
+            this.reportList = this.reportList.filter((item) => {
+              return data.every((item2) => {
+                return item.id != item2.id;
+              });
+            });
+          } else {
+            //单条
+            this.reportList = this.reportList.filter(
+              (item) => item.id != data.ids[0]
+            );
+          }
+        })
+        .catch((err) => {
           this.$message.error(err);
+        });
+    },
+    // 新窗口打开兼职页面
+    goWork(id) {
+      let routeData = this.$router.resolve({
+        name: "Job",
+        params: { id: id },
       });
+      window.open(routeData.href, "_blank");
     },
   },
 };
@@ -198,10 +291,24 @@ export default {
   /deep/.el-form-item {
     margin-bottom: 6px;
   }
+  .report_edit {
+    background-color: #fff;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
   .form_title {
     padding-left: 10px;
     border-left: 2px solid #2c9ef7;
     line-height: 30px;
+  }
+  .work_title {
+    cursor: pointer;
+    color: #2c9ef7;
+  }
+  .page {
+    background-color: #fff;
+    text-align: center;
+    margin: 10px 0;
   }
 }
 </style>

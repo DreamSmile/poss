@@ -89,6 +89,17 @@
           </template>
         </el-table-column>
       </el-table>
+      <!-- 页码 -->
+      <div class="page">
+        <el-pagination
+          @current-change="currentChange"
+          background
+          :hide-on-single-page="true"
+          layout="prev, pager, next"
+          :total="allData.totalRows"
+        >
+        </el-pagination>
+      </div>
       <!-- 查看用户 -->
       <el-dialog
         title="用户详情"
@@ -113,7 +124,7 @@
             @click="lookFile(certify.idCardFront)"
             >身份证正面</el-button
           >
-          
+
           <el-button
             type="primary"
             icon="el-icon-postcard"
@@ -163,6 +174,7 @@ export default {
   name: "Merchant",
   data() {
     return {
+      allData: {},
       merChantList: [], //商家列表
       banOpen: false,
       dialogVisible: false,
@@ -214,8 +226,10 @@ export default {
             this.$message.error(res.msg);
             return;
           }
+          this.allData = res.data;
           this.merChantList = res.data.content;
-        }).catch(err=>{
+        })
+        .catch((err) => {
           this.$message.error(err);
         });
     },
@@ -370,6 +384,15 @@ export default {
         .catch((err) => {
           this.$message.error("获取学校列表失败！" + err);
         });
+    },
+    // 更换页码
+    currentChange(num) {
+      this.merchantAxios({
+        campus: this.select,
+        keyword: this.userName,
+        pageNumber: num,
+        pageSize: 5,
+      });
     },
   },
 };

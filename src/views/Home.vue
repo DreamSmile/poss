@@ -34,10 +34,10 @@
           </div>
           <!-- 左边工作列表 -->
           <el-tabs v-model="activeName">
-            <el-tab-pane label="最新职位" name="second"
+            <el-tab-pane label="最新职位" name="first" 
               ><workList :jobList="jobListHot" @changePage="changePageHot"
             /></el-tab-pane>
-            <el-tab-pane label="推荐职位" name="first"
+            <el-tab-pane label="推荐职位" name="second"
               ><workList :jobList="jobList" @changePage="changePage"
             /></el-tab-pane>
           </el-tabs>

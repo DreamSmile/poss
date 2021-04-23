@@ -31,8 +31,7 @@
     <!-- 表格 -->
     <div class="user_table">
       <el-table :data="userList" border style="width: 100%">
-        <!-- <el-table-column prop="id" label="id"> </el-table-column> -->
-          <el-table-column prop="avatar" label="头像" width="70px">
+        <el-table-column prop="avatar" label="头像" width="70px">
           <template slot-scope="scope">
             <div
               class="imgs"
@@ -42,9 +41,8 @@
                   require('@/assets/imgs/user.jpg') + ')',
               }"
             ></div>
-            
           </template>
-          </el-table-column>
+        </el-table-column>
         <el-table-column prop="nickName" sortable label="名称">
         </el-table-column>
         <el-table-column prop="campus" sortable label="学校">
@@ -64,9 +62,9 @@
         <el-table-column prop="status" sortable label="状态">
           <template slot-scope="scope">
             <el-tag
-              :type="scope.row.status === '正常' ? 'succes' : 'danger'"
+              :type="scope.row.isBanned ? 'danger' : 'succes'"
               disable-transitions
-              >{{ scope.row.status }}</el-tag
+              >{{ scope.row.isBanned ? "封禁中" : "正常" }}</el-tag
             >
           </template>
         </el-table-column>
@@ -223,16 +221,6 @@ export default {
             } else {
               editUserList[i].role = "未知";
             }
-            switch (editUserList[i].status) {
-              case 0:
-                editUserList[i].status = "已注销";
-                break;
-              case 1:
-                editUserList[i].status = "正常";
-                break;
-              default:
-                break;
-            }
           }
           this.userList = editUserList;
         })
@@ -288,6 +276,7 @@ export default {
                     this.userList[j].isBanned = false;
                   }
                 }
+                console.log(this.userList);
               })
               .catch((err) => {
                 this.$message.error(err);

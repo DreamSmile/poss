@@ -193,6 +193,7 @@ router.beforeEach((to, form, next) => {
     return;
   }
   let userInfo = $store.state;//所有的用户信息，包括token
+  console.log(userInfo);
   // 检测如果是没有token智能去注册首页登录
   if (to.name != "Login" && to.name != "Register" && to.name != "Home" && to.name != "Job" && userInfo.accessToken == "") {
     try {
