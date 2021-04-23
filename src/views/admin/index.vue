@@ -46,7 +46,7 @@
         <el-aside width="250px" class="aside">
           <el-scrollbar wrap-style="overflow-x:hidden;height:100%；width:100%">
             <el-menu
-              default-active="2"
+              :default-active="this.$route.name"
               class="el-menu-vertical-demo aside_menu"
               background-color="#373c4c"
               text-color="#fff"
