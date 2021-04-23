@@ -14,6 +14,7 @@ export function getUserByPage(data) {
 export function getUserInfoById(data) {
     return $post(api + '/admin/fetch/user/detail', data);
 }
+
 // 根据用户id和封禁时长封禁用户
 export function banUser(data) {
     return $post(api + '/admin/lock/account', data);

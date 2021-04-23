@@ -203,6 +203,7 @@ router.beforeEach((to, form, next) => {
   next();
 })
 
+
 export function addAdminRouter() {
   if ($store.state.userData.role == 'admin' && router.options.routes.length == 12) {
     router.addRoute(adminRouter);

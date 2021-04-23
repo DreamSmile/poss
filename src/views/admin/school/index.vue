@@ -164,6 +164,7 @@ export default {
         }
       });
     },
+    
     // 清除学校增加页面的数据
     clear() {
       this.schoolOpen = false;

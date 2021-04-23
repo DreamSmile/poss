@@ -158,6 +158,7 @@ echarts.use([
   PieChart,
   CanvasRenderer,
 ]);
+
 export default {
   data() {
     return {

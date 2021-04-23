@@ -105,6 +105,7 @@ export default {
           } catch (error) {
             console.log(error);
           }
+          
           // addAdminRouter(); //动态路由
         })
         .catch((err) => {

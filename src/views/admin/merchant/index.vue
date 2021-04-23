@@ -259,6 +259,7 @@ export default {
           this.$message.error(err);
         });
     },
+    
     // 查看商家证明
     certifyopenBox(data) {
       this.$adminApi

@@ -128,6 +128,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import adminUserinfo from "../../../components/admin/adminUserinfo";
 
