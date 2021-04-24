@@ -183,8 +183,6 @@ export default {
     margin-top: 20px;
     padding: 18px 23px;
     margin-bottom: 20px;
-    .list_title {
-    }
     .no {
       text-align: center;
       color: @msg-color;

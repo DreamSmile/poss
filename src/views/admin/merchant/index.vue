@@ -38,8 +38,9 @@
               class="imgs"
               :style="{
                 backgroundImage:
-                  'url(' + scope.row.avatar ||
-                  require('@/assets/imgs/user.jpg') + ')',
+                  'url(' +
+                  (scope.row.avatar || require('@/assets/imgs/user.jpg')) +
+                  ')',
               }"
             ></div>
           </template>
@@ -90,7 +91,7 @@
         </el-table-column>
       </el-table>
       <!-- 页码 -->
-      <div class="page" v-show="allData.totalRows>0">
+      <div class="page" v-show="allData.totalRows > 0">
         <el-pagination
           @current-change="currentChange"
           background
@@ -259,7 +260,7 @@ export default {
           this.$message.error(err);
         });
     },
-    
+
     // 查看商家证明
     certifyopenBox(data) {
       this.$adminApi

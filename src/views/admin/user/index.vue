@@ -37,8 +37,9 @@
               class="imgs"
               :style="{
                 backgroundImage:
-                  'url(' + scope.row.avatar ||
-                  require('@/assets/imgs/user.jpg') + ')',
+                  'url(' +
+                  (scope.row.avatar || require('@/assets/imgs/user.jpg')) +
+                  ')',
               }"
             ></div>
           </template>
