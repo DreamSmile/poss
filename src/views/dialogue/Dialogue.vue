@@ -104,7 +104,6 @@
   </div>
 </template>
 <script>
-// import {state} from 'vuex'
 import Top from "../../components/top.vue";
 import "./dialogue.less";
 export default {

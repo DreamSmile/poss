@@ -30,7 +30,7 @@
           >{{ times }}秒后重发</span
         >
       </el-form-item>
-      <el-checkbox v-model="checked">同意poss直聘《用户协议》</el-checkbox>
+      <el-checkbox v-model="checked">同意兼职无忧《用户协议》</el-checkbox>
       <el-button type="primary" @click="regist" :loading="loading"
         >注册</el-button
       >

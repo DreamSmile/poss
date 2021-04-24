@@ -63,7 +63,7 @@
         <el-table-column prop="status" sortable label="状态">
           <template slot-scope="scope">
             <el-tag
-              :type="scope.row.status ? 'danger' : 'succes'"
+              :type="scope.row.isBanned ? 'danger' : 'succes'"
               disable-transitions
               >{{ scope.row.isBanned ? "封禁中" : "正常" }}</el-tag
             >

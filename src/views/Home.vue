@@ -57,7 +57,6 @@ import top from "@/components/top.vue";
 import workList from "@/components/workList.vue";
 import student from "@/components/state/student.vue";
 import tourist from "@/components/state/Tourist.vue";
-import { addAdminRouter } from "@/router/index.js";
 
 export default {
   name: "Home",
@@ -105,8 +104,6 @@ export default {
           } catch (error) {
             console.log(error);
           }
-          
-          // addAdminRouter(); //动态路由
         })
         .catch((err) => {
           this.$message.error("获取用户信息失败，请登录！" + err);

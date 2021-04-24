@@ -4,12 +4,8 @@
   </div>
 </template>
 <script>
-// import { addAdminRouter } from "@/router/index.js";
 export default {
   name: "App",
-  created() {
-    // addAdminRouter(); //动态路由
-  },
 };
 </script>
 
@@ -19,5 +15,13 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 400;
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #a1a3a9;
+    border-radius: 3px;
+  }
 }
 </style>

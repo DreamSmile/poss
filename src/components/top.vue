@@ -42,7 +42,6 @@
           <router-link to="/admin" v-if="$store.state.userData.role == 'admin'">
             <span class="user_admin">后台</span></router-link
           >
-          
           <router-link to="/userData">
             <span class="user_name" v-if="$store.state.accessToken">{{
               $store.state.userData.nickName || ""
@@ -53,7 +52,10 @@
                 class="imgs"
                 :style="{
                   backgroundImage:
-                    'url(' + this.$store.state.userData.avatar || require('@/assets/imgs/user.jpg') + ')',
+                    'url(' +
+                    (this.$store.state.userData.avatar ||
+                      require('../assets/imgs/user.jpg')) +
+                    ')',
                 }"
               ></div>
               <el-dropdown-menu slot="dropdown">
@@ -112,6 +114,8 @@ export default {
   data() {
     return {
       dialogVisible: false,
+      imgSrc:
+        this.$store.state.userData.avatar || require("../assets/imgs/user.jpg"),
       form: {
         passOld: "",
         passNew: "",
@@ -356,7 +360,7 @@ export default {
             color: #8bcdef;
           }
         }
-        
+
         .user_name {
           overflow: hidden;
           text-overflow: ellipsis;
@@ -364,7 +368,7 @@ export default {
           display: inline-block;
           vertical-align: middle;
           line-height: 50px;
-          width:82px;
+          width: 82px;
         }
         .user_name:hover {
           color: #8bcdef;

@@ -138,6 +138,7 @@ const routes = [
     ]
   }
 ]
+let adminR = ['Admin', 'HomePage', 'UserIndex', 'MerchantIndex', 'applyMerchantIndex', 'SchoolIndex', 'ReportIndex'];
 // 后台管理路由
 const adminRouter =
 {
@@ -180,6 +181,8 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, form, next) => {
+  // addAdminRouter();
+
   //处理无效路由
   if (Array.isArray(to.matched) && to.matched.length == 0) {
     next({
@@ -200,14 +203,26 @@ router.beforeEach((to, form, next) => {
       path: "/login"
     });
   }
+  if (adminR.indexOf(to.name) != -1 && $store.state.userData.role != 'admin') {
+    next({
+      path: "/error",
+    });
+    return;
+  }
   next();
 })
 
 
 export function addAdminRouter() {
-  if ($store.state.userData.role == 'admin' && router.options.routes.length == 12) {
-    router.addRoute(adminRouter);
+  try {
+    if ($store.state.userData.role == 'admin' && router.options.routes.length == 12) {
+      router.addRoute(adminRouter);
+    }
+  } catch (error) {
+    console.log('添加路由失败');
+    console.log(err);
   }
+
 }
 
 

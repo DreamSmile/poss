@@ -2,8 +2,8 @@
   <div id="report">
     <!-- 意见处理举报 -->
     <div class="report_edit">
-      <el-button type="primary" @click="batchReport">批量处理</el-button>
-      <el-button type="primary" @click="allReport">一键处理所申请</el-button>
+      <el-button type="primary" size="mini" @click="batchReport">批量处理</el-button>
+      <el-button type="primary" size="mini" @click="allReport">一键处理所申请</el-button>
     </div>
     <el-table ref="reportTable" :data="reportList" border style="width: 100%">
       <el-table-column type="selection" width="55" align="center">

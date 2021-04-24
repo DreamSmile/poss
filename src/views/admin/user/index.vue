@@ -208,7 +208,7 @@ export default {
         })
         .then((res) => {
           if (!res.success) {
-            this.$messge.error(res.msg);
+            this.$message.error(res.msg);
             return;
           }
           let editUserList = res.data.content;
@@ -227,7 +227,7 @@ export default {
           this.userList = editUserList;
         })
         .catch((err) => {
-          this.$messge.error(err);
+          this.$message.error(err);
         });
     },
     // 查看用户详情

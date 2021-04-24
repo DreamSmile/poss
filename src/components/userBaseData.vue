@@ -4,8 +4,10 @@
       class="imgs"
       :style="{
         backgroundImage:
-          'url(' + this.$store.state.userData.avatar ||
-          require('@/assets/imgs/user.jpg') + ')',
+          'url(' +
+          (this.$store.state.userData.avatar ||
+            require('../assets/imgs/user.jpg')) +
+          ')',
       }"
     ></div>
     <div class="user_summary">

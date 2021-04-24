@@ -49,6 +49,10 @@ export function handleApply(data) {
 export function addSchool(data) {
     return $post(api + '/admin/campus/add', data);
 }
+// 文件上传学校
+export function upSchoolFile(data){
+    return $postP(api+'/admin/campus/add/file',data);
+}
 
 
 /*举报管理*/

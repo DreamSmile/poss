@@ -225,10 +225,6 @@ export default {
         tooltip: {
           trigger: "item",
         },
-        legend: {
-          orient: "vertical",
-          left: "left",
-        },
         series: [
           {
             name: "访问来源",
