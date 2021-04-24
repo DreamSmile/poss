@@ -155,7 +155,6 @@ export default {
         // 如果会话是其他用户发的，将用户列表时间变成红色
         for (let i = 0; i < this.userList.length; i++) {
           if (data[index].fromUser == this.userList[i].id) {
-            console.log("有用户信息");
             this.userList[i].isHas = 1;
           }
         }
@@ -193,7 +192,6 @@ export default {
             pid: this.$route.params.id,
           })
           .then((res) => {
-            console.log(res);
             if (!res.success) {
               this.$message.error("获得工作信息失败，原因为：" + res.msg);
               return;

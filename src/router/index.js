@@ -219,7 +219,6 @@ export function addAdminRouter() {
       router.addRoute(adminRouter);
     }
   } catch (error) {
-    console.log('添加路由失败');
     console.log(err);
   }
 

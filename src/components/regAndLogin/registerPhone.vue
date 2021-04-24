@@ -93,7 +93,6 @@ export default {
       this.$api
         .getCode({ operationType: "signup", phoneNumber: this.form.phone })
         .then((res) => {
-          console.log(res);
           if (!res.success) {
             this.isErr("获取验证码失败", res.msg);
             return;

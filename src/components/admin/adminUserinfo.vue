@@ -86,7 +86,6 @@ export default {
     // 根据传入的用户Id 获取用户其他信息
     setData() {
       this.loading = this.userData.loading;
-      console.log(this.userData);
       this.campusInfo = this.userData.campusInfo;
     },
   },

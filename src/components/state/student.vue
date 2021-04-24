@@ -82,7 +82,6 @@ export default {
       this.$api
         .getJobHis()
         .then((res) => {
-          console.log(res);
           if (!res.success) {
             this.$message.error("获取用户兼职历史失败，原因为：" + res.msg);
             return;

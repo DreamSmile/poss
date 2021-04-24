@@ -221,11 +221,14 @@ export default {
                 return;
               }
               this.$store.commit("clearAll");
-              try {
-                //使用trycatch 是因为如果在home页面退出，控制台会报错重复跳转路由
+              if (this.$route.path != "/") {
                 this.$router.push("/");
-              } catch (error) {}
-              this.$socket.default.onClose();
+              }
+              try {
+                this.$socket.default.onClose();
+              } catch (error) {
+                console.log(error);
+              }
             })
             .catch((err) => {
               console.log(err);
