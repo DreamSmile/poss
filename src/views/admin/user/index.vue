@@ -44,14 +44,14 @@
             ></div>
           </template>
         </el-table-column>
-        <el-table-column prop="nickName" sortable label="名称">
+        <el-table-column prop="nickName" label="名称">
         </el-table-column>
-        <el-table-column prop="campus" sortable label="学校">
+        <el-table-column prop="campus" label="学校">
           <template slot-scope="scope">
             {{ scope.row.campus || "未知" }}
           </template>
         </el-table-column>
-        <el-table-column prop="role" sortable label="权限">
+        <el-table-column prop="role" label="权限">
           <template slot-scope="scope">
             <el-tag
               :type="scope.row.role === '普通用户' ? 'primary' : 'success'"
@@ -60,7 +60,7 @@
             >
           </template>
         </el-table-column>
-        <el-table-column prop="status" sortable label="状态">
+        <el-table-column prop="status" label="状态">
           <template slot-scope="scope">
             <el-tag
               :type="scope.row.isBanned ? 'danger' : 'succes'"

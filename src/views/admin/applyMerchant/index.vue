@@ -15,9 +15,9 @@
             ></div>
           </template>
         </el-table-column>
-        <el-table-column prop="user.nickName" sortable label="名称">
+        <el-table-column prop="user.nickName" label="名称">
         </el-table-column>
-        <el-table-column prop="createTime" sortable label="申请时间">
+        <el-table-column prop="createTime" label="申请时间">
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="220">
           <template slot-scope="scope">

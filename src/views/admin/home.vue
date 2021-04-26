@@ -117,25 +117,40 @@
     <el-dialog
       title="所有操作"
       :visible.sync="open"
-      width="482px"
+      width="520px"
       :before-close="clear"
     >
-      <el-scrollbar style="height: 100%">
-        <el-steps direction="vertical" space="60px" :active="1">
+      <el-date-picker
+        :editable="false"
+        size="mini"
+        v-model="datePicker"
+        type="daterange"
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+      >
+      </el-date-picker>
+      <el-button class="btn_date" type="primary" size="mini" @click="changeDate"
+        >查询</el-button
+      >
+      <el-scrollbar style="height: 90%;margin-top:10px">
+        <el-steps direction="vertical" space="60px" :active="1" v-if="allDateList.length>0">
           <el-step
-            v-for="(item, i) in operationHis"
+            v-for="(item, i) in allDateList"
             :key="i"
             icon="el-icon-info"
             :title="item.adminName + item.content"
             :description="item.createTime"
           ></el-step>
         </el-steps>
+        <div class="no_list" v-else>这段时间管理员未做任何操作~</div>
       </el-scrollbar>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import { returntimes } from "../../utils/common.js";
 import "./home.less";
 // 引入 echarts 核心模块，核心模块提供了 echarts 使用必须要的接口。
 import * as echarts from "echarts/core";
@@ -164,7 +179,9 @@ export default {
     return {
       open: false,
       base: {}, //tab的数据
-      operationHis: [], //日志
+      datePicker: [], //时间组件
+      allDateList: [], //所有日志
+      operationHis: [], //7天日志
       pieUserData: [], //饼图中用户分部数
       pieMerchant: [], //饼图中商家分部数
       userDistribution: {}, //接口中获取到的用户数
@@ -173,6 +190,7 @@ export default {
   },
   mounted() {
     this.setData();
+    this.getAllDateList(); //获取所有日志
   },
   methods: {
     setData() {
@@ -189,6 +207,47 @@ export default {
           this.userDistribution = res.data.userDistribution;
           this.merchantDistribution = res.data.merchantDistribution;
           this.setEchert();
+        })
+        .catch((err) => {
+          this.$message.error(err);
+        });
+    },
+    // 获取所有日志
+    getAllDateList() {
+      this.AllDateListAxios({
+        endTime: "",
+        startTime: "",
+      });
+    },
+    // 根据组件获取日志
+    changeDate() {
+      if (!this.datePicker) {
+        //点击清除按钮是将数据变为null，所有要调用值
+        this.datePicker = [];
+      }
+      console.log(this.datePicker);
+      if (this.datePicker.length < 1) {
+        this.$message.error("请选择日期范围~");
+        return;
+      }
+      this.AllDateListAxios({
+        startTime: this.$utils.returntimes(this.datePicker[0]).split(" ")[0],
+        endTime: this.$utils.returntimes(this.datePicker[1]).split(" ")[0],
+      });
+    },
+    AllDateListAxios(data) {
+      this.$adminApi
+        .getDateListByDate({
+          endTime: data.endTime,
+          startTime: data.startTime,
+        })
+        .then((res) => {
+          console.log(res);
+          if (!res.success) {
+            this.$message.error(res.msg);
+            return;
+          }
+          this.allDateList = res.data;
         })
         .catch((err) => {
           this.$message.error(err);

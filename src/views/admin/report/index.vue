@@ -8,32 +8,29 @@
     <el-table ref="reportTable" :data="reportList" border style="width: 100%">
       <el-table-column type="selection" width="55" align="center">
       </el-table-column>
-      <el-table-column prop="user.nickName" sortable label="举报者" width="200">
+      <el-table-column prop="user.nickName" label="举报者" width="200">
       </el-table-column>
       <el-table-column
         prop="content.parttimeInfo.title"
-        sortable
         label="工作标题"
         width="200"
       >
       </el-table-column>
       <el-table-column
         prop="content.parttimeInfo.campus"
-        sortable
         label="工作学校"
         width="150"
       >
       </el-table-column>
-      <el-table-column prop="createTime" sortable label="举报时间" width="100">
+      <el-table-column prop="createTime" label="举报时间" width="100">
       </el-table-column>
       <el-table-column
         prop="content.typeName"
-        sortable
         label="举报类型"
         width="140"
       >
       </el-table-column>
-      <el-table-column prop="status" sortable label="工作状态">
+      <el-table-column prop="status" label="工作状态">
         <template slot-scope="scope">
           <el-tag
             :type="

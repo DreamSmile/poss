@@ -5,6 +5,10 @@ const api = './possApi';
 export function getBase(){
     return $get(api+'/admin/fetch/management/basic');
 }
+// 根据日期获取日志
+export function getDateListByDate(data){
+    return $post(api+'/admin/query/operation/his',data);
+}
 
 // 分页获取用户列表
 export function getUserByPage(data) {

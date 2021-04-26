@@ -308,6 +308,9 @@ export default {
             return false;
           }
           this.schoolList = res.data;
+          if(this.$route.params.id == 0){
+            this.form.school=this.$store.state.userData.campusInfo.name;
+          }
         })
         .catch((err) => {
           this.$message.error("获取学校列表失败！" + err);
@@ -355,7 +358,6 @@ export default {
     },
     // 取消发布
     reset() {
-      console.log(this.$utils.returntimes(this.form.date));
     },
     // 发布兼职
     pushJob() {

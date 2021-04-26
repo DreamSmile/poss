@@ -69,16 +69,9 @@
             <p class="hr_name">
               {{ merchantinfo.realName || "招聘者" }}
             </p>
-            <!-- <router-link
-              :to="{
-                name: 'Dialogue',
-                params: { id: jobData.id },
-              }"> -->
             <p class="hr_state" @click="checkId">
-              <i class="el-icon-chat-dot-square"></i>刚刚在线
+              <i class="el-icon-chat-dot-square"></i>立即沟通
             </p>
-            <!-- </router-link
-            > -->
           </div>
         </div>
         <!-- 职位描述 -->

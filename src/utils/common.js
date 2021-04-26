@@ -38,7 +38,7 @@ export function removeLocalToken(name) {
 export function returnData(date) {
     return date.trim().split(" ")[0].replace(/\-/g, '\.');
 }
-// 中国标准时间转换为2021.04.06
+// 中国标准时间转换为2021-04-06
 export function returntimes(time) {
     var d = new Date(time);
     return d.getFullYear() + '-' + return0(d.getMonth() + 1) + '-' + return0(d.getDate()) + ' ' + return0(d.getHours()) + ':' + return0(d.getMinutes()) + ':00';
