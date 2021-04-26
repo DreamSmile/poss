@@ -132,8 +132,8 @@
       </div>
     </div>
     <!-- map弹窗 -->
-    <el-dialog title="地图路线" top="5vh" :visible.sync="mapOpen" width="90%">
-      <iframe :src="mapSrc" style="height:70vh;width:100%"></iframe>
+    <el-dialog title="地图路线" top="3vh" :visible.sync="mapOpen" width="96%">
+      <iframe :src="mapSrc" style="height:80vh;width:100%"></iframe>
     </el-dialog>
   </div>
 </template>
