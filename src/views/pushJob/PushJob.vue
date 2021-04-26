@@ -53,7 +53,6 @@
             label=" "
             style="display: inline-block"
           >
-          
             <el-input
               v-model="form.money"
               placeholder="请输入时薪"
@@ -103,7 +102,7 @@
             title="移除申请用户"
             width="380px"
           >
-            <el-scrollbar style="height: 100%;">
+            <el-scrollbar style="height: 100%">
               <ul>
                 <li v-for="(item, i) in jobInfo.joinList" :key="i">
                   <div
@@ -307,8 +306,8 @@ export default {
             return false;
           }
           this.schoolList = res.data;
-          if(this.$route.params.id == 0){
-            this.form.school=this.$store.state.userData.campusInfo.name;
+          if (this.$route.params.id == 0) {
+            this.form.school = this.$store.state.userData.campusInfo.name;
           }
         })
         .catch((err) => {
@@ -356,9 +355,8 @@ export default {
       return false;
     },
     // 取消发布
-    reset() {
-    },
-    // 发布兼职
+    reset() {},
+    // 发布兼职，或者修改兼职
     pushJob() {
       this.loading = true;
       let jobId = this.$route.params.id;
@@ -408,6 +406,15 @@ export default {
     },
     // 修改兼职
     editJobAxios(data) {
+      let workDate = parseInt(
+        this.$utils.timeOut(this.$utils.returntimes(this.form.date))
+      );
+      let nowDate = parseInt(this.$utils.getNowTime()) + 1000000;
+      if (nowDate > workDate) {
+        this.$alert("工作开始时间至少是当前时间一天后，请修改时间~");
+        this.loading = false;
+        return false;
+      }
       this.$api
         .editJob(data)
         .then((res) => {
@@ -426,7 +433,7 @@ export default {
         })
         .catch((err) => {
           this.loading = false;
-          this.$message.error("兼职修改失败");
+          this.$message.error('兼职修改失败，请重试~');
         });
     },
     // 将兼职状态改为开始兼职
