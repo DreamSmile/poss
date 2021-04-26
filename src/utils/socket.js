@@ -23,7 +23,6 @@ let socket = {
     if ($store.state.userData.id == undefined) {
       socket.socketEl.close();
       location.reload();
-      console.log('open监听');
     }
   },
   socketsend(data) {//   发送数据 fromUser:当前登录用户的id，toUser：要发送人的id，content:内容

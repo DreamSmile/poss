@@ -197,7 +197,6 @@ export default {
       this.$adminApi
         .getBase()
         .then((res) => {
-          console.log(res);
           if (!res.success) {
             this.$message.error(res.msg);
             return;
@@ -225,7 +224,6 @@ export default {
         //点击清除按钮是将数据变为null，所有要调用值
         this.datePicker = [];
       }
-      console.log(this.datePicker);
       if (this.datePicker.length < 1) {
         this.$message.error("请选择日期范围~");
         return;
@@ -242,7 +240,6 @@ export default {
           startTime: data.startTime,
         })
         .then((res) => {
-          console.log(res);
           if (!res.success) {
             this.$message.error(res.msg);
             return;

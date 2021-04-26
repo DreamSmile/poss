@@ -25,7 +25,6 @@ const mailPhoneConnect = r => require.ensure([], () => r(require('@/views/userDa
 
 const admin = r => require.ensure([], () => r(require('@/views/admin')), 'admin');
 const homePage = r => require.ensure([], () => r(require('@/views/admin/home')), 'homePage');
-
 const userIndex = r => require.ensure([], () => r(require('@/views/admin/user')), 'userIndex');
 const merchantIndex = r => require.ensure([], () => r(require('@/views/admin/merchant')), 'merchantIndex');
 const applyMerchantIndex = r => require.ensure([], () => r(require('@/views/admin/applyMerchant')), 'applyMerchantIndex');
@@ -181,7 +180,6 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, form, next) => {
-  // addAdminRouter();
 
   //处理无效路由
   if (Array.isArray(to.matched) && to.matched.length == 0) {
@@ -212,17 +210,6 @@ router.beforeEach((to, form, next) => {
   next();
 })
 
-
-export function addAdminRouter() {
-  try {
-    if ($store.state.userData.role == 'admin' && router.options.routes.length == 12) {
-      router.addRoute(adminRouter);
-    }
-  } catch (error) {
-    console.log(err);
-  }
-
-}
 
 
 export default router

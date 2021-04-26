@@ -65,7 +65,6 @@ export default {
           },
         })
         .then((res) => {
-          console.log(res);
           if (!res.success) {
             this.$message.error("获取发布过的兼职列表失败，原因为：" + res.msg);
             return;
@@ -86,7 +85,6 @@ export default {
       this.$api
         .getPushJobHis()
         .then((res) => {
-          console.log(res);
           if (!res.success) {
             this.$message.error(res.msg);
             return;

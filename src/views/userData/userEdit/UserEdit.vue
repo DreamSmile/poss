@@ -192,10 +192,6 @@ export default {
             sex: this.form.sex,
             signature: this.form.autograph,
           });
-          console.log(this.form.name);
-          // setTimeout(() => {
-          //   this.$router.push("/userBase");
-          // }, 2000);
         })
         .catch((err) => {
           this.$message.error("修改信息请求失败！");

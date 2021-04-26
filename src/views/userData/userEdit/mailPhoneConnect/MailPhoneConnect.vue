@@ -220,7 +220,6 @@ export default {
       let interval = setInterval(() => {
         this.timesM = num > 0 ? num-- : clearInterval(interval);
       }, 1000);
-      console.log(this.formMail.MailNew);
       this.$api
         .getCodeByMail({
           operationType: "bind",

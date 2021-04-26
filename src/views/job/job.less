@@ -4,6 +4,10 @@
     background-color: #F6F6F8;
     min-height: calc(100vh - 50px);
 
+    .el-dialog__body {
+        padding-top: 0;
+    }
+
     .content {
         width: 80%;
         min-width: 900px;
@@ -62,11 +66,33 @@
                     color: #f95500;
                     font-size: 26px;
                 }
+
+                .job_name {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    display: inline-block;
+                    max-width: 220px;
+                    font-weight: 400;
+                    line-height: 28px;
+                    color: #FFFFFF;
+                    font-size: 28px;
+                    margin-left: 0;
+                }
             }
 
             .school {
                 color: #fff;
                 padding-bottom: 40px;
+                cursor: pointer;
+
+                .el-icon-location-information {
+                    margin-right: 2px;
+                }
+            }
+
+            .school:hover {
+                color: @base-color;
             }
 
             button {

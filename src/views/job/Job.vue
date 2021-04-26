@@ -15,10 +15,19 @@
             >
           </div>
           <div class="post">
-            {{ jobData.title }}<span>{{ jobData.hourlyWage }}元/小时</span>
+            <el-tooltip
+              class="item"
+              effect="dark"
+              :content="jobData.title"
+              placement="top"
+            >
+              <span class="job_name"> {{ jobData.title }}</span></el-tooltip
+            ><span>{{ jobData.hourlyWage }}元/小时</span>
             <span class="createTime">开始时间：{{ jobData.createTime }}</span>
           </div>
-          <div class="school">{{ jobData.workplace }}</div>
+          <div class="school" @click="goMap">
+            <i class="el-icon-location-information"></i>{{ jobData.workplace }}
+          </div>
           <button type="button" @click="addJob" v-if="!jobData.join">
             立即加入
           </button>
@@ -92,7 +101,9 @@
               <p class="list">
                 负责人手机号：{{ publisher.phoneNumber || "--" }}
               </p>
-              <p class="list">负责人所属学校：{{ campusInfo.name || "--" }}</p>
+              <p class="list">
+                负责人所属学校：{{ merchantinfo.campus || "--" }}
+              </p>
             </div>
           </div>
           <div class="job_describe_list job_end">
@@ -120,6 +131,10 @@
         </div>
       </div>
     </div>
+    <!-- map弹窗 -->
+    <el-dialog title="地图路线" top="5vh" :visible.sync="mapOpen" width="90%">
+      <iframe :src="mapSrc" style="height:70vh;width:100%"></iframe>
+    </el-dialog>
   </div>
 </template>
 <style scoped lang="less">
@@ -143,6 +158,8 @@ export default {
       publisher: {}, //商家电话等
       campusInfo: {}, //商家学校
       peportNum: 0, //举报次数
+      mapOpen: false, //打开地图
+      mapSrc: "", //地图url
     };
   },
   components: {
@@ -160,6 +177,7 @@ export default {
           pid: this.$route.params.id,
         })
         .then((res) => {
+          console.log(res);
           if (!res.success) {
             this.$message.error("获取兼职详情错误！原因为：" + res.msg);
             return false;
@@ -278,6 +296,19 @@ export default {
         "http://www.yggdrasill.vip:8012/onlinePreview?url=" +
           encodeURIComponent(Base64.encode(deUrl))
       );
+    },
+    // 打开地图
+    goMap() {
+      let url =
+        "http://api.map.baidu.com/direction?origin=" +
+        this.$store.state.userData.campusInfo.name +
+        "&destination=" +
+        this.campusInfo.name +
+        "&mode=driving&region=" +
+        this.jobData.city +
+        "&output=html&src=webapp.baidu.openAPIdemo";
+      this.mapOpen = true;
+      this.mapSrc = url;
     },
   },
 };

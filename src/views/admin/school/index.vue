@@ -12,19 +12,17 @@
         :show-file-list="false"
       >
         <el-button size="mini" type="primary" :loading="loading"
-
           >上传文件</el-button
         >
       </el-upload>
     </div>
     <!-- 表格 -->
     <el-table :data="schoolList" lazy style="width: 100%" height="550">
-      <el-table-column prop="id" label="id" width="100">
-      </el-table-column>
+      <el-table-column prop="id" label="id" width="100"> </el-table-column>
       <el-table-column prop="name" label="学校名称"> </el-table-column>
       <el-table-column prop="type" label="学历"> </el-table-column>
-      <el-table-column prop="description" label="备注">
-      </el-table-column>
+      <el-table-column prop="city" label="城市"> </el-table-column>
+      <el-table-column prop="description" label="备注"> </el-table-column>
     </el-table>
     <!-- 增加学校 -->
     <el-dialog
@@ -60,6 +58,13 @@
             <el-radio border label="本科"></el-radio>
             <el-radio border label="专科"></el-radio>
           </el-radio-group>
+        </el-form-item>
+        <el-form-item label="所在城市：" prop="city">
+          <el-input
+            v-model="add.city"
+            :validate-event="false"
+            placeholder="请输入学校所在城市"
+          ></el-input>
         </el-form-item>
         <el-form-item label="学校描述：" prop="description">
           <el-input
@@ -111,7 +116,7 @@ export default {
   data() {
     return {
       schoolList: [],
-      loading:false,
+      loading: false,
       schoolOpen: false,
       fileOpen: false,
       btnClass: "el-icon-folder-add",
@@ -122,6 +127,7 @@ export default {
         id: "",
         name: "",
         type: "",
+        city: "",
         description: "",
       },
       rules: {
@@ -145,6 +151,14 @@ export default {
         ],
         type: [
           { required: true, message: "请选择学校类型", trigger: "change" },
+        ],
+        city: [
+          { required: true, message: "请输入学校所在城市" },
+          {
+            min: 2,
+            max: 6,
+            message: "长度在 2 到 6 个字符",
+          },
         ],
         description: [
           { required: true, message: "请填写学校描述", trigger: "blur" },
@@ -184,6 +198,7 @@ export default {
             .addSchool({
               description: this.add.description,
               id: this.add.id,
+              city: this.add.city,
               name: this.add.name,
               type: this.add.type,
             })
@@ -199,6 +214,7 @@ export default {
               this.schoolList.push({
                 description: this.add.description,
                 id: this.add.id,
+                city: this.add.city,
                 name: this.add.name,
                 type: this.add.type,
               });
@@ -212,7 +228,6 @@ export default {
     },
     // 文件上传前判断文件格式
     beforeAvatarUpload(file) {
-      console.log(file);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isLt2M) {
         this.$message.error("txt文件不允许超过2MB!");
@@ -227,7 +242,7 @@ export default {
     },
     // 自定义上传文件
     upFile() {
-      this.loading=true;
+      this.loading = true;
       this.$adminApi
         .upSchoolFile(this.fileEl)
         .then((res) => {
@@ -239,9 +254,7 @@ export default {
     },
     // 文件上传成功
     successUp(res, file, fileList) {
-      this.loading=false;
-      console.log("文件上传成功");
-      console.log(res);
+      this.loading = false;
       if (!res.success) {
         this.$message.error(res.msg);
         return;
@@ -257,11 +270,7 @@ export default {
       this.fileList = success;
       this.errFileList = err;
       this.$alert(
-        "增加 " +
-          success.length +
-          "个文件成功~ " +
-          err.length +
-          " 个文件失败~",
+        "增加 " + success.length + "个文件成功~ " + err.length + " 个文件失败~",
         "文件上传",
         {
           confirmButtonText: "查看详情",
@@ -273,10 +282,7 @@ export default {
     },
     // 文件上传失败
     errorUp(err, file, fileList) {
-      // this.btnClass = "el-icon-folder-add";
-      this.loading=false;
-      console.log("文件上传失败");
-      console.log(err);
+      this.loading = false;
       this.$message.error(err);
     },
     // 清除学校增加页面的数据
@@ -307,11 +313,11 @@ export default {
 }
 /deep/.el-dialog__body {
   padding-top: 10px;
-  height: 364px;
+  // height: 364px;
   overflow: auto;
 }
 /deep/.el-form-item {
-  margin-bottom: 3px;
+  margin-bottom: 16px;
 }
 .no_file {
   margin: 10px 0;

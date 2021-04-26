@@ -276,7 +276,6 @@ export default {
           pid: this.$route.params.id,
         })
         .then((res) => {
-          console.log(res);
           if (!res.success) {
             this.$message.error("获取兼职详情错误！原因为：" + res.msg);
             return false;

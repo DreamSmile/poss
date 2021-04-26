@@ -3,7 +3,9 @@
     <el-container class="content" ref="content">
       <!-- 顶部用户登录信息 -->
       <el-header class="header">
-        <span class="title">兼职无忧后台管理</span>
+        <span class="title"
+          ><router-link to="/admin">兼职无忧后台管理</router-link></span
+        >
         <div class="top_right">
           <router-link to="/">前台</router-link>
           <span
@@ -54,15 +56,15 @@
             >
               <!-- 首页 -->
               <el-menu-item index="HomePage"
-                ><i class="el-icon-document"></i>首页</el-menu-item
+                ><i class="el-icon-date"></i>首页</el-menu-item
               >
               <!-- 用户管理 -->
               <el-menu-item index="UserIndex"
-                ><i class="el-icon-document"></i>用户管理</el-menu-item
+                ><i class="el-icon-user"></i>用户管理</el-menu-item
               >
               <!-- 商家管理 -->
               <el-menu-item index="MerchantIndex"
-                ><i class="el-icon-document"></i>商家管理</el-menu-item
+                ><i class="el-icon-takeaway-box"></i>商家管理</el-menu-item
               >
               <!-- 商家申请 -->
               <el-menu-item index="ApplyMerchantIndex"
@@ -70,11 +72,11 @@
               >
               <!-- 学校管理 -->
               <el-menu-item index="SchoolIndex"
-                ><i class="el-icon-document"></i>学校管理</el-menu-item
+                ><i class="el-icon-school"></i>学校管理</el-menu-item
               >
               <!-- 举报管理 -->
               <el-menu-item index="ReportIndex"
-                ><i class="el-icon-document"></i>举报管理</el-menu-item
+                ><i class="el-icon-message"></i>举报管理</el-menu-item
               >
             </el-menu>
           </el-scrollbar>
@@ -153,22 +155,32 @@ export default {
         width: 250px;
         text-align: center;
         line-height: 60px;
+        /deep/a {
+          color: #fff;
+          text-decoration: none;
+        }
+        a:hover {
+          color: #409eff;
+        }
       }
       .top_right {
         display: inline-block;
         position: absolute;
         right: 10px;
         height: 60px;
-        .el-icon-bell{
-          margin-right:6px;
+        .el-icon-bell {
+          margin-right: 6px;
           font-size: 16px;
         }
-        
+
         a {
           margin-left: 20px;
           line-height: 60px;
           color: #fff;
           text-decoration: none;
+        }
+        a:hover {
+          color: #409eff;
         }
         .user_name {
           overflow: hidden;
@@ -179,7 +191,7 @@ export default {
           line-height: 60px;
         }
         .user_name:hover {
-          color: #fff;
+          color: #409eff;
         }
         .imgs {
           width: 26px;

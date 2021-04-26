@@ -243,7 +243,6 @@ export default {
             return;
           }
           this.userData = res.data;
-          console.log(this.userData);
           Object.assign(this.userData, { loading: false });
           this.dialogVisible = true;
         })
@@ -280,7 +279,6 @@ export default {
                     this.userList[j].isBanned = false;
                   }
                 }
-                console.log(this.userList);
               })
               .catch((err) => {
                 this.$message.error(err);
@@ -308,7 +306,6 @@ export default {
               userId: this.ban.id,
             })
             .then((res) => {
-              console.log(res);
               if (!res.success) {
                 this.$message.error(res.msg);
                 retur;

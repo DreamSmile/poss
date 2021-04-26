@@ -27,7 +27,6 @@
               @click="certifyopenBox(scope.row)"
               >查看证明</el-button
             >
-            
             <el-button
               type="success"
               size="small"

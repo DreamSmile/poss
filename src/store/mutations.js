@@ -4,7 +4,6 @@ const mutations = {
         state.accessToken = data.accessToken ? data.accessToken : null;
         state.refreshToken = data.refreshToken ? data.refreshToken : null;
         state.hasUser = true;
-        console.log(state);
     },
 
     setUserData(state, data) {
@@ -40,7 +39,6 @@ const mutations = {
         state.diaData=[];
     },
     getUserToken(state) {
-        console.log(state);
         return state;
     },
     getuserData(state) {
