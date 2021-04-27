@@ -399,6 +399,7 @@ export default {
         }
       });
     },
+    
     // 发布兼职
     pushJobAxios(data) {
       this.$api
