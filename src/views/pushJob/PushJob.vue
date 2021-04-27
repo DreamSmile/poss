@@ -140,13 +140,13 @@
             ></el-input>
           </el-form-item> -->
           <el-form-item label=" ">
-            <editor-bar
-              v-model="form.content"
-              :isClear="isClear"
-              @change="change"
-            >
-            </editor-bar>
-          </el-form-item>
+          <editor-bar
+            v-model="form.content"
+            :isClear="isClear"
+            @change="change"
+          >
+          </editor-bar>
+           </el-form-item> 
           <el-form-item>
             <el-button type="primary" v-if="isNew" @click="pushJob"
               >发布</el-button

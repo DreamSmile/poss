@@ -199,6 +199,10 @@ export default {
         this.$message.error("请登录再加入兼职！");
         return;
       }
+      if (this.publisher.id == this.$store.state.userData.id) {
+        this.$message.error("不可以加入自己发布的兼职哦~");
+        return false;
+      }
       this.$confirm("是否申请加入该兼职?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
