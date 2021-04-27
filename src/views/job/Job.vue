@@ -89,9 +89,10 @@
             <p class="title">职位描述</p>
             <div class="box">
               <p class="box_title">岗位职责</p>
-              <p class="list">
-                {{ jobData.content }}
-              </p>
+              <!-- <p class="list"> -->
+              <!-- {{ jobData.content }} -->
+              <div v-html="jobData.content"></div>
+              <!-- </p> -->
             </div>
           </div>
           <div class="job_describe_list job_middle">
@@ -109,9 +110,10 @@
           <div class="job_describe_list job_end">
             <p class="title">学校信息</p>
             <div class="box">
-              <p class="list">
+              <!-- <p class="list">
                 {{ campusInfo.description || "学校简介空~" }}
-              </p>
+              </p> -->
+              <div v-html="campusInfo.description || '学校简介空~'"></div>
             </div>
           </div>
         </div>

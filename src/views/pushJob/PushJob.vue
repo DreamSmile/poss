@@ -131,13 +131,21 @@
             <span class="fileName">{{ fileName }}</span>
           </el-form-item>
           <p class="content_title">工作内容</p>
-          <el-form-item label=" ">
+          <!-- <el-form-item label=" ">
             <el-input
               type="textarea"
               v-model="form.content"
               maxlength="150"
               show-word-limit
             ></el-input>
+          </el-form-item> -->
+          <el-form-item label=" ">
+            <editor-bar
+              v-model="form.content"
+              :isClear="isClear"
+              @change="change"
+            >
+            </editor-bar>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" v-if="isNew" @click="pushJob"
@@ -171,14 +179,18 @@
   </div>
 </template>
 <script>
+import EditorBar from "../../components/wangEnduit";
 import Top from "../../components/top.vue";
 export default {
   name: "PushJob",
   components: {
     Top,
+    EditorBar,
   },
   data() {
     return {
+      isClear: false,
+      detail: "", //富文本编辑器
       dialogVisible: false,
       loading: false,
       isNew: true,
@@ -271,6 +283,10 @@ export default {
     }
   },
   methods: {
+    // 富文本编辑器
+    change(val) {
+      // console.log(val);
+    },
     // 获取该兼职信息，方便修改
     setData() {
       this.$api
@@ -377,7 +393,6 @@ export default {
           );
           this.formData.set("title", this.form.name);
           this.formData.set("workplace", this.form.place);
-
           this.isNew
             ? this.pushJobAxios(this.formData)
             : this.editJobAxios(this.formData);
@@ -549,7 +564,7 @@ export default {
     width: 70%;
     min-width: 800px;
     margin: 0 auto;
-    margin-top: 80px;
+    margin-top: 60px;
     min-height: calc(100vh - 50px);
     .content_title {
       font-size: 16px;
