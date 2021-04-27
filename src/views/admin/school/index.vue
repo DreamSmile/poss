@@ -18,10 +18,18 @@
     </div>
     <!-- 表格 -->
     <el-table :data="schoolList" lazy style="width: 100%" height="550">
-      <el-table-column prop="id" label="id" width="100"> </el-table-column>
+      <el-table-column prop="id" label="学校编号" width="100">
+      </el-table-column>
       <el-table-column prop="name" label="学校名称"> </el-table-column>
       <el-table-column prop="type" label="学历"> </el-table-column>
-      <el-table-column prop="city" label="城市"> </el-table-column>
+      <el-table-column
+        prop="city"
+        label="城市"
+        column-key="date"
+        :filters="cityList"
+        :filter-method="filterHandler"
+      >
+      </el-table-column>
       <el-table-column prop="description" label="备注"> </el-table-column>
     </el-table>
     <!-- 增加学校 -->
@@ -39,10 +47,10 @@
         class="form"
         :rules="rules"
       >
-        <el-form-item label="学校代码：" prop="id">
+        <el-form-item label="学校编号：" prop="id">
           <el-input
             v-model="add.id"
-            placeholder="请输入学校代码"
+            placeholder="请输入学校编号"
             :validate-event="false"
           ></el-input>
         </el-form-item>
@@ -120,6 +128,7 @@ export default {
       schoolOpen: false,
       fileOpen: false,
       btnClass: "el-icon-folder-add",
+      cityList: [], //用做筛选
       fileEl: null,
       fileList: [], //上传成功后的文件，
       errFileList: [], //上传失败文件列表
@@ -185,6 +194,16 @@ export default {
             return;
           }
           this.schoolList = res.data;
+          for (let i = 0; i < res.data.length; i++) {
+            if (res.data[i].city == null) {
+              res.data[i].city = "未知";
+            }
+            this.cityList.push({
+              text: res.data[i].city,
+              value: res.data[i].city,
+            });
+          }
+          this.cityList = this.$utils.deteleObject(this.cityList);
         })
         .catch((err) => {
           this.$message.error(err);
@@ -297,6 +316,11 @@ export default {
       this.$nextTick(() => {
         this.$refs.form.resetFields();
       });
+    },
+    // 筛选城市
+    filterHandler(value, row, column) {
+      const property = column["property"];
+      return row[property] === value;
     },
   },
 };

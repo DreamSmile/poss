@@ -133,7 +133,7 @@
     </div>
     <!-- map弹窗 -->
     <el-dialog title="地图路线" top="3vh" :visible.sync="mapOpen" width="96%">
-      <iframe :src="mapSrc" style="height:80vh;width:100%"></iframe>
+      <iframe :src="mapSrc" style="height: 80vh; width: 100%"></iframe>
     </el-dialog>
   </div>
 </template>
@@ -177,7 +177,6 @@ export default {
           pid: this.$route.params.id,
         })
         .then((res) => {
-          console.log(res);
           if (!res.success) {
             this.$message.error("获取兼职详情错误！原因为：" + res.msg);
             return false;
@@ -299,6 +298,10 @@ export default {
     },
     // 打开地图
     goMap() {
+      if (!this.$store.state.hasUser) {
+        this.$message.error("请登录再获取定位信息~");
+        return;
+      }
       let url =
         "http://api.map.baidu.com/direction?origin=" +
         this.$store.state.userData.campusInfo.name +

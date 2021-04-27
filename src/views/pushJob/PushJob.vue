@@ -155,7 +155,10 @@
               @click="ingJob"
               >开始</el-button
             >
-            <el-button type="danger" v-if="!isNew" @click="overJob"
+            <el-button
+              type="danger"
+              v-if="!isNew && this.jobInfo.status != 0"
+              @click="overJob"
               >结束</el-button
             >
             <el-button type="danger" v-if="!isNew" @click="delJob"
@@ -433,7 +436,7 @@ export default {
         })
         .catch((err) => {
           this.loading = false;
-          this.$message.error('兼职修改失败，请重试~');
+          this.$message.error("兼职修改失败，请重试~");
         });
     },
     // 将兼职状态改为开始兼职

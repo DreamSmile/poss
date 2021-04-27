@@ -38,19 +38,21 @@
                 <div
                   class="face"
                   v-for="(face, i) in item.joinUsers"
-                  v-show="i<3"
+                  v-show="i < 3"
                   :key="i"
-                  :style="{backgroundImage:
-                      'url(' + face.avatar ||
-                      require('@/assets/imgs/user.jpg') + ')',
-                  }">
+                  :style="{
+                    backgroundImage:
+                      'url(' +
+                      (face.avatar || require('@/assets/imgs/user.jpg')) +
+                      ')',
+                  }"
+                >
                   <!-- <div
                     class="img_hover"
                     @click="delImg(index, i, item.id, face.id)"
                   >
                     <i class="el-icon-close"></i>
                   </div> -->
-                  
                 </div>
               </div>
             </div>
@@ -67,8 +69,6 @@
             <img v-show="item.status == 1" src="@/assets/imgs/no.png" />
             <img v-show="item.status == 2" src="@/assets/imgs/ing.png" />
           </div>
-          <!-- 移动出现头像兼职列表 -->
-          <!-- <div class="face_list">这是头像兼职列表</div> -->
         </li>
       </ul>
     </div>

@@ -60,6 +60,10 @@ export default {
         .getPushByPage({
           keyword: "",
           paginationInfo: {
+            order: {
+              direction: "desc",
+              property: "createTime",
+            },
             pageNumber: 1,
             pageSize: 10,
           },
@@ -137,6 +141,10 @@ export default {
         .getPushByPage({
           keyword: keyword,
           paginationInfo: {
+            order: {
+              direction: "desc",
+              property: "createTime",
+            },
             pageNumber: page ? page : 1,
             pageSize: 10,
           },

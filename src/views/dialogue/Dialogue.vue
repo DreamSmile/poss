@@ -193,7 +193,7 @@ export default {
           })
           .then((res) => {
             if (!res.success) {
-              this.$message.error("获得工作信息失败，原因为：" + res.msg);
+              this.$message.error(res.msg);
               return;
             }
             this.jobData = {

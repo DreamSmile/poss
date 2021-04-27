@@ -140,7 +140,7 @@ export default {
       }, 1000);
       this.$api
         .getCode({
-          operationType: "restPassword",
+          operationType: "resetPassword",
           phoneNumber: phoneNumber,
         })
         .then((res) => {
@@ -161,7 +161,7 @@ export default {
       }, 1000);
       this.$api
         .getCodeByMail({
-          operationType: "restPassword",
+          operationType: "resetPassword",
           email: mail,
         })
         .then((res) => {
@@ -374,6 +374,9 @@ export default {
           width: 82px;
         }
         .user_name:hover {
+          color: #8bcdef;
+        }
+        .user_admin:hover {
           color: #8bcdef;
         }
         .imgs {

@@ -86,7 +86,6 @@ axiosIns.interceptors.response.use(response => {
     } else if (response.data.code == 13066) {//登录状态失败，一般是账号同时登录，提示其他地方登录，并跳转到登录界面
         $store.commit('clearAll');
         $router.push("/login");
-        Message.error('账号已在其他地区登录，请重新登录！');
         try {
             $socket.onClose();//关闭websocket
         } catch (error) {
