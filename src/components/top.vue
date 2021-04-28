@@ -232,7 +232,7 @@ export default {
                 this.$router.push("/");
               }
               try {
-                this.$socket.onClose();
+                this.$socket.default.onClose();
               } catch (error) {
                 console.log(error);
               }
