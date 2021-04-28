@@ -22,7 +22,10 @@
                   params: { id: item.id },
                 }"
               >
-                <i v-if="jobList.type == 'business'" class="el-icon-edit-outline"></i>
+                <i
+                  v-if="jobList.type == 'business'"
+                  class="el-icon-edit-outline"
+                ></i>
               </router-link>
               <span class="work_master" v-if="jobList.type == 'home'"
                 >发布者：{{ item.publisher.realName || "发布者" }}</span
@@ -202,9 +205,9 @@ export default {
         a {
           text-decoration: none;
         }
-        .el-icon-edit-outline{
-          margin-left:6px;
-          color:@base-color;
+        .el-icon-edit-outline {
+          margin-left: 6px;
+          color: @base-color;
         }
         .work_NO {
           position: absolute;
