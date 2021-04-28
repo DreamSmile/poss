@@ -225,7 +225,7 @@ export default {
                 this.$router.push("/");
               }
               try {
-                this.$socket.default.onClose();
+                this.$socket.onClose();
               } catch (error) {
                 console.log(error);
               }

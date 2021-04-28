@@ -55,7 +55,10 @@ export default {
     seteditor() {
       this.editor = new E(this.$refs.toolbar, this.$refs.editor);
       this.editor.config.uploadImgShowBase64 = true; // base 64 存储图片
-
+      this.editor.config.uploadVideoServer =process.env.VUE_APP_FOREGROUND+"/open/file/video"; //服务地址  从env从获取
+      this.editor.config.uploadVideoParams = { authorization: this.$store.state.accessToken }; //用户token-> authorization
+      this.editor.config.uploadVideoMaxSize = 200 * 1024 * 1024; //限制最大视频大小为200mb
+      this.editor.config.uploadVideoAccept = ["mp4"]; //限制文件类型为mp4
       // 配置菜单
       this.editor.config.menus = [
         "head", // 标题
@@ -70,6 +73,7 @@ export default {
         "list", // 列表
         "emoticon", // 表情
         "image", // 插入图片
+        "video", //插入视频
         "undo", // 撤销
         "redo", // 重复
         "fullscreen", // 全屏
@@ -81,8 +85,6 @@ export default {
         },
         success: (xhr, editor, result) => {
           // 图片上传成功回调
-          console.log("图片上传成功");
-          console.log(xhr);
         },
         timeout: (xhr, editor) => {
           // 网络超时的回调

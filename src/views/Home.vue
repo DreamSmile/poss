@@ -33,9 +33,14 @@
             </el-input>
           </div>
           <!-- 左边工作列表 -->
-          <el-tabs v-model="activeName">
-            <el-tab-pane label="最新职位" name="first"
-              ><workList :jobList="jobListHot" @changePage="changePageHot"
+          <el-tabs
+            v-model="activeName"
+            v-loading="loading"
+            element-loading-text="加载中..."
+            element-loading-spinner="el-icon-loading"
+          >
+            <el-tab-pane label="最新职位" name="first">
+              <workList :jobList="jobListHot" @changePage="changePageHot"
             /></el-tab-pane>
             <el-tab-pane label="推荐职位" name="second"
               ><workList :jobList="jobList" @changePage="changePage"
@@ -62,6 +67,7 @@ export default {
   name: "Home",
   data() {
     return {
+      loading: true,
       schoolList: [],
       jobName: "",
       select: "",
@@ -166,6 +172,7 @@ export default {
         .then((res) => {
           if (!res.success) {
             this.$message.error("获取兼职列表失败！原因为：" + res.msg);
+            this.loading = false;
             return false;
           }
           if (property == "participantNumber") {
@@ -185,8 +192,10 @@ export default {
               totalRows: res.data.totalRows,
             });
           }
+          this.loading = false;
         })
         .catch((err) => {
+          this.loading = false;
           this.$message.error(err);
         });
     },

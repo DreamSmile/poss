@@ -131,22 +131,14 @@
             <span class="fileName">{{ fileName }}</span>
           </el-form-item>
           <p class="content_title">工作内容</p>
-          <!-- <el-form-item label=" ">
-            <el-input
-              type="textarea"
-              v-model="form.content"
-              maxlength="150"
-              show-word-limit
-            ></el-input>
-          </el-form-item> -->
           <el-form-item label=" ">
-          <editor-bar
-            v-model="form.content"
-            :isClear="isClear"
-            @change="change"
-          >
-          </editor-bar>
-           </el-form-item> 
+            <editor-bar
+              v-model="form.content"
+              :isClear="isClear"
+              @change="change"
+            >
+            </editor-bar>
+          </el-form-item>
           <el-form-item>
             <el-button type="primary" v-if="isNew" @click="pushJob"
               >发布</el-button
@@ -399,7 +391,7 @@ export default {
         }
       });
     },
-    
+
     // 发布兼职
     pushJobAxios(data) {
       this.$api
@@ -457,6 +449,10 @@ export default {
     },
     // 将兼职状态改为开始兼职
     ingJob() {
+      if (this.jobInfo.participantNumber < 1) {
+        this.$message.error("当前没有人参加该兼职，不可开始兼职工作~");
+        return;
+      }
       this.$confirm("此操作代表将本兼职状态改为进行中, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -470,17 +466,15 @@ export default {
           .then((res) => {
             this.loading = false;
             if (!res.success) {
-              this.$message.error(
-                "兼职信息转为开始状态失败！原因为：" + res.msg
-              );
+              this.$message.error(res.msg);
               return;
             }
             this.$message({
               type: "success",
-              message: "修改兼职信息状态成功!将为您跳转至首页！",
+              message: "修改兼职信息状态成功!将为您跳转至上一步！",
             });
             setTimeout(() => {
-              this.$router.push("/");
+              this.$router.push("/userRelease");
             }, 2000);
           })
           .catch((err) => {
@@ -511,10 +505,10 @@ export default {
             }
             this.$message({
               type: "success",
-              message: "修改兼职信息状态成功!将为您跳转至首页！",
+              message: "修改兼职信息状态成功!将为您跳转至上一步！",
             });
             setTimeout(() => {
-              this.$router.push("/");
+              this.$router.push("/userRelease");
             }, 2000);
           })
           .catch((err) => {
@@ -543,10 +537,10 @@ export default {
             }
             this.$message({
               type: "success",
-              message: "删除成功!将为您跳转至首页！",
+              message: "删除成功!将为您返回到已发布兼职页面！",
             });
             setTimeout(() => {
-              this.$router.push("/");
+              this.$router.push("/userRelease");
             }, 2000);
           })
           .catch((err) => {
