@@ -36,7 +36,7 @@
     <el-dialog
       title="添加学校"
       :visible.sync="schoolOpen"
-      width="620px"
+      width="482px"
       height="246px"
       :before-close="clear"
     >
@@ -75,18 +75,12 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="学校描述：" prop="description">
-          <!-- <el-input
+          <el-input
             v-model="add.description"
             placeholder="请输入学校描述"
             :validate-event="false"
             type="textarea"
-          ></el-input> -->
-          <editor-bar
-            v-model="add.description"
-            :isClear="isClear"
-            @change="change"
-          >
-          </editor-bar>
+          ></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="addSchool">添加</el-button>
@@ -125,17 +119,10 @@
   </div>
 </template>
 <script>
-import EditorBar from "../../../components/wangEnduit";
-
 export default {
   name: "school",
-  components: {
-    EditorBar,
-  },
   data() {
     return {
-      isClear: false,
-      detail: "", //富文本编辑器
       schoolList: [],
       loading: false,
       schoolOpen: false,
@@ -184,6 +171,12 @@ export default {
         ],
         description: [
           { required: true, message: "请填写学校描述", trigger: "blur" },
+          {
+            min: 4,
+            max: 20,
+            message: "长度在 4 到 20 个字符",
+            trigger: "blur",
+          },
         ],
       },
     };
@@ -192,10 +185,6 @@ export default {
     this.setData();
   },
   methods: {
-    // 富文本编辑器
-    change(val) {
-      // console.log(val);
-    },
     setData() {
       this.$api
         .getSchoolList()
@@ -337,15 +326,6 @@ export default {
 };
 </script>
 <style scoped lang="less">
-/deep/.w-e-toolbar {
-  /deep/.w-e-menu {
-    width: 32px;
-    height: 26px;
-  }
-}
-/deep/.text{
-  min-height: 170px;
-}
 .work_space {
   background-color: #fff;
   padding: 10px;

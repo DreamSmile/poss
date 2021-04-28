@@ -20,7 +20,7 @@ export default {
     height: 6px;
   }
   ::-webkit-scrollbar-thumb {
-    background-color: #a1a3a9;
+    background-color: #dbdcdf;
     border-radius: 3px;
   }
 }

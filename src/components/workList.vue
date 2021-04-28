@@ -18,11 +18,10 @@
               >
               <router-link
                 :to="{
-                  name: 'Job',
+                  name: 'PushJob',
                   params: { id: item.id },
                 }"
               >
-              
                 <i v-if="jobList.type == 'business'" class="el-icon-edit-outline"></i>
               </router-link>
               <span class="work_master" v-if="jobList.type == 'home'"
