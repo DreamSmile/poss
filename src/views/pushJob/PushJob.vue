@@ -157,7 +157,7 @@
             >
             <el-button
               type="danger"
-              v-if="!isNew && this.jobInfo.status != 0"
+              v-if="!isNew && this.jobInfo.status == 2"
               @click="overJob"
               >结束</el-button
             >
