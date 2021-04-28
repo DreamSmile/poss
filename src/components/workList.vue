@@ -4,11 +4,10 @@
       <ul>
         <li v-for="(item, index) in jobList" :key="index">
           <div>
-            <!-- <span class="work_NO">{{ index + 1 }}、</span> -->
             <div class="list_base">
               <router-link
                 :to="{
-                  name: jobList.role != 'merchant' ? 'Job' : 'PushJob',
+                  name: 'Job',
                   params: { id: item.id },
                 }"
               >
@@ -17,6 +16,14 @@
                   >[{{ item.workplace }}]</span
                 ></router-link
               >
+              <router-link
+                :to="{
+                  name: 'Job',
+                  params: { id: item.id },
+                }"
+              >
+                <i v-if="jobList.type == 'business'" class="el-icon-edit-outline"></i>
+              </router-link>
               <span class="work_master" v-if="jobList.type == 'home'"
                 >发布者：{{ item.publisher.realName || "发布者" }}</span
               >
@@ -46,14 +53,7 @@
                       (face.avatar || require('@/assets/imgs/user.jpg')) +
                       ')',
                   }"
-                >
-                  <!-- <div
-                    class="img_hover"
-                    @click="delImg(index, i, item.id, face.id)"
-                  >
-                    <i class="el-icon-close"></i>
-                  </div> -->
-                </div>
+                ></div>
               </div>
             </div>
             <div class="list_secondary">
@@ -201,6 +201,10 @@ export default {
         margin: 10px 0;
         a {
           text-decoration: none;
+        }
+        .el-icon-edit-outline{
+          margin-left:6px;
+          color:@base-color;
         }
         .work_NO {
           position: absolute;

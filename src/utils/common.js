@@ -32,7 +32,7 @@ export function timeOut(time) {
 //获取当前年月日时分秒
 export function getNowTime() {
     let time = new Date();
-    return time.getFullYear() + return0(time.getMonth()+1) + return0(time.getDate()) + return0(time.getHours()) + return0(time.getMinutes()) + '00';
+    return time.getFullYear() + return0(time.getMonth() + 1) + return0(time.getDate()) + return0(time.getHours()) + return0(time.getMinutes()) + '00';
 }
 
 function return0(s) {
@@ -44,7 +44,7 @@ export function deteleObject(obj) {
     var stringify = {};
     for (var i = 0; i < obj.length; i++) {
         var keys = Object.keys(obj[i]);
-        keys.sort(function(a, b) {
+        keys.sort(function (a, b) {
             return (Number(a) - Number(b));
         });
         var str = '';
@@ -59,6 +59,20 @@ export function deteleObject(obj) {
     }
     uniques = uniques;
     return uniques;
+}
+
+//   获取字符串长度（汉字算两个字符，字母算一个）
+export function getByteLen(val) {
+    var len = 0;
+    for (var i = 0; i < val.length; i++) {
+        var a = val.charAt(i);
+        if (a.match(/[^\x00-\xff]/ig) != null) {
+            len += 2;
+        } else {
+            len += 1;
+        }
+    }
+    return len;
 }
 
 // base64加密

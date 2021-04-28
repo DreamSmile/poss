@@ -75,6 +75,8 @@
     <el-dialog
       :modal-append-to-body="false"
       :visible.sync="dialogVisible"
+      :close-on-click-modal="false"
+      :before-close="clear"
       title="修改密码"
       width="400px"
       height="300px"
@@ -180,6 +182,11 @@ export default {
         this.$message.error("请填写完整的新旧密码与验证码！");
         return;
       }
+      let pasLen = this.$utils.getByteLen(this.form.passNew);
+      if (!(11 > pasLen && pasLen > 5)) {
+        this.$message.error("新密码长度应为6-10位~");
+        return;
+      }
       this.$api
         .resetPass({
           newPassword: this.form.passNew,
@@ -236,8 +243,15 @@ export default {
         })
         .catch((err) => {});
     },
-    // 注销用户
-    logout() {},
+    // 关闭修改密码界面
+    clear() {
+      this.form = {
+        passOld: "",
+        passNew: "",
+        code: "",
+      };
+      this.dialogVisible=false;
+    },
   },
 };
 </script>
