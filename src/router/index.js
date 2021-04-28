@@ -122,7 +122,7 @@ const routes = [
         component: merchantIndex,
       }, {
         path: '/applyMerchantIndex',
-        name: 'applyMerchantIndex',
+        name: 'ApplyMerchantIndex',
         component: applyMerchantIndex,
       }
       , {
