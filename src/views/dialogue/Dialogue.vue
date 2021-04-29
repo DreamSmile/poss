@@ -277,6 +277,7 @@ export default {
         this.sendMess();
       }
     },
+    
     // 发送信息按钮
     sendMess() {
       if (this.mess == "" || this.mess == null) {

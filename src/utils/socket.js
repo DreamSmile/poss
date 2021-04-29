@@ -54,6 +54,7 @@ let socket = {
     console.log($store.state.diaData);
     return redata;
   },
+  
   onError(e) {
     this.errorNum++;
     if (this.errorNum > 5) { this.init(); }
