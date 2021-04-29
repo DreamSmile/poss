@@ -24,8 +24,6 @@ let socket = {
     }
   },
   socketsend(data) {//   发送数据 fromUser:当前登录用户的id，toUser：要发送人的id，content:内容
-    console.log('发送数据');
-    console.log(data);
     if (socket.socketEl.readyState == WebSocket.OPEN) {//判断当前情况是否连接正常
       socket.socketEl.send(JSON.stringify(data));
     } else {
@@ -33,16 +31,27 @@ let socket = {
     }
   },
   onMessage(e) {//接收返回数据
-    console.log("返回数据");
     let redata = JSON.parse(e.data);
-    console.log(redata);
-    $store.commit('setDiaData', {
-      id: redata.id,
-      content: redata.content,
-      createTime: redata.createTime,
-      fromUser: redata.fromUser,
-      toUser: redata
-    })
+    if (redata.content == undefined) {//这是离线发的的信息
+      for (let i = 0; i < Object.keys(redata).length; i++) {
+        $store.commit('setDiaData', {
+          id: redata[Object.keys(redata)[i]][0].id,
+          content: redata[Object.keys(redata)[i]][0].content,
+          createTime: redata[Object.keys(redata)[i]][0].createTime,
+          fromUser: redata[Object.keys(redata)[i]][0].fromUser,
+          toUser: redata[Object.keys(redata)[i]][0].toUser
+        })
+      }
+    } else {
+      $store.commit('setDiaData', {
+        id: redata.id,
+        content: redata.content,
+        createTime: redata.createTime,
+        fromUser: redata.fromUser,
+        toUser: redata.toUser
+      })
+    }
+    console.log($store.state.diaData);
     return redata;
   },
   onError(e) {

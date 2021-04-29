@@ -5,7 +5,7 @@
       <div class="content_flex">
         <!-- 左侧列表 -->
         <div class="user_list">
-          <p v-show="userList.length > 0">30天内联系人</p>
+          <p v-show="userList.length > 0" @click="clo">30天内联系人</p>
           <p v-show="userList.length == 0">近30天都没有联系人哦~</p>
           <div class="list">
             <el-scrollbar style="height: 100%">
@@ -113,7 +113,11 @@ export default {
   },
   watch: {
     "$store.state.diaData"(data) {
-      if (this.$route.name == "Dialogue" && data.length != 0) {
+      if (
+        this.$route.name == "Dialogue" &&
+        data.length != 0 &&
+        this.userList.length > 0
+      ) {
         this.setDia(data);
       }
     },
@@ -126,11 +130,6 @@ export default {
     // 监听到的返回对话内容
     setDia(data) {
       if (data.length < 1) {
-        return;
-      }
-      //监听聊天信息改变
-      if (this.$store.state.diaData.length < 1) {
-        //数据空一般是已经循环过清空了
         return;
       }
       for (let index = 0; index < data.length; index++) {
@@ -284,6 +283,10 @@ export default {
         this.$message.error("不允许发送空内容~");
         return;
       }
+      if (this.mess.replace(/\s+/g,"")=="") {
+        this.$message.error("不允许只发送空格~");
+        return;
+      }
       if (this.jobData.id == undefined) {
         this.$message.error("请选择对话人员再发信息哦~");
         this.mess = "";
@@ -303,6 +306,10 @@ export default {
         let container = this.$refs.box;
         container.scrollTop = container.scrollHeight;
       });
+    },
+    // 测试关闭websocket
+    clo() {
+      this.$socket.default.onClose();
     },
   },
   data() {
