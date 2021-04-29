@@ -27,6 +27,10 @@ export default {
       type: String,
       default: "",
     },
+    isdis: {
+      type: Boolean,
+      default: false,
+    },
     isClear: {
       type: Boolean,
       default: false,
@@ -46,6 +50,9 @@ export default {
       }
     },
     //value为编辑框输入的内容，这里我监听了一下值，当父组件调用得时候，如果给value赋值了，子组件将会显示父组件赋给的值
+    isdis(val) {
+      this.editor.$textElem.attr("contenteditable", !val);
+    },
   },
   mounted() {
     this.seteditor();
@@ -55,8 +62,11 @@ export default {
     seteditor() {
       this.editor = new E(this.$refs.toolbar, this.$refs.editor);
       this.editor.config.uploadImgShowBase64 = true; // base 64 存储图片
-      this.editor.config.uploadVideoServer =process.env.VUE_APP_FOREGROUND+"/open/file/video"; //服务地址  从env从获取
-      this.editor.config.uploadVideoParams = { authorization: this.$store.state.accessToken }; //用户token-> authorization
+      this.editor.config.uploadVideoServer =
+        process.env.VUE_APP_FOREGROUND + "/open/file/video"; //服务地址  从env从获取
+      this.editor.config.uploadVideoParams = {
+        authorization: this.$store.state.accessToken,
+      }; //用户token-> authorization
       this.editor.config.uploadVideoMaxSize = 200 * 1024 * 1024; //限制最大视频大小为200mb
       this.editor.config.uploadVideoAccept = ["mp4"]; //限制文件类型为mp4
       // 配置菜单
@@ -93,27 +103,18 @@ export default {
           // 图片上传错误的回调
         },
         customInsert: (insertImg, result, editor) => {
-          // 图片上传成功，插入图片的回调
-          //result为上传图片成功的时候返回的数据，这里我打印了一下发现后台返回的是data：[{url:"路径的形式"},...]
-          // console.log(result.data[0].url)
-          //insertImg()为插入图片的函数
-          //循环插入图片
-          // for (let i = 0; i < 1; i++) {
-          // console.log(result)
           let url = result.url;
-          //这里插一句, 如果项目在本地开发的,图片在服务器存着的
-          //在编辑器里面回显的话url要加上ip,ip是看你们开发的时候怎么拿的,
-          //我们是store存的直接拿来拼接上的
           insertImg(url);
-          // }
         },
       };
       this.editor.config.onchange = (html) => {
         this.info_ = html; // 绑定当前逐渐地值
         this.$emit("change", this.info_); // 将内容同步到父组件中
       };
+
       // 创建富文本编辑器
       this.editor.create();
+      this.editor.$textElem.attr("contenteditable", !this.isdis);
     },
   },
 };

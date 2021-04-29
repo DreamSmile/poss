@@ -18,6 +18,7 @@
               placeholder="请输入工作标题"
               maxlength="15"
               show-word-limit
+              :disabled="isDisabled"
             ></el-input>
           </el-form-item>
 
@@ -26,6 +27,7 @@
               v-model="form.school"
               placeholder="请选择发布学校"
               style="width: 174px"
+              :disabled="isDisabled"
             >
               <el-option
                 :label="item.name"
@@ -46,6 +48,7 @@
               v-model="form.num"
               placeholder="请输入人数限制"
               style="width: 210px"
+              :disabled="isDisabled"
             ></el-input> </el-form-item
           ><el-form-item
             prop="money"
@@ -57,6 +60,7 @@
               v-model="form.money"
               placeholder="请输入时薪"
               style="width: 210px"
+              :disabled="isDisabled"
             ></el-input>
           </el-form-item>
 
@@ -67,6 +71,7 @@
               label=" "
               maxlength="25"
               show-word-limit
+              :disabled="isDisabled"
             ></el-input>
           </el-form-item>
 
@@ -77,6 +82,7 @@
               placeholder="请选择开始时间"
               :picker-options="pickerOptions"
               :default-value="form.date"
+              :disabled="isDisabled"
             >
             </el-date-picker>
           </el-form-item>
@@ -86,11 +92,13 @@
               v-model="form.time"
               placeholder="请输入兼职时间"
               style="width: 200px"
+              :disabled="isDisabled"
             ></el-input>
           </el-form-item>
 
           <el-form-item label=" " style="display: inline-block">
             <el-button
+              :disabled="isDisabled"
               v-if="jobInfo.status == 1 && jobInfo.joinList.length > 0"
               @click="userList"
               >参与者申请列表</el-button
@@ -109,8 +117,9 @@
                     class="face"
                     :style="{
                       backgroundImage:
-                        'url(' + item.avatar ||
-                        require('@/assets/imgs/user.jpg') + ')',
+                        'url(' +
+                        (item.avatar || require('@/assets/imgs/user.jpg')) +
+                        ')',
                     }"
                   ></div>
                   <span class="name">{{ item.nickName }}</span>
@@ -125,8 +134,11 @@
               class="upload-demo"
               action="#"
               :before-upload="beforeAvatarUpload"
+              :disabled="isDisabled"
             >
-              <el-button><i class="el-icon-link"></i>点击上传附件</el-button>
+              <el-button :disabled="isDisabled"
+                ><i class="el-icon-link"></i>点击上传附件</el-button
+              >
             </el-upload>
             <span class="fileName">{{ fileName }}</span>
           </el-form-item>
@@ -136,9 +148,11 @@
               v-model="form.content"
               :isClear="isClear"
               @change="change"
+              :isdis="isDisabled"
             >
             </editor-bar>
           </el-form-item>
+          <!-- 按钮区 -->
           <el-form-item>
             <el-button type="primary" v-if="isNew" @click="pushJob"
               >发布</el-button
@@ -186,6 +200,7 @@ export default {
       dialogVisible: false,
       loading: false,
       isNew: true,
+      isDisabled: false,
       schoolList: [],
       jobInfo: {},
       formData: new FormData(),
@@ -302,6 +317,7 @@ export default {
           };
           this.fileName = res.data.attachmentName;
           this.jobInfo = res.data;
+          this.isDisabled = res.data.status == 1 ? false : true;
         })
         .catch((err) => {
           this.$message.error(err);
@@ -571,6 +587,7 @@ export default {
       .title {
         color: @font-color;
       }
+
       /deep/.el-dialog__body {
         padding-top: 0;
         height: 250px;

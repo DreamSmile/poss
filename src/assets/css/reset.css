@@ -50,7 +50,7 @@ code,
 kbd,
 pre,
 samp {
-    font-family: Microsoft YaHei,couriernew, courier, monospace;
+    font-family: Microsoft YaHei, couriernew, courier, monospace;
 }
 
 small {
@@ -134,7 +134,7 @@ body {
     background: #fff;
     font-size: 14px;
     line-height: 1.25;
-    font-family:Microsoft YaHei, tahoma, arial, \5b8b\4f53, sans-serif
+    font-family: Microsoft YaHei, tahoma, arial, \5b8b\4f53, sans-serif
 }
 
 th,
@@ -153,8 +153,8 @@ blockquote {
 
 a {
     text-decoration: none;
-    font-family: Microsoft YaHei,tahoma, arial, \5b8b\4f53, sans-serif;
-    _font-family: Microsoft YaHei,arial, sans-serif
+    font-family: Microsoft YaHei, tahoma, arial, \5b8b\4f53, sans-serif;
+    _font-family: Microsoft YaHei, arial, sans-serif
 }
 
 a:hover {

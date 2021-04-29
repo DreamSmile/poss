@@ -19,6 +19,7 @@
               ><i class="el-icon-bell"></i>消息</router-link
             ></span
           >
+
           <router-link to="/userData">
             <span class="user_name" v-if="$store.state.accessToken">{{
               $store.state.userData.nickName || ""
@@ -181,6 +182,14 @@ export default {
         }
         a:hover {
           color: #409eff;
+        }
+        .hasDia::after {
+          content: ".";
+          position: absolute;
+          left: 114px;
+          top: -34px;
+          font-size: 60px;
+          color: red;
         }
         .user_name {
           overflow: hidden;

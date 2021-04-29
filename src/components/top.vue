@@ -183,8 +183,12 @@ export default {
         return;
       }
       let pasLen = this.$utils.getByteLen(this.form.passNew);
-      if (!(11 > pasLen && pasLen > 5)) {
-        this.$message.error("新密码长度应为6-10位~");
+      if (!(13 > pasLen && pasLen > 5)) {
+        this.$message.error("新密码长度应为6-12位~");
+        return;
+      }
+      if (this.form.passOld == this.form.passNew) {
+        this.$message.error("新旧密码不可相同~");
         return;
       }
       this.$api
@@ -250,7 +254,7 @@ export default {
         passNew: "",
         code: "",
       };
-      this.dialogVisible=false;
+      this.dialogVisible = false;
     },
   },
 };

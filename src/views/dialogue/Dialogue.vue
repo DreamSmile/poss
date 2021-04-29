@@ -113,7 +113,7 @@ export default {
   },
   watch: {
     "$store.state.diaData"(data) {
-      if (this.$route.name == "Dialogue") {
+      if (this.$route.name == "Dialogue" && data.length != 0) {
         this.setDia(data);
       }
     },
@@ -125,7 +125,7 @@ export default {
     },
     // 监听到的返回对话内容
     setDia(data) {
-      if (data.lenegth < 1) {
+      if (data.length < 1) {
         return;
       }
       //监听聊天信息改变
@@ -176,9 +176,7 @@ export default {
             data["isHas"] = -1;
             this.userList.push(data);
           }
-          // setTimeout(() => {
           this.getStateData(); //state中有存储信息，这步模拟点击进来top上的红点取消
-          // }, 4000);
         })
         .catch((err) => {
           this.$message.error(err);
@@ -226,6 +224,7 @@ export default {
       this.isActive = index; //当前点击的列表背景颜色变
       item.isHas = -1; //取消界面上的红点
       this.dialogueList = [];
+      this.$socket.default.init(); //防止界面放太久断了联系
       this.$api
         .getHisByUserId({
           toUser: item.id,

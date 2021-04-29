@@ -88,11 +88,7 @@
           <div class="job_describe_list describe_first">
             <p class="title">职位描述</p>
             <div class="box">
-              <p class="box_title">岗位职责</p>
-              <!-- <p class="list"> -->
-              <!-- {{ jobData.content }} -->
               <div v-html="jobData.content"></div>
-              <!-- </p> -->
             </div>
           </div>
           <div class="job_describe_list job_middle">

@@ -1,5 +1,4 @@
 import $store from '../store'
-import $route from '../router'
 let socket = {
   socketEl: null,//websocket实例
   openNum: 0,//连接的次数，短期超过20次判断为错误连接（心跳机制未连接未成功自动重连产生的bug）
@@ -7,18 +6,17 @@ let socket = {
   // 初始化
   init() {
     if ($store.state.userData.id != undefined) {
-      socket.socketEl = new ReconnectingWebSocket("ws://47.97.157.142:8888/websocket/" + $store.state.userData.id);
+      socket.socketEl = new ReconnectingWebSocket(process.env.VUE_APP_WEBSOCKET + $store.state.userData.id);
       socket.socketEl.onopen = this.onOpen;
       socket.socketEl.onmessage = this.onMessage;
       socket.socketEl.onerror = this.onError;
-      console.log('初始化websocket');
     }
   },
   onOpen() {
     this.openNum++;
     if (this.openNum > 6) { this.init(); }
     else {
-      console.log("连接" + $store.state.userData.id);
+      // console.log("连接" + $store.state.userData.id);
     }
     if ($store.state.userData.id == undefined) {
       socket.socketEl.close();
