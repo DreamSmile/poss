@@ -40,7 +40,7 @@
               >
               <i
                 class="el-icon-delete out_job"
-                v-if="jobList.type == 'join'"
+                v-if="jobList.type == 'join' && item.status == 1"
                 @click="outJob(item.status, item.id)"
               ></i>
               <!-- 显示兼职人员的头像 -->

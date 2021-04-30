@@ -81,6 +81,8 @@
               type="datetime"
               placeholder="请选择开始时间"
               :picker-options="pickerOptions"
+              @change="handleTime"
+              :clearable="false"
               :default-value="form.date"
               :disabled="isDisabled"
             >
@@ -97,10 +99,7 @@
           </el-form-item>
 
           <el-form-item label=" " style="display: inline-block">
-            <el-button
-              :disabled="isDisabled"
-              v-if="jobInfo.status == 1 && jobInfo.joinList.length > 0"
-              @click="userList"
+            <el-button v-if="jobInfo.joinList.length > 0" @click="userList"
               >参与者申请列表</el-button
             >
           </el-form-item>
@@ -123,7 +122,11 @@
                     }"
                   ></div>
                   <span class="name">{{ item.nickName }}</span>
-                  <i class="el-icon-close del" @click="delUser(item.id, i)"></i>
+                  <i
+                    class="el-icon-close del"
+                    v-if="jobInfo.status == 1"
+                    @click="delUser(item.id, i)"
+                  ></i>
                 </li>
               </ul>
             </el-scrollbar>
@@ -202,8 +205,11 @@ export default {
       isNew: true,
       isDisabled: false,
       schoolList: [],
-      jobInfo: {},
+      jobInfo: {
+        joinList: 0,
+      },
       formData: new FormData(),
+      topId: this.$route.params.id,
       form: {
         name: "",
         school: "",
@@ -277,7 +283,7 @@ export default {
       },
       pickerOptions: {
         disabledDate(time) {
-          return time.getTime() < Date.now();
+          return time.getTime() < Date.now() - 1 * 24 * 3600 * 1000;
         },
       },
     };
@@ -289,11 +295,36 @@ export default {
       this.setData(); //如果是修改兼职界面
     }
   },
-  methods: {
-    // 富文本编辑器
-    change(val) {
-      // console.log(val);
+  watch: {
+    $route(val) {
+      if (val.params.id != 0) {
+        this.isNew = false;
+        this.setData(); //如果是修改兼职界面
+      } else {
+        location.reload();
+      }
     },
+  },
+  methods: {
+    // 时间修改
+    handleTime() {
+      //只选择了日期，没有选择具体时间
+      let startAt = (new Date(this.form.date) * 1000) / 1000;
+      if (startAt < Date.now()) {
+        let time = new Date();
+        // this.form.date = time.setHours(time.getHours() + 6);//时间搓
+        let addHours = new Date(time.setHours(time.getHours() + 6)); //标准时间
+        this.form.date = new Date(
+          addHours.setMinutes(addHours.getMinutes() + 10)
+        );
+        this.$message({
+          message: "开始时间至少要在当前时间6小时后，已自动修改~",
+          type: "warning",
+        });
+      }
+    },
+    // 富文本编辑器
+    change(val) {},
     // 获取该兼职信息，方便修改
     setData() {
       this.$api
@@ -389,6 +420,14 @@ export default {
       let jobId = this.$route.params.id;
       this.$refs.form.validate((valid) => {
         if (valid) {
+          let workDate = new Date(this.form.date).getTime();
+          let time = new Date();
+          let nowDate = time.setHours(time.getHours() + 6);
+          if (nowDate > workDate) {
+            this.$alert("工作开始时间至少是当前时间六小时后，请修改时间~");
+            this.loading = false;
+            return;
+          }
           !this.isNew ? this.formData.set("id", jobId) : "";
           this.formData.set("campus", this.form.school);
           this.formData.set("content", this.form.content);
@@ -404,10 +443,11 @@ export default {
           this.isNew
             ? this.pushJobAxios(this.formData)
             : this.editJobAxios(this.formData);
+        } else {
+          this.loading = false;
         }
       });
     },
-
     // 发布兼职
     pushJobAxios(data) {
       this.$api
@@ -433,15 +473,6 @@ export default {
     },
     // 修改兼职
     editJobAxios(data) {
-      let workDate = parseInt(
-        this.$utils.timeOut(this.$utils.returntimes(this.form.date))
-      );
-      let nowDate = parseInt(this.$utils.getNowTime()) + 1000000;
-      if (nowDate > workDate) {
-        this.$alert("工作开始时间至少是当前时间一天后，请修改时间~");
-        this.loading = false;
-        return false;
-      }
       this.$api
         .editJob(data)
         .then((res) => {
@@ -469,35 +500,45 @@ export default {
         this.$message.error("当前没有人参加该兼职，不可开始兼职工作~");
         return;
       }
+      let workDate = new Date(this.form.date).getTime();
+      let time = new Date();
+      let nowDate = time.setHours(time.getHours() + 6);
+      if (nowDate > workDate) {
+        this.$alert("工作开始时间至少是当前时间六小时后，请修改时间~");
+        this.loading = false;
+        return;
+      }
       this.$confirm("此操作代表将本兼职状态改为进行中, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      }).then(() => {
-        this.loading = true;
-        this.$api
-          .ingJob({
-            pid: this.$route.params.id,
-          })
-          .then((res) => {
-            this.loading = false;
-            if (!res.success) {
-              this.$message.error(res.msg);
-              return;
-            }
-            this.$message({
-              type: "success",
-              message: "修改兼职信息状态成功!将为您跳转至上一步！",
+      })
+        .then(() => {
+          this.loading = true;
+          this.$api
+            .ingJob({
+              pid: this.$route.params.id,
+            })
+            .then((res) => {
+              this.loading = false;
+              if (!res.success) {
+                this.$message.error(res.msg);
+                return;
+              }
+              this.$message({
+                type: "success",
+                message: "修改兼职信息状态成功!将为您跳转至上一步！",
+              });
+              setTimeout(() => {
+                this.$router.push("/userRelease");
+              }, 2000);
+            })
+            .catch((err) => {
+              this.loading = false;
+              this.$message.error(err);
             });
-            setTimeout(() => {
-              this.$router.push("/userRelease");
-            }, 2000);
-          })
-          .catch((err) => {
-            this.loading = false;
-            this.$message.error(err);
-          });
-      });
+        })
+        .catch((err) => {});
     },
     // 结束该兼职
     overJob() {
